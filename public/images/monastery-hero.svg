@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1100" role="img" aria-label="Kerala hills and monastery">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#fff8ec"/>
+      <stop offset="1" stop-color="#e9f0dc"/>
+    </linearGradient>
+    <linearGradient id="hill" x1="0" x2="1">
+      <stop offset="0" stop-color="#1d5339"/>
+      <stop offset="1" stop-color="#789a55"/>
+    </linearGradient>
+  </defs>
+  <rect width="1800" height="1100" fill="url(#sky)"/>
+  <circle cx="1420" cy="180" r="96" fill="#d58425" opacity=".8"/>
+  <path d="M0 520c230-120 430-132 650 0s390 138 620 10 365-116 530 0v570H0z" fill="#d7e1c0"/>
+  <path d="M0 650c290-190 530-160 790-20s530 98 1010-80v550H0z" fill="url(#hill)"/>
+  <path d="M0 785c290-105 520-92 750 18 320 153 592 75 1050-92v389H0z" fill="#123927"/>
+  <g transform="translate(605 360)">
+    <rect x="130" y="290" width="420" height="250" rx="6" fill="#fbf4e6"/>
+    <path d="M100 290h480L340 115z" fill="#c8741d"/>
+    <rect x="275" y="350" width="130" height="190" rx="64" fill="#173f2d"/>
+    <rect x="180" y="360" width="62" height="96" rx="31" fill="#dce8d1"/>
+    <rect x="438" y="360" width="62" height="96" rx="31" fill="#dce8d1"/>
+    <path d="M320 52h40v80h-40z" fill="#fbf4e6"/>
+    <path d="M295 84h90v30h-90z" fill="#fbf4e6"/>
+  </g>
+  <path d="M0 960c300-45 584-42 860 12s587 58 940-12v140H0z" fill="#0d2c1f" opacity=".64"/>
+</svg>

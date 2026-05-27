@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-label="Monastery garden and work">
+  <rect width="1200" height="900" fill="#fbf4e6"/>
+  <path d="M0 0h1200v430H0z" fill="#fff9ef"/>
+  <path d="M0 385c180-86 332-92 508-16s330 78 510-4 182-78 182-78v613H0z" fill="#d7e4c0"/>
+  <path d="M0 530h1200v370H0z" fill="#173f2d"/>
+  <g stroke="#faf5ea" stroke-width="12" opacity=".55">
+    <path d="M70 850c130-120 238-210 430-310"/>
+    <path d="M260 884c130-130 250-230 475-350"/>
+    <path d="M510 900c120-124 260-232 560-350"/>
+    <path d="M820 910c75-92 170-170 315-230"/>
+  </g>
+  <g transform="translate(130 330)">
+    <rect x="0" y="108" width="292" height="170" fill="#fbf4e6"/>
+    <path d="M-26 108h344L146 0z" fill="#c8741d"/>
+    <rect x="118" y="168" width="58" height="110" rx="29" fill="#173f2d"/>
+  </g>
+</svg>

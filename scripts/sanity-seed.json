@@ -1,0 +1,522 @@
+[
+  {
+    "_id": "siteSettings",
+    "_type": "siteSettings",
+    "siteTitle": "Ananda Matha Monastery",
+    "subtitle": "A Cistercian Monastery in the Wayanad District of Kerala, India.",
+    "theme": {
+      "cream": "#faf5ea",
+      "saffron": "#c8741d",
+      "forest": "#173f2d",
+      "ashoka": "#1d4f91"
+    },
+    "contactEmail": "anandamatha@gmail.com",
+    "phone": "9656061997",
+    "address": "Kunnambetta P.O. 673 123, Wayanad District, Kerala, India",
+    "socialLinks": [
+      {
+        "_key": "ocso",
+        "label": "OCSO",
+        "url": "https://www.ocso.org"
+      }
+    ],
+    "footerText": "A house of silence, prayer, work, and hospitality in the hills of Wayanad."
+  },
+  {
+    "_id": "homePage",
+    "_type": "homePage",
+    "heroTitle": "Welcome to Ananda Matha Monastery",
+    "heroSubtitle": "A Cistercian Monastery in the Wayanad District of Kerala, India.",
+    "heroButtonLabel": "Read more",
+    "heroButtonLink": "/about-us",
+    "values": [
+      {
+        "_key": "silence",
+        "icon": "sparkles",
+        "title": "In silence, we listen.",
+        "text": "This is the rhythm of monastic life, where time slows down and hearts open to something greater."
+      },
+      {
+        "_key": "work",
+        "icon": "leaf",
+        "title": "In work, we serve.",
+        "text": "Manual work supports the community and joins us to creation, to our neighbors, and to the hidden life of Christ."
+      },
+      {
+        "_key": "prayer",
+        "icon": "heart",
+        "title": "In prayer, we unite.",
+        "text": "The Divine Office, meditation, and lectio divina shape the hours of each day in praise and intercession."
+      }
+    ],
+    "cards": [
+      {
+        "_key": "about",
+        "title": "About Our Monastery",
+        "text": "Founded in 1995, Ananda Matha Ashram is a community of Cistercian nuns living in simplicity, prayer, and hospitality.",
+        "linkLabel": "Read more",
+        "link": "/about-us"
+      },
+      {
+        "_key": "life",
+        "title": "Our Life",
+        "text": "We follow the Rule of Saint Benedict in a rhythm of silence, liturgical prayer, manual work, and fraternal life.",
+        "linkLabel": "Read more",
+        "link": "/monastic-life"
+      },
+      {
+        "_key": "hospitality",
+        "title": "Monastic Hospitality",
+        "text": "Guests are welcomed with respect and dignity, and invited to share in the peace and prayer of the monastery.",
+        "linkLabel": "Read more",
+        "link": "/hospitality"
+      }
+    ],
+    "visitingHoursTitle": "Visiting Hours",
+    "visitingHoursContent": "Mon - Fri: 8am-8pm\nSaturday: 9am-7pm\nSunday: 9am-8pm\n\nFor retreat stays or the hermitage, please contact the monastery before visiting.",
+    "invitationText": "All are welcome to share in the peace and prayer of our home.",
+    "invitationButtonLabel": "Contact us",
+    "invitationButtonLink": "/contact"
+  },
+  {
+    "_id": "navigation",
+    "_type": "navigation",
+    "title": "Menu principal",
+    "items": [
+      {
+        "_key": "home",
+        "label": "Home",
+        "url": "/"
+      },
+      {
+        "_key": "about-us",
+        "label": "About Us",
+        "url": "/about-us"
+      },
+      {
+        "_key": "history",
+        "label": "History",
+        "url": "/history"
+      },
+      {
+        "_key": "our-vision",
+        "label": "Our Vision",
+        "url": "/our-vision"
+      },
+      {
+        "_key": "monastic-life",
+        "label": "Monastic Life",
+        "url": "/monastic-life"
+      },
+      {
+        "_key": "prayer",
+        "label": "Prayer",
+        "url": "/prayer"
+      },
+      {
+        "_key": "work",
+        "label": "Work",
+        "url": "/work"
+      },
+      {
+        "_key": "community",
+        "label": "Community",
+        "url": "/community"
+      },
+      {
+        "_key": "hospitality",
+        "label": "Hospitality",
+        "url": "/hospitality"
+      },
+      {
+        "_key": "location",
+        "label": "Location",
+        "url": "/location"
+      },
+      {
+        "_key": "contact",
+        "label": "Contact",
+        "url": "/contact"
+      }
+    ]
+  },
+  {
+    "_id": "nav-home",
+    "_type": "navigationItem",
+    "label": "Home",
+    "url": "/",
+    "order": 0
+  },
+  {
+    "_id": "nav-about-us",
+    "_type": "navigationItem",
+    "label": "About Us",
+    "url": "/about-us",
+    "order": 1
+  },
+  {
+    "_id": "nav-history",
+    "_type": "navigationItem",
+    "label": "History",
+    "url": "/history",
+    "order": 2
+  },
+  {
+    "_id": "nav-our-vision",
+    "_type": "navigationItem",
+    "label": "Our Vision",
+    "url": "/our-vision",
+    "order": 3
+  },
+  {
+    "_id": "nav-monastic-life",
+    "_type": "navigationItem",
+    "label": "Monastic Life",
+    "url": "/monastic-life",
+    "order": 4
+  },
+  {
+    "_id": "nav-prayer",
+    "_type": "navigationItem",
+    "label": "Prayer",
+    "url": "/prayer",
+    "order": 5
+  },
+  {
+    "_id": "nav-work",
+    "_type": "navigationItem",
+    "label": "Work",
+    "url": "/work",
+    "order": 6
+  },
+  {
+    "_id": "nav-community",
+    "_type": "navigationItem",
+    "label": "Community",
+    "url": "/community",
+    "order": 7
+  },
+  {
+    "_id": "nav-hospitality",
+    "_type": "navigationItem",
+    "label": "Hospitality",
+    "url": "/hospitality",
+    "order": 8
+  },
+  {
+    "_id": "nav-location",
+    "_type": "navigationItem",
+    "label": "Location",
+    "url": "/location",
+    "order": 9
+  },
+  {
+    "_id": "nav-contact",
+    "_type": "navigationItem",
+    "label": "Contact",
+    "url": "/contact",
+    "order": 10
+  },
+  {
+    "_id": "page-about-us",
+    "_type": "page",
+    "title": "About Us",
+    "slug": {
+      "_type": "slug",
+      "current": "about-us"
+    },
+    "excerpt": "Ananda Matha Ashram Monastery is a Cistercian community in Kerala, rooted in prayer, work, silence, and hospitality.",
+    "body": [
+      {
+        "_key": "about-1",
+        "_type": "block",
+        "style": "normal",
+        "children": [
+          {
+            "_key": "about-1-span",
+            "_type": "span",
+            "text": "Ananda Matha Ashram Monastery is a Cistercian abbey of the Order of Cistercians of the Strict Observance (OCSO).",
+            "marks": []
+          }
+        ],
+        "markDefs": []
+      },
+      {
+        "_key": "about-2",
+        "_type": "block",
+        "style": "normal",
+        "children": [
+          {
+            "_key": "about-2-span",
+            "_type": "span",
+            "text": "In the heart of India, among the lush mountains of Kerala, the community seeks God through the ordinary rhythm of monastic life. The Cistercian Order of the Strict Observance, also known as the Trappists, follows the Rule of Saint Benedict and the Cistercian tradition.",
+            "marks": []
+          }
+        ],
+        "markDefs": []
+      }
+    ]
+  },
+  {
+    "_id": "page-history",
+    "_type": "page",
+    "title": "History",
+    "slug": {
+      "_type": "slug",
+      "current": "history"
+    },
+    "excerpt": "Founded in 1995, the community moved to Kunnambetta in 2009 and was recognized as a priory on 7 October 2024.",
+    "body": [
+      {
+        "_key": "history-1",
+        "_type": "block",
+        "style": "normal",
+        "children": [
+          {
+            "_key": "history-1-span",
+            "_type": "span",
+            "text": "Ananda Matha Ashram is a monastic community of Cistercian nuns, also known as Trappistines. Founded in 1995 in India, the community first settled in another location before moving in 2009 to Kunnambetta, in the lush and peaceful district of Wayanad, Kerala.",
+            "marks": []
+          }
+        ],
+        "markDefs": []
+      },
+      {
+        "_key": "history-2",
+        "_type": "block",
+        "style": "normal",
+        "children": [
+          {
+            "_key": "history-2-span",
+            "_type": "span",
+            "text": "On 7th October 2024, our monastery was formally recognized as a priory, a major milestone on the path to autonomy within the Cistercian Order.",
+            "marks": []
+          }
+        ],
+        "markDefs": []
+      }
+    ]
+  },
+  {
+    "_id": "page-our-vision",
+    "_type": "page",
+    "title": "Our Vision",
+    "slug": {
+      "_type": "slug",
+      "current": "our-vision"
+    },
+    "excerpt": "The name Ananda means deep joy, a call to live in divine presence and communion with creation.",
+    "body": [
+      {
+        "_key": "vision-1",
+        "_type": "block",
+        "style": "normal",
+        "children": [
+          {
+            "_key": "vision-1-span",
+            "_type": "span",
+            "text": "The name Ananda, meaning deep joy in Sanskrit, reflects our aspiration to live in the divine presence, in peace, communion with creation, and fidelity to the Cistercian spirit of contemplation.",
+            "marks": []
+          }
+        ],
+        "markDefs": []
+      }
+    ]
+  },
+  {
+    "_id": "page-monastic-life",
+    "_type": "page",
+    "title": "Monastic Life",
+    "slug": {
+      "_type": "slug",
+      "current": "monastic-life"
+    },
+    "excerpt": "To live in God alone and to stand in his presence, to leave everything to attain peace.",
+    "body": [
+      {
+        "_key": "life-1",
+        "_type": "block",
+        "style": "normal",
+        "children": [
+          {
+            "_key": "life-1-span",
+            "_type": "span",
+            "text": "Cistercian monks and nuns live according to the Rule of Saint Benedict. The first word of this rule is LISTEN.",
+            "marks": []
+          }
+        ],
+        "markDefs": []
+      }
+    ]
+  },
+  {
+    "_id": "page-prayer",
+    "_type": "page",
+    "title": "Prayer",
+    "slug": {
+      "_type": "slug",
+      "current": "prayer"
+    },
+    "excerpt": "Prayer is an encounter with God, a deep inner listening to what the Holy Spirit whispers in the heart.",
+    "body": [
+      {
+        "_key": "prayer-1",
+        "_type": "block",
+        "style": "normal",
+        "children": [
+          {
+            "_key": "prayer-1-span",
+            "_type": "span",
+            "text": "Jesus never left us a manual on prayer. Instead, He prayed, and in doing so, He taught us by example. He withdrew in silence, often at night. He prayed in secret, with humility.",
+            "marks": []
+          }
+        ],
+        "markDefs": []
+      },
+      {
+        "_key": "prayer-2",
+        "_type": "block",
+        "style": "normal",
+        "children": [
+          {
+            "_key": "prayer-2-span",
+            "_type": "span",
+            "text": "The rhythm of prayer: 4:00 Vigils - Meditation, 5:00 Reading Lectio, 6:00 Lauds, 7:00 Mass - Terce, 12:10 Sext, 14:15 None, 17:30 Vespers - Meditation, 19:30 Compline.",
+            "marks": []
+          }
+        ],
+        "markDefs": []
+      }
+    ]
+  },
+  {
+    "_id": "page-work",
+    "_type": "page",
+    "title": "Work",
+    "slug": {
+      "_type": "slug",
+      "current": "work"
+    },
+    "excerpt": "They are truly monastic when they live by the labor of their hands.",
+    "body": [
+      {
+        "_key": "work-1",
+        "_type": "block",
+        "style": "normal",
+        "children": [
+          {
+            "_key": "work-1-span",
+            "_type": "span",
+            "text": "Ananda Matha Ashram owns a small property with a vegetable and flower garden, and a modest production of coffee and pepper. Our work includes everything needed in a household: cooking, cleaning, and building maintenance.",
+            "marks": []
+          }
+        ],
+        "markDefs": []
+      }
+    ]
+  },
+  {
+    "_id": "page-community",
+    "_type": "page",
+    "title": "Community",
+    "slug": {
+      "_type": "slug",
+      "current": "community"
+    },
+    "excerpt": "The community forms a single body in Christ, each sister contributing to the upbuilding of relations within the community.",
+    "body": [
+      {
+        "_key": "community-1",
+        "_type": "block",
+        "style": "normal",
+        "children": [
+          {
+            "_key": "community-1-span",
+            "_type": "span",
+            "text": "Community life brings both deep joy and great strength. Yet it can also be challenging, because we have not chosen one another. It is God who has chosen each of us to live together.",
+            "marks": []
+          }
+        ],
+        "markDefs": []
+      }
+    ]
+  },
+  {
+    "_id": "page-hospitality",
+    "_type": "page",
+    "title": "Hospitality",
+    "slug": {
+      "_type": "slug",
+      "current": "hospitality"
+    },
+    "excerpt": "All guests who present themselves are to be received like Christ.",
+    "body": [
+      {
+        "_key": "hospitality-1",
+        "_type": "block",
+        "style": "normal",
+        "children": [
+          {
+            "_key": "hospitality-1-span",
+            "_type": "span",
+            "text": "All guests who present themselves are to be received like Christ. The Benedictine tradition is founded on universal hospitality. Every guest, regardless of background, status, or religion, is welcomed with respect and dignity.",
+            "marks": []
+          }
+        ],
+        "markDefs": []
+      }
+    ]
+  },
+  {
+    "_id": "page-location",
+    "_type": "page",
+    "title": "Location",
+    "slug": {
+      "_type": "slug",
+      "current": "location"
+    },
+    "excerpt": "The monastery lies on the road between Gudalur and Chundale, near Kunnambetta in Wayanad.",
+    "body": [
+      {
+        "_key": "location-1",
+        "_type": "block",
+        "style": "normal",
+        "children": [
+          {
+            "_key": "location-1-span",
+            "_type": "span",
+            "text": "Nearest airport: the closest airport to Kunnambetta is Calicut International Airport, also known as Kozhikode. By bus from Bangalore, take any bus to Kerala via Mysore and stop at Kalpetta.",
+            "marks": []
+          }
+        ],
+        "markDefs": []
+      }
+    ]
+  },
+  {
+    "_id": "page-contact",
+    "_type": "page",
+    "title": "Contact",
+    "slug": {
+      "_type": "slug",
+      "current": "contact"
+    },
+    "excerpt": "Contact Ananda Matha Monastery for visits, retreats, and hospitality.",
+    "body": [
+      {
+        "_key": "contact-1",
+        "_type": "block",
+        "style": "normal",
+        "children": [
+          {
+            "_key": "contact-1-span",
+            "_type": "span",
+            "text": "Ananda Matha Monastery, Kunnambetta P.O. 673 123, Wayanad District, Kerala, India. Phone: 9656061997. Email: anandamatha@gmail.com.",
+            "marks": []
+          }
+        ],
+        "markDefs": []
+      }
+    ]
+  }
+]

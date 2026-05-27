@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-label="Quiet prayer landscape">
+  <rect width="1200" height="900" fill="#faf5ea"/>
+  <circle cx="930" cy="160" r="74" fill="#c8741d" opacity=".85"/>
+  <path d="M0 430c170-80 330-96 500-12s296 74 470-20 178-90 230-92v594H0z" fill="#dfe9cb"/>
+  <path d="M0 560c178-92 368-88 570 12s384 84 630-40v368H0z" fill="#236143"/>
+  <path d="M0 690c206-76 380-60 570 14 244 95 430 82 630-16v212H0z" fill="#173f2d"/>
+  <g transform="translate(488 268)" fill="none" stroke="#1d4f91" stroke-width="18" opacity=".8">
+    <circle cx="112" cy="112" r="112"/>
+    <path d="M112 0v224M0 112h224M33 33l158 158M191 33 33 191"/>
+  </g>
+</svg>
