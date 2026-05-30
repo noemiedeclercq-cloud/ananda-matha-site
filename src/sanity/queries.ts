@@ -82,7 +82,9 @@ export async function getHomePage(): Promise<HomePage> {
     heroButtonLabel, heroButtonLink, "heroButton": heroButton${linkProjection},
     values[]{icon, title, text},
     cards[]{
-      title, text, image, frontText, frontImage, backImage, backText,
+      title, text, image, frontText, frontBackgroundColor, frontTextColor,
+      frontImage, backImage, backText, backBackgroundColor, backTextColor,
+      buttonBackgroundColor, buttonTextColor,
       "audioUrl": audio.asset->url,
       linkLabel, link, "button": button${linkProjection}
     },
@@ -131,7 +133,24 @@ export async function getHomePage(): Promise<HomePage> {
 
 export async function getPageBySlug(slug: string): Promise<PageContent | null> {
   const page = await fetchOrNull<Record<string, any>>(`*[_type == "page" && slug.current == $slug][0]{
-    title, "slug": slug.current, heroImage, excerpt, body, seoTitle, seoDescription
+    title, "slug": slug.current, heroImage, excerpt,
+    body[]{
+      ...,
+      markDefs[]{
+        ...,
+        _type == "smartLink" => {
+          label,
+          type,
+          "internalPage": internalPage->{title, "slug": slug.current},
+          externalUrl,
+          "fileUrl": file.asset->url,
+          email,
+          phone,
+          openInNewTab
+        }
+      }
+    },
+    seoTitle, seoDescription
   }`, { slug });
 
   if (!page) return fallbackPages.find((item) => item.slug === slug) || null;

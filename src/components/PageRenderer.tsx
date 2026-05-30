@@ -1,7 +1,24 @@
 import Image from "next/image";
+import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import type { PortableTextBlock } from "@portabletext/types";
+import type { ReactNode } from "react";
+import { resolveLink } from "@/lib/links";
 import type { PageContent } from "@/lib/types";
+
+const portableTextComponents = {
+  marks: {
+    smartLink: ({ children, value }: { children: ReactNode; value?: any }) => {
+      const resolved = resolveLink(value, { href: "#" });
+
+      return (
+        <Link href={resolved.href} target={resolved.target} rel={resolved.rel}>
+          {children}
+        </Link>
+      );
+    }
+  }
+};
 
 export function PageRenderer({ page }: { page: PageContent }) {
   return (
@@ -27,7 +44,10 @@ export function PageRenderer({ page }: { page: PageContent }) {
       <section className="bg-cream px-6 py-16 lg:px-8">
         <div className="prose-like mx-auto max-w-4xl rounded-lg bg-white px-6 py-10 shadow-sm md:px-12">
           {Array.isArray(page.body) ? (
-            <PortableText value={page.body as PortableTextBlock[]} />
+            <PortableText
+              value={page.body as PortableTextBlock[]}
+              components={portableTextComponents}
+            />
           ) : (
             page.body.split("\n\n").map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>

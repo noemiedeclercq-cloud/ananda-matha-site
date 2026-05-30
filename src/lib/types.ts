@@ -53,10 +53,16 @@ export type HomeCard = {
   title: string;
   text?: string;
   frontText?: string;
+  frontBackgroundColor?: string;
+  frontTextColor?: string;
   image?: string;
   frontImage?: string;
   backImage?: string;
   backText?: string;
+  backBackgroundColor?: string;
+  backTextColor?: string;
+  buttonBackgroundColor?: string;
+  buttonTextColor?: string;
   audioUrl?: string;
   linkLabel: string;
   link: string;

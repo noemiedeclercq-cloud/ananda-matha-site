@@ -6,6 +6,12 @@ import { useState } from "react";
 import { resolveLink } from "@/lib/links";
 import type { HomeCard } from "@/lib/types";
 
+const hexPattern = /^#[0-9a-fA-F]{6}$/;
+
+function safeColor(value: string | undefined, fallback: string) {
+  return value && hexPattern.test(value) ? value : fallback;
+}
+
 export function CardGrid({ cards }: { cards: HomeCard[] }) {
   const [openCard, setOpenCard] = useState<string | null>(null);
 
@@ -22,6 +28,21 @@ export function CardGrid({ cards }: { cards: HomeCard[] }) {
             const flipped = openCard === card.title;
             const frontImage = card.frontImage || card.image;
             const backImage = card.backImage || card.image;
+            const frontBackgroundColor = safeColor(
+              card.frontBackgroundColor,
+              "var(--color-cream)"
+            );
+            const frontTextColor = safeColor(card.frontTextColor, "var(--color-forest)");
+            const backBackgroundColor = safeColor(
+              card.backBackgroundColor,
+              "var(--color-forest)"
+            );
+            const backTextColor = safeColor(card.backTextColor, "#ffffff");
+            const buttonBackgroundColor = safeColor(
+              card.buttonBackgroundColor,
+              "var(--color-saffron)"
+            );
+            const buttonTextColor = safeColor(card.buttonTextColor, "#ffffff");
 
             return (
               <article key={card.title} className="space-y-5">
@@ -42,7 +63,13 @@ export function CardGrid({ cards }: { cards: HomeCard[] }) {
                       flipped ? "[transform:rotateY(180deg)]" : ""
                     }`}
                   >
-                    <span className="absolute inset-0 overflow-hidden rounded-lg border border-stone-200 bg-cream p-7 text-left shadow-sm [backface-visibility:hidden]">
+                    <span
+                      className="absolute inset-0 overflow-hidden rounded-lg border border-stone-200 p-7 text-left shadow-sm [backface-visibility:hidden]"
+                      style={{
+                        backgroundColor: frontBackgroundColor,
+                        color: frontTextColor
+                      }}
+                    >
                       {frontImage ? (
                         <Image
                           src={frontImage}
@@ -52,18 +79,29 @@ export function CardGrid({ cards }: { cards: HomeCard[] }) {
                           className="object-cover opacity-[0.22]"
                         />
                       ) : null}
-                      <span className="absolute inset-0 bg-[linear-gradient(180deg,rgba(250,245,234,0.82),rgba(255,255,255,0.96))]" />
+                      <span
+                        className="absolute inset-0"
+                        style={{
+                          background: `linear-gradient(180deg, color-mix(in srgb, ${frontBackgroundColor} 62%, transparent), ${frontBackgroundColor})`
+                        }}
+                      />
                       <span className="relative flex h-full flex-col justify-end">
-                        <span className="font-serif text-4xl font-semibold leading-tight text-forest">
+                        <span className="font-serif text-4xl font-semibold leading-tight">
                           {card.title}
                         </span>
-                        <span className="mt-4 text-base leading-7 text-stone-700">
+                        <span className="mt-4 text-base leading-7">
                           {card.frontText || card.text}
                         </span>
                       </span>
                     </span>
 
-                    <span className="absolute inset-0 overflow-hidden rounded-lg bg-forest text-left text-white shadow-sm [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                    <span
+                      className="absolute inset-0 overflow-hidden rounded-lg text-left shadow-sm [backface-visibility:hidden] [transform:rotateY(180deg)]"
+                      style={{
+                        backgroundColor: backBackgroundColor,
+                        color: backTextColor
+                      }}
+                    >
                       {backImage ? (
                         <Image
                           src={backImage}
@@ -73,9 +111,14 @@ export function CardGrid({ cards }: { cards: HomeCard[] }) {
                           className="object-cover"
                         />
                       ) : null}
-                      <span className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,53,37,0.1),rgba(13,53,37,0.82))]" />
+                      <span
+                        className="absolute inset-0"
+                        style={{
+                          background: `linear-gradient(180deg, color-mix(in srgb, ${backBackgroundColor} 18%, transparent), color-mix(in srgb, ${backBackgroundColor} 86%, transparent))`
+                        }}
+                      />
                       <span className="relative flex h-full items-end p-7">
-                        <span className="text-base leading-7 text-white">
+                        <span className="text-base leading-7">
                           {card.backText || card.text}
                         </span>
                       </span>
@@ -93,7 +136,11 @@ export function CardGrid({ cards }: { cards: HomeCard[] }) {
                   href={resolved.href}
                   target={resolved.target}
                   rel={resolved.rel}
-                  className="inline-flex text-sm font-semibold uppercase tracking-[0.18em] text-saffron hover:text-forest"
+                  className="inline-flex rounded-full px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] transition hover:opacity-85"
+                  style={{
+                    backgroundColor: buttonBackgroundColor,
+                    color: buttonTextColor
+                  }}
                 >
                   {resolved.label || card.linkLabel}
                 </Link>

@@ -78,16 +78,9 @@ export const page = defineType({
             ],
             annotations: [
               {
-                name: "link",
+                name: "smartLink",
                 title: "Lien",
-                type: "object",
-                fields: [
-                  defineField({
-                    name: "href",
-                    title: "Adresse du lien",
-                    type: "url"
-                  })
-                ]
+                type: "link"
               }
             ]
           }

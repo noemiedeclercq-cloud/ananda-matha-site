@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { ColorSwatchInput } from "../studio/components/ColorSwatchInput";
 import { FriendlyImageInput } from "../studio/components/FriendlyImageInput";
 
 const required = (message: string) => (Rule: any) => Rule.required().error(message);
@@ -110,7 +111,9 @@ export const heroSlide = defineType({
       name: "alt",
       title: "Texte alternatif",
       type: "string",
-      description: "Courte description pour les lecteurs d'ecran."
+      description: "Courte description pour les lecteurs d'ecran.",
+      validation: (Rule) =>
+        Rule.required().warning("Ajoutez une description courte de l'image.")
     }),
     defineField({
       name: "caption",
@@ -228,6 +231,20 @@ export const homeCard = defineType({
       description: "Optionnel. Court texte sous le titre."
     }),
     defineField({
+      name: "frontBackgroundColor",
+      title: "Couleur du fond du recto",
+      type: "string",
+      description: "Optionnel. Si vide, le site utilise la couleur creme.",
+      components: { input: ColorSwatchInput }
+    }),
+    defineField({
+      name: "frontTextColor",
+      title: "Couleur du texte du recto",
+      type: "string",
+      description: "Optionnel. Gardez un bon contraste avec le fond.",
+      components: { input: ColorSwatchInput }
+    }),
+    defineField({
       name: "frontImage",
       title: "Photo du recto",
       type: "image",
@@ -239,7 +256,8 @@ export const homeCard = defineType({
       title: "Photo du verso",
       type: "image",
       options: { hotspot: true },
-      components: { field: FriendlyImageInput }
+      components: { field: FriendlyImageInput },
+      validation: required("Ajoutez la photo du verso.")
     }),
     defineField({
       name: "backText",
@@ -247,6 +265,34 @@ export const homeCard = defineType({
       type: "text",
       rows: 3,
       description: "Optionnel. Gardez un texte court."
+    }),
+    defineField({
+      name: "backBackgroundColor",
+      title: "Couleur du fond du verso",
+      type: "string",
+      description: "Optionnel. Visible surtout si la photo ne remplit pas tout.",
+      components: { input: ColorSwatchInput }
+    }),
+    defineField({
+      name: "backTextColor",
+      title: "Couleur du texte du verso",
+      type: "string",
+      description: "Optionnel. Choisissez une couleur lisible sur la photo.",
+      components: { input: ColorSwatchInput }
+    }),
+    defineField({
+      name: "buttonBackgroundColor",
+      title: "Couleur du fond du bouton",
+      type: "string",
+      description: "Optionnel. Si vide, le bouton reste safran.",
+      components: { input: ColorSwatchInput }
+    }),
+    defineField({
+      name: "buttonTextColor",
+      title: "Couleur du texte du bouton",
+      type: "string",
+      description: "Optionnel. Choisissez une couleur lisible.",
+      components: { input: ColorSwatchInput }
     }),
     defineField({
       name: "audio",
