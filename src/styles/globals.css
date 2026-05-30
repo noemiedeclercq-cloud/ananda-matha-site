@@ -64,7 +64,7 @@ a {
 }
 
 .button-secondary {
-  border: 1px solid rgb(23 63 45 / 25%);
+  border: 1px solid color-mix(in srgb, var(--color-forest) 25%, transparent);
   color: var(--color-forest);
 }
 
@@ -76,7 +76,7 @@ a {
 .icon-button {
   align-items: center;
   background: white;
-  border: 1px solid rgb(200 116 29 / 24%);
+  border: 1px solid color-mix(in srgb, var(--color-saffron) 24%, transparent);
   border-radius: 999px;
   color: var(--color-forest);
   display: inline-flex;
@@ -88,10 +88,10 @@ a {
 .quiet-panel {
   background:
     linear-gradient(180deg, rgb(255 255 255 / 86%), rgb(255 255 255 / 72%)),
-    #faf5ea;
-  border: 1px solid rgb(200 116 29 / 18%);
+    var(--color-cream);
+  border: 1px solid color-mix(in srgb, var(--color-saffron) 18%, transparent);
   border-radius: 0.5rem;
-  box-shadow: 0 16px 50px rgb(23 63 45 / 7%);
+  box-shadow: 0 16px 50px color-mix(in srgb, var(--color-forest) 7%, transparent);
 }
 
 .footer-title {
@@ -124,7 +124,7 @@ a {
 }
 
 .prose-like h3 {
-  color: #173f2d;
+  color: var(--color-forest);
   font-family: var(--font-serif), Georgia, serif;
   font-size: 1.75rem;
   font-weight: 600;

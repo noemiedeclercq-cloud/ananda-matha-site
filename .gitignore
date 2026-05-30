@@ -22,7 +22,6 @@ payload.config.ts
 src/app/(payload)/
 src/payload/
 src/payload-types.ts
-src/lib/retreato-data.ts
 scripts/check-payload.ts
 scripts/seed-payload.ts
 src/App.vue

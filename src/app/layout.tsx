@@ -17,11 +17,11 @@ const sans = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Retreato",
-    template: "%s | Retreato"
+    default: "Ananda Matha Monastery",
+    template: "%s | Ananda Matha Monastery"
   },
   description:
-    "Plateforme de réservation simple pour hôtelleries monastiques."
+    "A Cistercian Monastery in the Wayanad District of Kerala, India."
 };
 
 export default function RootLayout({
@@ -29,7 +29,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
-      lang="fr"
+      lang="en"
       className={`${serif.variable} ${sans.variable}`}
       data-scroll-behavior="smooth"
     >

@@ -37,9 +37,11 @@ export function Header({
             <p className="font-serif text-xl font-semibold leading-none text-forest">
               {settings.siteTitle}
             </p>
-            <p className="mt-1 hidden text-xs uppercase tracking-[0.22em] text-stone-500 sm:block">
-              Cistercian Monastery
-            </p>
+            {settings.subtitle ? (
+              <p className="mt-1 hidden max-w-56 text-xs uppercase tracking-[0.22em] text-stone-500 sm:block">
+                {settings.subtitle}
+              </p>
+            ) : null}
           </div>
         </Link>
 

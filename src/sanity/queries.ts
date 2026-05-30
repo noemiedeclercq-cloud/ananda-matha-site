@@ -9,14 +9,12 @@ import {
 } from "@/lib/fallbacks";
 import type { HomePage, NavigationItem, PageContent, SiteSettings } from "@/lib/types";
 
-const imageProjection = "image.asset->";
-
 async function fetchOrNull<T>(query: string, params?: Record<string, string>) {
   if (!isSanityConfigured) return null;
 
   try {
     return await client.fetch<T | null>(query, params || {}, {
-      next: { revalidate: 60 }
+      cache: "no-store"
     });
   } catch {
     return null;
@@ -33,7 +31,7 @@ function imageUrl(value: unknown, fallback?: string) {
 }
 
 export async function getSiteSettings(): Promise<SiteSettings> {
-  const settings = await fetchOrNull<Record<string, unknown>>(`*[_type == "siteSettings"][0]{
+  const settings = await fetchOrNull<Record<string, unknown>>(`*[_id == "siteSettings" && _type == "siteSettings"][0]{
     siteTitle, subtitle, logo, theme, contactEmail, phone, address, socialLinks, footerText
   }`);
 
@@ -47,7 +45,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 }
 
 export async function getNavigation(): Promise<NavigationItem[]> {
-  const navigation = await fetchOrNull<{ items?: NavigationItem[] }>(`*[_type == "navigation"][0]{
+  const navigation = await fetchOrNull<{ items?: NavigationItem[] }>(`*[_id == "navigation" && _type == "navigation"][0]{
     items[]{label, url, "order": _key}
   }`);
 
@@ -66,7 +64,7 @@ export async function getNavigation(): Promise<NavigationItem[]> {
 }
 
 export async function getHomePage(): Promise<HomePage> {
-  const home = await fetchOrNull<Record<string, any>>(`*[_type == "homePage"][0]{
+  const home = await fetchOrNull<Record<string, any>>(`*[_id == "homePage" && _type == "homePage"][0]{
     heroTitle, heroSubtitle, heroImage, heroButtonLabel, heroButtonLink,
     values[]{icon, title, text},
     cards[]{title, text, image, linkLabel, link},
