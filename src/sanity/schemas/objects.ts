@@ -3,6 +3,132 @@ import { FriendlyImageInput } from "../studio/components/FriendlyImageInput";
 
 const required = (message: string) => (Rule: any) => Rule.required().error(message);
 
+export const link = defineType({
+  name: "link",
+  title: "Lien",
+  type: "object",
+  fields: [
+    defineField({
+      name: "label",
+      title: "Texte du bouton ou du lien",
+      type: "string",
+      description: "Exemple : Read more, Contact us, Download PDF"
+    }),
+    defineField({
+      name: "type",
+      title: "Type de lien",
+      type: "string",
+      initialValue: "internal",
+      options: {
+        layout: "radio",
+        list: [
+          { title: "Page interne du site", value: "internal" },
+          { title: "URL externe", value: "external" },
+          { title: "Fichier ou PDF", value: "file" },
+          { title: "Adresse email", value: "email" },
+          { title: "Telephone", value: "phone" }
+        ]
+      },
+      validation: required("Choisissez le type de lien.")
+    }),
+    defineField({
+      name: "internalPage",
+      title: "Page du site",
+      type: "reference",
+      to: [{ type: "page" }],
+      description: "Choisissez une page existante, sans taper l'adresse.",
+      hidden: ({ parent }) => parent?.type !== "internal"
+    }),
+    defineField({
+      name: "externalUrl",
+      title: "Adresse web externe",
+      type: "url",
+      hidden: ({ parent }) => parent?.type !== "external"
+    }),
+    defineField({
+      name: "file",
+      title: "Fichier ou PDF",
+      type: "file",
+      hidden: ({ parent }) => parent?.type !== "file"
+    }),
+    defineField({
+      name: "email",
+      title: "Adresse email",
+      type: "string",
+      hidden: ({ parent }) => parent?.type !== "email",
+      validation: (Rule) => Rule.email().warning("Verifiez l'adresse email.")
+    }),
+    defineField({
+      name: "phone",
+      title: "Numero de telephone",
+      type: "string",
+      hidden: ({ parent }) => parent?.type !== "phone"
+    }),
+    defineField({
+      name: "openInNewTab",
+      title: "Ouvrir dans un nouvel onglet",
+      type: "boolean",
+      initialValue: false,
+      hidden: ({ parent }) => !["internal", "external"].includes(parent?.type)
+    })
+  ],
+  preview: {
+    select: {
+      label: "label",
+      type: "type",
+      pageTitle: "internalPage.title",
+      externalUrl: "externalUrl",
+      fileName: "file.asset.originalFilename",
+      email: "email",
+      phone: "phone"
+    },
+    prepare: ({ label, type, pageTitle, externalUrl, fileName, email, phone }) => {
+      const destination =
+        pageTitle || externalUrl || fileName || email || phone || "Lien a completer";
+      return {
+        title: label || "Lien",
+        subtitle: `${type || "type"} - ${destination}`
+      };
+    }
+  }
+});
+
+export const heroSlide = defineType({
+  name: "heroSlide",
+  title: "Image du diaporama",
+  type: "object",
+  fields: [
+    defineField({
+      name: "image",
+      title: "Image",
+      type: "image",
+      options: { hotspot: true },
+      components: { field: FriendlyImageInput },
+      validation: required("Ajoutez une image pour cette diapositive.")
+    }),
+    defineField({
+      name: "alt",
+      title: "Texte alternatif",
+      type: "string",
+      description: "Courte description pour les lecteurs d'ecran."
+    }),
+    defineField({
+      name: "caption",
+      title: "Legende",
+      type: "string",
+      description: "Optionnel. Peut rester vide."
+    })
+  ],
+  preview: {
+    select: { title: "alt", subtitle: "caption", media: "image" },
+    prepare: ({ title, subtitle, media }) => ({
+      title: title || "Image du diaporama",
+      subtitle: subtitle || "Photo d'accueil",
+      media
+    })
+  }
+});
+
 export const heroSection = defineType({
   name: "heroSection",
   title: "Grande introduction de la page",
@@ -12,7 +138,7 @@ export const heroSection = defineType({
       name: "title",
       title: "Grand titre",
       type: "string",
-      validation: required("Ajoutez le grand titre affiché en haut de la page.")
+      validation: required("Ajoutez le grand titre affiche en haut de la page.")
     }),
     defineField({
       name: "subtitle",
@@ -28,15 +154,9 @@ export const heroSection = defineType({
       components: { field: FriendlyImageInput }
     }),
     defineField({
-      name: "buttonLabel",
-      title: "Texte du bouton",
-      type: "string"
-    }),
-    defineField({
-      name: "buttonLink",
-      title: "Lien du bouton",
-      type: "string",
-      description: "Exemple : /about-us ou /contact"
+      name: "button",
+      title: "Bouton",
+      type: "link"
     })
   ],
   preview: {
@@ -60,9 +180,9 @@ export const valueStatement = defineType({
       type: "string",
       options: {
         list: [
-          { title: "Étoile / lumière", value: "sparkles" },
+          { title: "Etoile / lumiere", value: "sparkles" },
           { title: "Feuille / travail", value: "leaf" },
-          { title: "Cœur / prière", value: "heart" }
+          { title: "Coeur / priere", value: "heart" }
         ],
         layout: "radio"
       }
@@ -91,7 +211,7 @@ export const valueStatement = defineType({
 
 export const homeCard = defineType({
   name: "homeCard",
-  title: "Carte de la page d’accueil",
+  title: "Carte retournable",
   type: "object",
   fields: [
     defineField({
@@ -101,36 +221,79 @@ export const homeCard = defineType({
       validation: required("Ajoutez le titre de la carte.")
     }),
     defineField({
-      name: "text",
-      title: "Texte de la carte",
+      name: "frontText",
+      title: "Texte du recto",
       type: "text",
-      rows: 3
+      rows: 2,
+      description: "Optionnel. Court texte sous le titre."
     }),
     defineField({
-      name: "image",
-      title: "Photo de la carte",
+      name: "frontImage",
+      title: "Photo du recto",
       type: "image",
       options: { hotspot: true },
       components: { field: FriendlyImageInput }
     }),
     defineField({
+      name: "backImage",
+      title: "Photo du verso",
+      type: "image",
+      options: { hotspot: true },
+      components: { field: FriendlyImageInput }
+    }),
+    defineField({
+      name: "backText",
+      title: "Texte du verso",
+      type: "text",
+      rows: 3,
+      description: "Optionnel. Gardez un texte court."
+    }),
+    defineField({
+      name: "audio",
+      title: "Audio",
+      type: "file",
+      description: "Optionnel. Ajoutez un fichier audio si necessaire."
+    }),
+    defineField({
+      name: "button",
+      title: "Bouton",
+      type: "link"
+    }),
+    defineField({
+      name: "text",
+      title: "Ancien texte",
+      type: "text",
+      rows: 3,
+      readOnly: true,
+      hidden: ({ value }) => !value
+    }),
+    defineField({
+      name: "image",
+      title: "Ancienne photo",
+      type: "image",
+      readOnly: true,
+      hidden: ({ value }) => !value
+    }),
+    defineField({
       name: "linkLabel",
-      title: "Texte du lien",
+      title: "Ancien texte du lien",
       type: "string",
-      initialValue: "Read more"
+      readOnly: true,
+      hidden: ({ value }) => !value
     }),
     defineField({
       name: "link",
-      title: "Page de destination",
+      title: "Ancien lien",
       type: "string",
-      description: "Exemple : /hospitality"
+      readOnly: true,
+      hidden: ({ value }) => !value
     })
   ],
   preview: {
-    select: { title: "title", subtitle: "text", media: "image" },
+    select: { title: "title", subtitle: "backText", media: "backImage" },
     prepare: ({ title, subtitle, media }) => ({
       title: title || "Carte",
-      subtitle: subtitle || "Texte et lien",
+      subtitle: subtitle || "Photo, texte et bouton",
       media
     })
   }
@@ -145,21 +308,26 @@ export const navLink = defineType({
       name: "label",
       title: "Nom visible dans le menu",
       type: "string",
-      validation: required("Écrivez le nom qui apparaît dans le menu.")
+      validation: required("Ecrivez le nom qui apparait dans le menu.")
     }),
     defineField({
       name: "url",
-      title: "Lien",
+      title: "Ancien lien",
       type: "string",
-      description: "Exemple : /prayer ou /contact",
-      validation: required("Ajoutez le lien de cette entrée du menu.")
+      description: "Ancien champ conserve comme fallback."
+    }),
+    defineField({
+      name: "link",
+      title: "Destination",
+      type: "link",
+      description: "Choisissez une page, une URL, un fichier, un email ou un telephone."
     })
   ],
   preview: {
-    select: { title: "label", subtitle: "url" },
-    prepare: ({ title, subtitle }) => ({
+    select: { title: "label", subtitle: "url", linkLabel: "link.label" },
+    prepare: ({ title, subtitle, linkLabel }) => ({
       title: title || "Lien du menu",
-      subtitle: subtitle || "Page de destination"
+      subtitle: linkLabel || subtitle || "Page de destination"
     })
   }
 });

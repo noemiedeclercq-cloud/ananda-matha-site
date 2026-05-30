@@ -12,8 +12,17 @@ export function ThemeVars({ settings }: { settings: SiteSettings }) {
   const saffron = safeColor(theme.saffron, "#c8741d");
   const forest = safeColor(theme.forest, "#173f2d");
   const ashoka = safeColor(theme.ashoka, "#1d4f91");
+  const headerBackgroundColor = safeColor(theme.headerBackgroundColor, cream);
+  const menuTextColor = safeColor(theme.menuTextColor, "#3f3a32");
+  const menuHoverColor = safeColor(theme.menuHoverColor, saffron);
+  const menuActiveColor = safeColor(theme.menuActiveColor, forest);
+  const menuButtonBackgroundColor = safeColor(
+    theme.menuButtonBackgroundColor,
+    saffron
+  );
+  const menuButtonTextColor = safeColor(theme.menuButtonTextColor, "#ffffff");
 
   return (
-    <style>{`:root{--color-cream:${cream};--color-saffron:${saffron};--color-forest:${forest};--color-ashoka:${ashoka};}`}</style>
+    <style>{`:root{--color-cream:${cream};--color-saffron:${saffron};--color-forest:${forest};--color-ashoka:${ashoka};--header-background:${headerBackgroundColor};--menu-text:${menuTextColor};--menu-hover:${menuHoverColor};--menu-active:${menuActiveColor};--menu-button-background:${menuButtonBackgroundColor};--menu-button-text:${menuButtonTextColor};}`}</style>
   );
 }

@@ -9,6 +9,17 @@ import {
 } from "@/lib/fallbacks";
 import type { HomePage, NavigationItem, PageContent, SiteSettings } from "@/lib/types";
 
+const linkProjection = `{
+  label,
+  type,
+  "internalPage": internalPage->{title, "slug": slug.current},
+  externalUrl,
+  "fileUrl": file.asset->url,
+  email,
+  phone,
+  openInNewTab
+}`;
+
 async function fetchOrNull<T>(query: string, params?: Record<string, string>) {
   if (!isSanityConfigured) return null;
 
@@ -32,7 +43,9 @@ function imageUrl(value: unknown, fallback?: string) {
 
 export async function getSiteSettings(): Promise<SiteSettings> {
   const settings = await fetchOrNull<Record<string, unknown>>(`*[_id == "siteSettings" && _type == "siteSettings"][0]{
-    siteTitle, subtitle, logo, theme, contactEmail, phone, address, socialLinks, footerText
+    siteTitle, subtitle, logo, theme, contactEmail, phone, address,
+    socialLinks[]{label, url, "link": link${linkProjection}},
+    footerText
   }`);
 
   if (!settings) return fallbackSettings;
@@ -46,7 +59,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 
 export async function getNavigation(): Promise<NavigationItem[]> {
   const navigation = await fetchOrNull<{ items?: NavigationItem[] }>(`*[_id == "navigation" && _type == "navigation"][0]{
-    items[]{label, url, "order": _key}
+    items[]{label, url, "order": _key, "link": link${linkProjection}}
   }`);
 
   if (navigation?.items?.length) {
@@ -65,11 +78,17 @@ export async function getNavigation(): Promise<NavigationItem[]> {
 
 export async function getHomePage(): Promise<HomePage> {
   const home = await fetchOrNull<Record<string, any>>(`*[_id == "homePage" && _type == "homePage"][0]{
-    heroTitle, heroSubtitle, heroImage, heroButtonLabel, heroButtonLink,
+    heroTitle, heroSubtitle, heroImage, heroSlides[]{image, alt, caption},
+    heroButtonLabel, heroButtonLink, "heroButton": heroButton${linkProjection},
     values[]{icon, title, text},
-    cards[]{title, text, image, linkLabel, link},
+    cards[]{
+      title, text, image, frontText, frontImage, backImage, backText,
+      "audioUrl": audio.asset->url,
+      linkLabel, link, "button": button${linkProjection}
+    },
     visitingHoursTitle, visitingHoursContent, visitingHoursImage,
-    invitationText, invitationButtonLabel, invitationButtonLink
+    invitationText, invitationButtonLabel, invitationButtonLink,
+    "invitationButton": invitationButton${linkProjection}
   }`);
 
   if (!home) return fallbackHome;
@@ -78,6 +97,16 @@ export async function getHomePage(): Promise<HomePage> {
     ...fallbackHome,
     ...home,
     heroImage: imageUrl(home.heroImage, fallbackHome.heroImage),
+    heroSlides: (home.heroSlides?.length
+      ? home.heroSlides
+      : fallbackHome.heroSlides
+    )?.map((slide: any, index: number) => ({
+      ...slide,
+      image: imageUrl(
+        slide.image,
+        fallbackHome.heroSlides?.[index % fallbackHome.heroSlides.length]?.image
+      )
+    })),
     visitingHoursImage: imageUrl(
       home.visitingHoursImage,
       fallbackHome.visitingHoursImage
@@ -86,7 +115,15 @@ export async function getHomePage(): Promise<HomePage> {
       (card: any, index: number) => ({
         ...fallbackHome.cards[index % fallbackHome.cards.length],
         ...card,
-        image: imageUrl(card.image, fallbackHome.cards[index]?.image)
+        image: imageUrl(card.image, fallbackHome.cards[index]?.image),
+        frontImage: imageUrl(
+          card.frontImage,
+          imageUrl(card.image, fallbackHome.cards[index]?.frontImage)
+        ),
+        backImage: imageUrl(
+          card.backImage,
+          imageUrl(card.image, fallbackHome.cards[index]?.backImage)
+        )
       })
     )
   };

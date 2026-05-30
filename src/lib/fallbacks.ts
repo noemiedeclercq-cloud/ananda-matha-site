@@ -11,7 +11,13 @@ export const fallbackSettings: SiteSettings = {
     cream: "#faf5ea",
     saffron: "#c8741d",
     forest: "#173f2d",
-    ashoka: "#1d4f91"
+    ashoka: "#1d4f91",
+    headerBackgroundColor: "#faf5ea",
+    menuTextColor: "#3f3a32",
+    menuHoverColor: "#c8741d",
+    menuActiveColor: "#173f2d",
+    menuButtonBackgroundColor: "#c8741d",
+    menuButtonTextColor: "#ffffff"
   },
   contactEmail: "anandamatha@gmail.com",
   phone: "9656061997",
@@ -40,8 +46,27 @@ export const fallbackHome: HomePage = {
   heroSubtitle:
     "A Cistercian Monastery in the Wayanad District of Kerala, India.",
   heroImage: monasteryImage,
+  heroSlides: [
+    {
+      image: monasteryImage,
+      alt: "Ananda Matha Monastery in Kerala"
+    },
+    {
+      image: gardenImage,
+      alt: "Garden and monastic work"
+    },
+    {
+      image: prayerImage,
+      alt: "Prayerful hills of Wayanad"
+    }
+  ],
   heroButtonLabel: "Read more",
   heroButtonLink: "/about-us",
+  heroButton: {
+    label: "Read more",
+    type: "internal",
+    internalPage: { title: "About Us", slug: "about-us" }
+  },
   values: [
     {
       title: "In silence, we listen.",
@@ -60,23 +85,50 @@ export const fallbackHome: HomePage = {
     {
       title: "About Our Monastery",
       text: "Founded in 1995, Ananda Matha Ashram is a community of Cistercian nuns living in simplicity, prayer, and hospitality.",
+      frontText: "A Cistercian home in Kerala.",
       image: gardenImage,
+      frontImage: gardenImage,
+      backImage: gardenImage,
+      backText: "Founded in 1995, Ananda Matha Ashram is a community of Cistercian nuns.",
       linkLabel: "Read more",
-      link: "/about-us"
+      link: "/about-us",
+      button: {
+        label: "Read more",
+        type: "internal",
+        internalPage: { title: "About Us", slug: "about-us" }
+      }
     },
     {
       title: "Our Life",
       text: "We follow the Rule of Saint Benedict in a rhythm of silence, liturgical prayer, manual work, and fraternal life.",
+      frontText: "Prayer, work, silence, and community.",
       image: prayerImage,
+      frontImage: prayerImage,
+      backImage: prayerImage,
+      backText: "A daily rhythm shaped by the Rule of Saint Benedict.",
       linkLabel: "Read more",
-      link: "/monastic-life"
+      link: "/monastic-life",
+      button: {
+        label: "Read more",
+        type: "internal",
+        internalPage: { title: "Monastic Life", slug: "monastic-life" }
+      }
     },
     {
       title: "Monastic Hospitality",
       text: "Guests are welcomed with respect and dignity, and invited to share in the peace and prayer of the monastery.",
+      frontText: "A quiet welcome for guests and retreatants.",
       image: monasteryImage,
+      frontImage: monasteryImage,
+      backImage: monasteryImage,
+      backText: "Guests are welcomed with respect and invited into the peace of the monastery.",
       linkLabel: "Read more",
-      link: "/hospitality"
+      link: "/hospitality",
+      button: {
+        label: "Read more",
+        type: "internal",
+        internalPage: { title: "Hospitality", slug: "hospitality" }
+      }
     }
   ],
   visitingHoursTitle: "Visiting Hours",
@@ -85,7 +137,12 @@ export const fallbackHome: HomePage = {
   visitingHoursImage: gardenImage,
   invitationText: "All are welcome to share in the peace and prayer of our home.",
   invitationButtonLabel: "Contact us",
-  invitationButtonLink: "/contact"
+  invitationButtonLink: "/contact",
+  invitationButton: {
+    label: "Contact us",
+    type: "internal",
+    internalPage: { title: "Contact", slug: "contact" }
+  }
 };
 
 export const fallbackPages: PageContent[] = [

@@ -106,6 +106,42 @@ export const siteSettings = defineType({
           title: "Bleu Ashoka",
           type: "string",
           components: { input: ColorSwatchInput }
+        }),
+        defineField({
+          name: "headerBackgroundColor",
+          title: "Fond du menu",
+          type: "string",
+          components: { input: ColorSwatchInput }
+        }),
+        defineField({
+          name: "menuTextColor",
+          title: "Texte du menu",
+          type: "string",
+          components: { input: ColorSwatchInput }
+        }),
+        defineField({
+          name: "menuHoverColor",
+          title: "Couleur au survol",
+          type: "string",
+          components: { input: ColorSwatchInput }
+        }),
+        defineField({
+          name: "menuActiveColor",
+          title: "Couleur active",
+          type: "string",
+          components: { input: ColorSwatchInput }
+        }),
+        defineField({
+          name: "menuButtonBackgroundColor",
+          title: "Fond du bouton du menu",
+          type: "string",
+          components: { input: ColorSwatchInput }
+        }),
+        defineField({
+          name: "menuButtonTextColor",
+          title: "Texte du bouton du menu",
+          type: "string",
+          components: { input: ColorSwatchInput }
         })
       ]
     }),
@@ -126,8 +162,15 @@ export const siteSettings = defineType({
             }),
             defineField({
               name: "url",
-              title: "Adresse web",
-              type: "url"
+              title: "Ancienne adresse web",
+              type: "url",
+              readOnly: true,
+              hidden: ({ value }) => !value
+            }),
+            defineField({
+              name: "link",
+              title: "Destination",
+              type: "link"
             })
           ],
           preview: {

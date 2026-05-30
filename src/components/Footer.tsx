@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
+import { resolveLink } from "@/lib/links";
 import type { NavigationItem, SiteSettings } from "@/lib/types";
 
 export function Footer({
@@ -26,11 +27,24 @@ export function Footer({
         <div>
           <p className="footer-title">Explore</p>
           <div className="mt-4 grid grid-cols-2 gap-2 text-sm text-cream/75">
-            {navigation.slice(0, 10).map((item) => (
-              <Link key={item.url} href={item.url} className="hover:text-white">
-                {item.label}
-              </Link>
-            ))}
+            {navigation.slice(0, 10).map((item) => {
+              const resolved = resolveLink(item.link, {
+                href: item.url,
+                label: item.label
+              });
+
+              return (
+                <Link
+                  key={`${item.label}-${resolved.href}`}
+                  href={resolved.href}
+                  target={resolved.target}
+                  rel={resolved.rel}
+                  className="hover:text-white"
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
           </div>
         </div>
 
@@ -52,6 +66,28 @@ export function Footer({
               <a href={`tel:${settings.phone}`}>{settings.phone}</a>
             </p>
           </div>
+          {settings.socialLinks?.length ? (
+            <div className="mt-6 flex flex-wrap gap-3 text-sm text-cream/75">
+              {settings.socialLinks.map((item) => {
+                const resolved = resolveLink(item.link, {
+                  href: item.url,
+                  label: item.label
+                });
+
+                return (
+                  <Link
+                    key={`${item.label}-${resolved.href}`}
+                    href={resolved.href}
+                    target={resolved.target}
+                    rel={resolved.rel}
+                    className="hover:text-white"
+                  >
+                    {resolved.label || item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          ) : null}
         </div>
       </div>
       <div className="border-t border-white/10 px-6 py-5 text-center text-xs text-cream/60">
