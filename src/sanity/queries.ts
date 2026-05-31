@@ -72,6 +72,29 @@ function mapPageBlock(block: Record<string, any>) {
   return block;
 }
 
+function mapHeroSlides(home: Record<string, any>) {
+  const publishedSlides = (home.heroSlides || [])
+    .map((slide: any) => ({
+      ...slide,
+      image: imageUrl(slide.image)
+    }))
+    .filter((slide: any) => slide.image);
+
+  if (publishedSlides.length) return publishedSlides;
+
+  const legacyHeroImage = imageUrl(home.heroImage);
+  if (legacyHeroImage) {
+    return [
+      {
+        image: legacyHeroImage,
+        alt: home.heroTitle || "Ananda Matha Monastery"
+      }
+    ];
+  }
+
+  return fallbackHome.heroSlides;
+}
+
 function normalizeLegacyMenuUrl(url: string | undefined, pageSlugs: Set<string>) {
   if (!url) return "#";
   if (url === "/") return "/";
@@ -165,17 +188,8 @@ export async function getHomePage(): Promise<HomePage> {
   return {
     ...fallbackHome,
     ...home,
-    heroImage: imageUrl(home.heroImage, fallbackHome.heroImage),
-    heroSlides: (home.heroSlides?.length
-      ? home.heroSlides
-      : fallbackHome.heroSlides
-    )?.map((slide: any, index: number) => ({
-      ...slide,
-      image: imageUrl(
-        slide.image,
-        fallbackHome.heroSlides?.[index % fallbackHome.heroSlides.length]?.image
-      )
-    })),
+    heroImage: imageUrl(home.heroImage),
+    heroSlides: mapHeroSlides(home),
     visitingHoursImage: imageUrl(
       home.visitingHoursImage,
       fallbackHome.visitingHoursImage

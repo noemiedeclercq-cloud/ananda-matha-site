@@ -34,6 +34,10 @@ export function Hero({
   });
 
   useEffect(() => {
+    setActiveIndex(0);
+  }, [visibleSlides.length]);
+
+  useEffect(() => {
     if (visibleSlides.length <= 1) return;
 
     const timer = window.setInterval(() => {

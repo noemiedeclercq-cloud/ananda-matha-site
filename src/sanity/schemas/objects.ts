@@ -132,16 +132,16 @@ export const link = defineType({
 
 export const heroSlide = defineType({
   name: "heroSlide",
-  title: "Image du diaporama",
+  title: "Photo",
   type: "object",
   fields: [
     defineField({
       name: "image",
-      title: "Image",
+      title: "Photo",
       type: "image",
       options: { hotspot: true },
       components: { field: FriendlyImageInput },
-      validation: required("Ajoutez une image pour cette diapositive.")
+      validation: required("Ajoutez une photo.")
     }),
     defineField({
       name: "alt",

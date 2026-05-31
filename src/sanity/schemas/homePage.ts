@@ -12,7 +12,7 @@ export const homePage = defineType({
   icon: HomeIcon,
   components: { input: FriendlyDocumentInput },
   groups: [
-    { name: "hero", title: "Grande photo d'accueil", default: true },
+    { name: "hero", title: "Haut de page", default: true },
     { name: "values", title: "Trois phrases" },
     { name: "cards", title: "Cartes Prayer / Work / Community / Hospitality" },
     { name: "story", title: "Our Story" },
@@ -39,9 +39,9 @@ export const homePage = defineType({
     }),
     defineField({
       name: "heroSlides",
-      title: "Photos du haut de la page",
+      title: "Grande photo d'accueil",
       description:
-        "C'est le seul endroit pour gerer les photos du haut de la page. Une seule photo reste fixe. Plusieurs photos defilent automatiquement.",
+        "Ajoutez une ou plusieurs photos. Une seule photo reste fixe. Plusieurs photos defilent automatiquement. Vous pouvez reordonner ou supprimer chaque photo.",
       type: "array",
       group: "hero",
       of: [{ type: "heroSlide" }],
@@ -60,7 +60,7 @@ export const homePage = defineType({
       title: "Ancienne grande photo d'accueil",
       type: "image",
       options: { hotspot: true },
-      group: "hero",
+      group: "legacy",
       readOnly: true,
       hidden: true,
       components: { field: FriendlyImageInput }
