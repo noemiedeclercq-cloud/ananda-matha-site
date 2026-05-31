@@ -2,32 +2,31 @@
 
 Route locale : `/orateo-studio`
 
-## Fonctionnel en phase 1
+## Fonctionnel
 
-- Navigation visuelle en français pour Accueil, Pages du site, Menu principal, Galerie photos, Documents PDF, Apparence, Contact et Paramètres.
-- Page Accueil organisée en blocs repliables : Hero, Diaporama, Cartes rapides, Our Story, Citation et Contact.
-- Édition locale du titre de bienvenue, du texte d'introduction, des photos du diaporama et des boutons d'action.
-- Gestionnaire de photos avec ajout local, suppression locale, ordre visuel et glisser-déposer.
+- Navigation visuelle en francais pour Accueil, Pages du site, Menu principal, Galerie photos, Documents PDF, Apparence, Contact et Parametres.
+- Page Accueil organisee en blocs repliables : Hero, Diaporama, Cartes rapides, Our Story, Citation et Contact.
+- Edition locale du titre de bienvenue, du texte d'introduction, des photos du diaporama et des boutons d'action.
+- Reglage du voile de la photo Hero : aucun, leger, moyen ou fort.
+- Gestionnaire de photos avec ajout local, suppression locale, ordre visuel et glisser-deposer.
 - Gestionnaire de boutons avec texte, destination, couleur et activation.
-- Aperçu de la page d'accueil mis à jour en direct avec un mode aperçu large.
-- Un seul indicateur "Prototype local" dans le header.
-- Brouillon local conservé dans le navigateur : enregistrer, annuler les changements et restaurer au rechargement.
-- Lecture seule Sanity quand le projet est configuré : accueil, pages, menu, galerie, PDF, couleurs et contact.
-- Indicateur de source : "Connecté à Sanity" ou "Données de démonstration".
+- Apercu de la page d'accueil mis a jour en direct avec un mode apercu large.
+- Brouillon local conserve dans le navigateur : enregistrer, annuler les changements et restaurer au rechargement.
+- Lecture Sanity quand le projet est configure : accueil, pages, menu, galerie, PDF, couleurs et contact.
+- Publication Sanity limitee au bloc Hero : titre, texte, boutons et voile uniquement.
 
-## Données utilisées
+## Donnees utilisees
 
 - Le prototype lit les contenus de repli existants depuis `src/lib/fallbacks.ts`.
-- Quand Sanity est configuré, le prototype lit les documents existants via `services/sanity/readOnly.ts`.
-- Aucune modification n'est encore envoyée à Sanity.
-- Les boutons, cartes rapides, actions d'ajout/suppression, ordre des photos et sélections de liens sont simulés en local dans le navigateur.
-- Le brouillon local est sauvegardé temporairement dans `localStorage`, sans modifier le site public.
-- La publication est désactivée dans cette étape.
+- Quand Sanity est configure, le prototype lit les documents existants via `services/sanity/readOnly.ts`.
+- Le bloc Hero peut publier dans Sanity via la route serveur `/orateo-studio/api/hero`.
+- Les photos, cartes rapides, actions d'ajout/suppression, ordre des photos et selections de liens hors Hero restent locales dans le navigateur.
+- Le brouillon local est sauvegarde temporairement dans `localStorage`, sans modifier le site public.
+- L'upload des images vers Sanity n'est pas encore active.
 
 ## Prochain branchement Sanity
 
-1. Lire les documents Sanity réels de la page d'accueil au chargement de la route.
-2. Remplacer l'état local par un brouillon persistant.
-3. Connecter le bouton "Publier les changements" à une mutation Sanity avec validation.
-4. Brancher la médiathèque sur les assets Sanity pour ajouter et supprimer de vraies images.
-5. Brancher les liens intelligents sur les pages, documents PDF, emails et téléphones existants.
+1. Ajouter une validation plus fine avant publication.
+2. Brancher la mediatheque sur les assets Sanity pour ajouter et supprimer de vraies images.
+3. Brancher les liens intelligents sur les pages, documents PDF, emails et telephones existants.
+4. Etendre la publication aux autres blocs seulement apres validation du CRUD local.

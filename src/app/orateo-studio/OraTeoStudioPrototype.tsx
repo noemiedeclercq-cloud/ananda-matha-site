@@ -26,7 +26,9 @@ import {
 import type { LucideIcon } from "lucide-react";
 import type { ChangeEvent, ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { fallbackSettings } from "@/lib/fallbacks";
+import type { HeroOverlayStrength } from "@/lib/types";
 import styles from "./orateo-studio.module.css";
 import {
   editablePages,
@@ -97,6 +99,25 @@ const blockMeta: Array<{
 ];
 
 const draftStorageKey = "orateo-studio-home-draft-v1";
+
+const overlayOptions: Array<{ label: string; value: HeroOverlayStrength }> = [
+  { label: "Aucun", value: "none" },
+  { label: "Leger", value: "light" },
+  { label: "Moyen", value: "medium" },
+  { label: "Fort", value: "strong" }
+];
+
+const previewOverlayBackgrounds: Record<HeroOverlayStrength, string | null> = {
+  none: null,
+  light: "linear-gradient(90deg, rgb(0 0 0 / 24%), rgb(0 0 0 / 6%))",
+  medium: "linear-gradient(90deg, rgb(0 0 0 / 48%), rgb(0 0 0 / 14%))",
+  strong: "linear-gradient(90deg, rgb(0 0 0 / 72%), rgb(0 0 0 / 22%))"
+};
+
+function getHeroPreviewBackground(image: string, overlayStrength: HeroOverlayStrength) {
+  const overlay = previewOverlayBackgrounds[overlayStrength] ?? previewOverlayBackgrounds.light;
+  return overlay ? `${overlay}, url(${image})` : `url(${image})`;
+}
 
 function readStoredDraft(baseDraft: OraTeoHomeDraft): OraTeoHomeDraft | null {
   if (typeof window === "undefined") {
@@ -186,10 +207,13 @@ function getPendingChanges(draft: OraTeoHomeDraft, savedDraft: OraTeoHomeDraft) 
 }
 
 export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStudioData }) {
+  const router = useRouter();
   const [activeSection, setActiveSection] = useState("Accueil");
   const [draft, setDraft] = useState<OraTeoHomeDraft>(initialData.home);
   const [savedDraft, setSavedDraft] = useState<OraTeoHomeDraft>(initialData.home);
   const [lastSavedLabel, setLastSavedLabel] = useState("Brouillon initial");
+  const [isPublishingHero, setIsPublishingHero] = useState(false);
+  const [heroPublishMessage, setHeroPublishMessage] = useState("");
   const [draggedPhotoId, setDraggedPhotoId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("split");
   const [previewMode, setPreviewMode] = useState<PreviewMode>("edit");
@@ -542,6 +566,60 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
     setDraft(savedDraft);
     setDraggedPhotoId(null);
     setUploadNotice("");
+    setHeroPublishMessage("");
+  }
+
+  async function publishHeroToSanity() {
+    const confirmed = window.confirm(
+      "Publier le bloc Hero dans Sanity ? Seuls le titre, le texte, les boutons et le voile seront envoyes."
+    );
+
+    if (!confirmed) return;
+
+    const payload = {
+      hero: {
+        title: draft.hero.title,
+        intro: draft.hero.intro,
+        overlayStrength: draft.hero.overlayStrength,
+        buttons: draft.hero.buttons
+      }
+    };
+
+    setIsPublishingHero(true);
+    setHeroPublishMessage("Publication du Hero en cours...");
+    console.info("OraTeo Studio - Hero envoye a Sanity", payload);
+
+    try {
+      const response = await fetch("/orateo-studio/api/hero", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result?.error || "La publication du Hero a echoue.");
+      }
+
+      console.info("OraTeo Studio - Hero publie dans Sanity", result.sent);
+      setSavedDraft((current) => {
+        const next = {
+          ...current,
+          hero: draft.hero
+        };
+        window.localStorage.setItem(draftStorageKey, JSON.stringify(next));
+        return next;
+      });
+      setLastSavedLabel("Hero publie avec succes");
+      setHeroPublishMessage("Hero publie avec succes");
+      router.refresh();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Erreur inconnue pendant la publication.";
+      console.error("OraTeo Studio - erreur de publication Hero", error);
+      setHeroPublishMessage(message);
+    } finally {
+      setIsPublishingHero(false);
+    }
   }
 
   return (
@@ -692,12 +770,17 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
                       <HeroEditor
                         buttons={draft.hero.buttons}
                         intro={draft.hero.intro}
+                        isPublishing={isPublishingHero}
                         onAddButton={addHeroButton}
                         onRemoveButton={removeHeroButton}
+                        onPublish={publishHeroToSanity}
                         onReorderButton={reorderHeroButton}
                         onSetIntro={(intro) => updateHero({ intro })}
+                        onSetOverlayStrength={(overlayStrength) => updateHero({ overlayStrength })}
                         onSetTitle={(title) => updateHero({ title })}
                         onUpdateButton={updateHeroButton}
+                        overlayStrength={draft.hero.overlayStrength}
+                        publishMessage={heroPublishMessage}
                         title={draft.hero.title}
                       />
                     )}
@@ -789,6 +872,7 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
               buttons={enabledButtons}
               cards={draft.cards}
               heroPhoto={heroPhoto}
+              overlayStrength={draft.hero.overlayStrength}
               intro={draft.hero.intro}
               mode={previewMode}
               onSelectBlock={selectBlock}
@@ -879,22 +963,32 @@ function PendingChanges({
 function HeroEditor({
   buttons,
   intro,
+  isPublishing,
   onAddButton,
   onRemoveButton,
+  onPublish,
   onReorderButton,
+  onSetOverlayStrength,
   onSetIntro,
   onSetTitle,
   onUpdateButton,
+  overlayStrength,
+  publishMessage,
   title
 }: {
   buttons: StudioButton[];
   intro: string;
+  isPublishing: boolean;
   onAddButton: () => void;
   onRemoveButton: (id: string) => void;
+  onPublish: () => void;
   onReorderButton: (id: string, direction: -1 | 1) => void;
+  onSetOverlayStrength: (value: HeroOverlayStrength) => void;
   onSetIntro: (value: string) => void;
   onSetTitle: (value: string) => void;
   onUpdateButton: (id: string, next: Partial<StudioButton>) => void;
+  overlayStrength: HeroOverlayStrength;
+  publishMessage: string;
   title: string;
 }) {
   return (
@@ -909,6 +1003,20 @@ function HeroEditor({
         <textarea value={intro} onChange={(event) => onSetIntro(event.target.value)} />
       </label>
 
+      <label className={styles.fieldCard}>
+        <span>Voile sur la photo</span>
+        <select
+          value={overlayStrength}
+          onChange={(event) => onSetOverlayStrength(event.target.value as HeroOverlayStrength)}
+        >
+          {overlayOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </label>
+
       <div className={styles.managerCard}>
         <ButtonManager
           buttons={buttons}
@@ -918,6 +1026,18 @@ function HeroEditor({
           onUpdateButton={onUpdateButton}
           title="Boutons d'action"
         />
+      </div>
+
+      <div className={styles.publishHeroCard}>
+        <div>
+          <strong>Publication du Hero</strong>
+          <span>Titre, texte, boutons et voile uniquement. Les photos ne sont pas encore envoyees.</span>
+        </div>
+        <button className={styles.primaryAction} disabled={isPublishing} onClick={onPublish} type="button">
+          <UploadCloud aria-hidden="true" size={17} />
+          {isPublishing ? "Publication..." : "Publier dans Sanity"}
+        </button>
+        {publishMessage ? <p>{publishMessage}</p> : null}
       </div>
     </div>
   );
@@ -1642,6 +1762,7 @@ function HomepagePreview({
   intro,
   mode,
   onSelectBlock,
+  overlayStrength,
   quote,
   selectedBlock,
   story,
@@ -1654,12 +1775,14 @@ function HomepagePreview({
   intro: string;
   mode: PreviewMode;
   onSelectBlock: (key: BlockKey) => void;
+  overlayStrength: HeroOverlayStrength;
   quote: OraTeoHomeDraft["quote"];
   selectedBlock: BlockKey;
   story: OraTeoHomeDraft["story"];
   title: string;
 }) {
   const isEditing = mode === "edit";
+  const heroBackground = getHeroPreviewBackground(heroPhoto, overlayStrength);
 
   return (
     <div className={styles.previewFrame}>
@@ -1679,7 +1802,7 @@ function HomepagePreview({
         label="Modifier"
         onSelect={() => onSelectBlock("hero")}
       >
-        <section className={styles.heroPreview} style={{ backgroundImage: `url(${heroPhoto})` }}>
+        <section className={styles.heroPreview} style={{ backgroundImage: heroBackground }}>
           <div>
             <EditableZone
               active={selectedBlock === "hero"}
