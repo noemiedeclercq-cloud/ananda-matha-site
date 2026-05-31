@@ -40,6 +40,7 @@ import {
 import type { OraTeoHomeDraft, OraTeoStudioData } from "./services/sanity/types";
 
 type BlockKey = "hero" | "slideshow" | "cards" | "story" | "quote" | "contact";
+type PreviewMode = "preview" | "edit";
 
 const sections = [
   { label: "Accueil", icon: Home },
@@ -137,6 +138,8 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
   const [lastSavedLabel, setLastSavedLabel] = useState("Brouillon initial");
   const [draggedPhotoId, setDraggedPhotoId] = useState<string | null>(null);
   const [previewWide, setPreviewWide] = useState(false);
+  const [previewMode, setPreviewMode] = useState<PreviewMode>("edit");
+  const [selectedBlock, setSelectedBlock] = useState<BlockKey>("hero");
   const [openBlocks, setOpenBlocks] = useState<Record<BlockKey, boolean>>({
     hero: true,
     slideshow: true,
@@ -164,6 +167,20 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
 
   function toggleBlock(key: BlockKey) {
     setOpenBlocks((current) => ({ ...current, [key]: !current[key] }));
+    setSelectedBlock(key);
+  }
+
+  function selectBlock(key: BlockKey) {
+    setActiveSection("Accueil");
+    setSelectedBlock(key);
+    setOpenBlocks({
+      hero: key === "hero",
+      slideshow: key === "slideshow",
+      cards: key === "cards",
+      story: key === "story",
+      quote: key === "quote",
+      contact: key === "contact"
+    });
   }
 
   function updateButton(id: string, next: Partial<StudioButton>) {
@@ -434,6 +451,7 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
                     isOpen={openBlocks[block.key]}
                     key={block.key}
                     onToggle={() => toggleBlock(block.key)}
+                    selected={selectedBlock === block.key}
                     summary={block.summary}
                     title={block.title}
                   >
@@ -502,14 +520,35 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
                 )}
                 {previewWide ? "Réduire l'aperçu" : "Agrandir l'aperçu"}
               </button>
+              <div className={styles.modeSwitch} aria-label="Mode de l'aperçu">
+                <button
+                  className={previewMode === "preview" ? styles.modeActive : styles.modeButton}
+                  onClick={() => setPreviewMode("preview")}
+                  type="button"
+                >
+                  👁 Aperçu
+                </button>
+                <button
+                  className={previewMode === "edit" ? styles.modeActive : styles.modeButton}
+                  onClick={() => setPreviewMode("edit")}
+                  type="button"
+                >
+                  ✏️ Édition
+                </button>
+              </div>
             </div>
             <HomepagePreview
               buttons={enabledButtons}
               cards={draft.cards}
               heroPhoto={heroPhoto}
               intro={draft.hero.intro}
+              mode={previewMode}
+              onSelectBlock={selectBlock}
+              selectedBlock={selectedBlock}
               story={draft.story}
               title={draft.hero.title}
+              contact={draft.contact}
+              quote={draft.quote}
             />
           </aside>
         </div>
@@ -531,6 +570,7 @@ function StudioBlock({
   icon: Icon,
   isOpen,
   onToggle,
+  selected,
   summary,
   title
 }: {
@@ -538,11 +578,12 @@ function StudioBlock({
   icon: LucideIcon;
   isOpen: boolean;
   onToggle: () => void;
+  selected: boolean;
   summary: string;
   title: string;
 }) {
   return (
-    <section className={styles.blockCard}>
+    <section className={selected ? styles.blockCardSelected : styles.blockCard}>
       <button className={styles.blockHeader} onClick={onToggle} type="button">
         <span className={styles.blockIcon}>
           <Icon aria-hidden="true" size={19} />
@@ -845,29 +886,46 @@ function ReadOnlySection({
   activeSection: string;
   data: OraTeoStudioData;
 }) {
+  const featuredPages = useMemo(() => {
+    const wanted = ["Home", "Who are we ?", "Hospitality", "Pictures", "Contact"];
+    const byTitle = new Map(data.pages.map((page) => [page.title, page]));
+
+    return wanted.map((title, index) => ({
+      id: byTitle.get(title)?.id || `featured-${index}`,
+      title,
+      status: byTitle.get(title)?.status || "Publié",
+      updatedAt: byTitle.get(title)?.updatedAt || "Page prête à consulter",
+      image:
+        data.home.cards[index % Math.max(data.home.cards.length, 1)]?.image ||
+        data.home.slideshow.photos[0]?.image ||
+        "/images/monastery-hero.svg"
+    }));
+  }, [data.home.cards, data.home.slideshow.photos, data.pages]);
+  const [selectedPageTitle, setSelectedPageTitle] = useState(featuredPages[0]?.title || "Home");
+  const selectedPage = featuredPages.find((page) => page.title === selectedPageTitle) || featuredPages[0];
+
   if (activeSection === "Pages du site") {
     return (
       <div className={styles.readOnlyPanel}>
         <SectionIntro
           title="Pages du site"
-          text="Liste consultable des pages actuellement connues par OraTeo Studio."
+          text="Choisissez une page pour la voir comme un visiteur, sans modifier le site."
         />
-        <div className={styles.pageList}>
-          {data.pages.map((page) => (
-            <article key={page.id}>
-              <div>
-                <strong>{page.title}</strong>
-                <span>{page.addressLabel}</span>
-              </div>
-              <div>
-                <span className={page.status === "Publié" ? styles.statusPill : styles.draftPill}>
-                  {page.status}
-                </span>
-                <small>Mis à jour : {page.updatedAt}</small>
-              </div>
-            </article>
+        <div className={styles.visualPageGrid}>
+          {featuredPages.map((page) => (
+            <button
+              className={selectedPageTitle === page.title ? styles.visualPageActive : styles.visualPageCard}
+              key={page.id}
+              onClick={() => setSelectedPageTitle(page.title)}
+              type="button"
+            >
+              <img alt="" src={page.image} />
+              <strong>{page.title}</strong>
+              <span>{page.status}</span>
+            </button>
           ))}
         </div>
+        {selectedPage ? <PageVisualPreview page={selectedPage} /> : null}
       </div>
     );
   }
@@ -1007,6 +1065,24 @@ function ReadOnlySection({
   );
 }
 
+function PageVisualPreview({
+  page
+}: {
+  page: { image: string; status: string; title: string; updatedAt: string };
+}) {
+  return (
+    <article className={styles.pageVisualPreview}>
+      <img alt="" src={page.image} />
+      <div>
+        <span>{page.status}</span>
+        <h3>{page.title}</h3>
+        <p>Cette page est affichée ici en consultation. La modification viendra dans une étape suivante.</p>
+        <small>Mis à jour : {page.updatedAt}</small>
+      </div>
+    </article>
+  );
+}
+
 function SectionIntro({ text, title }: { text: string; title: string }) {
   return (
     <div className={styles.sectionIntro}>
@@ -1041,18 +1117,30 @@ function MenuTreeItem({ item }: { item: OraTeoStudioData["menu"][number] }) {
 function HomepagePreview({
   buttons,
   cards,
+  contact,
   heroPhoto,
   intro,
+  mode,
+  onSelectBlock,
+  quote,
+  selectedBlock,
   story,
   title
 }: {
   buttons: StudioButton[];
   cards: StudioCard[];
+  contact: OraTeoHomeDraft["contact"];
   heroPhoto: string;
   intro: string;
+  mode: PreviewMode;
+  onSelectBlock: (key: BlockKey) => void;
+  quote: OraTeoHomeDraft["quote"];
+  selectedBlock: BlockKey;
   story: OraTeoHomeDraft["story"];
   title: string;
 }) {
+  const isEditing = mode === "edit";
+
   return (
     <div className={styles.previewFrame}>
       <header className={styles.siteMiniHeader}>
@@ -1065,53 +1153,176 @@ function HomepagePreview({
         <Menu aria-hidden="true" size={20} />
       </header>
 
-      <section className={styles.heroPreview} style={{ backgroundImage: `url(${heroPhoto})` }}>
-        <div>
-          <h2>{title}</h2>
-          <p>{intro}</p>
-          <div className={styles.previewButtons}>
-            {buttons.map((button) => (
-              <button key={button.id} style={{ backgroundColor: button.color }} type="button">
-                {button.label}
-              </button>
+      <EditableZone
+        active={selectedBlock === "hero"}
+        isEditing={isEditing}
+        label="Modifier"
+        onSelect={() => onSelectBlock("hero")}
+      >
+        <section className={styles.heroPreview} style={{ backgroundImage: `url(${heroPhoto})` }}>
+          <div>
+            <EditableZone
+              active={selectedBlock === "hero"}
+              compact
+              isEditing={isEditing}
+              label="Modifier le titre"
+              onSelect={() => onSelectBlock("hero")}
+            >
+              <h2>{title}</h2>
+            </EditableZone>
+            <EditableZone
+              active={selectedBlock === "hero"}
+              compact
+              isEditing={isEditing}
+              label="Modifier le texte"
+              onSelect={() => onSelectBlock("hero")}
+            >
+              <p>{intro}</p>
+            </EditableZone>
+            <EditableZone
+              active={selectedBlock === "hero"}
+              compact
+              isEditing={isEditing}
+              label="Modifier les boutons"
+              onSelect={() => onSelectBlock("hero")}
+            >
+              <div className={styles.previewButtons}>
+                {buttons.map((button) => (
+                  <button key={button.id} style={{ backgroundColor: button.color }} type="button">
+                    {button.label}
+                  </button>
+                ))}
+              </div>
+            </EditableZone>
+          </div>
+        </section>
+      </EditableZone>
+
+      <EditableZone
+        active={selectedBlock === "slideshow"}
+        isEditing={isEditing}
+        label="Modifier le diaporama"
+        onSelect={() => onSelectBlock("slideshow")}
+      >
+        <div className={styles.previewDots}>
+          <span />
+          <span />
+          <span />
+          <span />
+        </div>
+      </EditableZone>
+
+      <EditableZone
+        active={selectedBlock === "cards"}
+        isEditing={isEditing}
+        label="Modifier les cartes"
+        onSelect={() => onSelectBlock("cards")}
+      >
+        <section className={styles.previewSection}>
+          <div>
+            <h3>Cartes rapides</h3>
+            <p>Mettez en avant les pages importantes.</p>
+          </div>
+          <div className={styles.previewCards}>
+            {cards.map((card) => (
+              <article key={card.id}>
+                <img alt="" src={card.image} />
+                <strong>{card.title}</strong>
+                <button type="button">Modifier</button>
+              </article>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
+      </EditableZone>
 
-      <div className={styles.previewDots}>
-        <span />
-        <span />
-        <span />
-        <span />
-      </div>
+      <EditableZone
+        active={selectedBlock === "story"}
+        isEditing={isEditing}
+        label="Modifier Our Story"
+        onSelect={() => onSelectBlock("story")}
+      >
+        <section className={styles.previewStory}>
+          <div>
+            <h3>{story.title}</h3>
+            <p>Présentez l'histoire et la mission du monastère.</p>
+          </div>
+          <div className={styles.storyPreviewRow}>
+            <img alt="" src={story.image} />
+            <p>{story.text}</p>
+          </div>
+        </section>
+      </EditableZone>
 
-      <section className={styles.previewSection}>
-        <div>
-          <h3>Cartes rapides</h3>
-          <p>Mettez en avant les pages importantes.</p>
-        </div>
-        <div className={styles.previewCards}>
-          {cards.map((card) => (
-            <article key={card.id}>
-              <img alt="" src={card.image} />
-              <strong>{card.title}</strong>
-              <button type="button">Modifier</button>
-            </article>
-          ))}
-        </div>
-      </section>
+      <EditableZone
+        active={selectedBlock === "quote"}
+        isEditing={isEditing}
+        label="Modifier la citation"
+        onSelect={() => onSelectBlock("quote")}
+      >
+        <section className={styles.previewQuote}>
+          <blockquote>{quote.text}</blockquote>
+          <cite>{quote.signature}</cite>
+        </section>
+      </EditableZone>
 
-      <section className={styles.previewStory}>
-        <div>
-          <h3>Section "Our Story"</h3>
-          <p>Présentez l'histoire et la mission du monastère.</p>
-        </div>
-        <div className={styles.storyPreviewRow}>
-          <img alt="" src={story.image} />
-          <p>{story.text}</p>
-        </div>
-      </section>
+      <EditableZone
+        active={selectedBlock === "contact"}
+        isEditing={isEditing}
+        label="Modifier le contact"
+        onSelect={() => onSelectBlock("contact")}
+      >
+        <section className={styles.previewContact}>
+          <div>
+            <h3>Contact</h3>
+            <p>{contact.message}</p>
+          </div>
+          <button type="button">{contact.buttonLabel}</button>
+        </section>
+      </EditableZone>
+    </div>
+  );
+}
+
+function EditableZone({
+  active,
+  children,
+  compact = false,
+  isEditing,
+  label,
+  onSelect
+}: {
+  active: boolean;
+  children: ReactNode;
+  compact?: boolean;
+  isEditing: boolean;
+  label: string;
+  onSelect: () => void;
+}) {
+  if (!isEditing) {
+    return <>{children}</>;
+  }
+
+  return (
+    <div
+      className={[
+        compact ? styles.editableZoneCompact : styles.editableZone,
+        active ? styles.editableZoneActive : ""
+      ].join(" ")}
+      onClick={(event) => {
+        event.stopPropagation();
+        onSelect();
+      }}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onSelect();
+        }
+      }}
+    >
+      <span className={styles.editBadge}>{label}</span>
+      {children}
     </div>
   );
 }

@@ -384,6 +384,16 @@
   overflow: hidden;
 }
 
+.blockCardSelected {
+  background: rgb(255 253 248 / 92%);
+  border: 1px solid color-mix(in srgb, var(--studio-saffron) 58%, var(--studio-line));
+  border-radius: 1rem;
+  box-shadow:
+    0 22px 70px rgb(41 32 20 / 7%),
+    0 0 0 3px rgb(200 115 34 / 10%);
+  overflow: hidden;
+}
+
 .blockHeader {
   align-items: center;
   background: transparent;
@@ -925,8 +935,108 @@
   text-align: center;
 }
 
+.visualPageGrid {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.visualPageCard,
+.visualPageActive {
+  background: rgb(255 253 248 / 90%);
+  border: 1px solid var(--studio-line);
+  border-radius: 1rem;
+  box-shadow: 0 14px 46px rgb(41 32 20 / 5%);
+  color: var(--studio-ink);
+  cursor: pointer;
+  display: grid;
+  font: inherit;
+  gap: 0.45rem;
+  overflow: hidden;
+  padding: 0 0 0.8rem;
+  text-align: left;
+}
+
+.visualPageActive {
+  border-color: color-mix(in srgb, var(--studio-saffron) 60%, var(--studio-line));
+  box-shadow:
+    0 18px 54px rgb(41 32 20 / 7%),
+    0 0 0 3px rgb(200 115 34 / 10%);
+}
+
+.visualPageCard img,
+.visualPageActive img {
+  aspect-ratio: 1.12 / 0.76;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.visualPageCard strong,
+.visualPageActive strong,
+.visualPageCard span,
+.visualPageActive span {
+  padding: 0 0.75rem;
+}
+
+.visualPageCard span,
+.visualPageActive span {
+  color: var(--studio-muted);
+  font-size: 0.8rem;
+}
+
+.pageVisualPreview {
+  background: rgb(255 253 248 / 90%);
+  border: 1px solid var(--studio-line);
+  border-radius: 1.2rem;
+  box-shadow: var(--studio-shadow);
+  display: grid;
+  grid-template-columns: minmax(14rem, 0.72fr) minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.pageVisualPreview img {
+  height: 100%;
+  min-height: 17rem;
+  object-fit: cover;
+  width: 100%;
+}
+
+.pageVisualPreview div {
+  align-content: center;
+  display: grid;
+  gap: 0.6rem;
+  padding: 1.35rem;
+}
+
+.pageVisualPreview span {
+  background: #e9f5ed;
+  border-radius: 999px;
+  color: #17643a;
+  font-size: 0.78rem;
+  font-weight: 850;
+  justify-self: start;
+  padding: 0.3rem 0.65rem;
+}
+
+.pageVisualPreview h3 {
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 2rem;
+  line-height: 1;
+  margin: 0;
+}
+
+.pageVisualPreview p,
+.pageVisualPreview small {
+  color: var(--studio-muted);
+}
+
+.pageVisualPreview p {
+  margin: 0;
+}
+
 .previewPanel {
-  border-left: 1px solid var(--studio-line);
+  border-left: 0;
   padding-left: 1.1rem;
 }
 
@@ -938,6 +1048,38 @@
   margin: 0.3rem 0 0.9rem;
 }
 
+.modeSwitch {
+  background: #f4ecdf;
+  border: 1px solid var(--studio-line);
+  border-radius: 999px;
+  display: inline-flex;
+  gap: 0.25rem;
+  padding: 0.22rem;
+}
+
+.modeButton,
+.modeActive {
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 850;
+  min-height: 2.12rem;
+  padding: 0 0.82rem;
+}
+
+.modeButton {
+  background: transparent;
+  color: var(--studio-muted);
+}
+
+.modeActive {
+  background: white;
+  box-shadow: 0 8px 20px rgb(41 32 20 / 8%);
+  color: var(--studio-forest);
+}
+
 .previewTitle span {
   align-items: center;
   display: inline-flex;
@@ -946,13 +1088,14 @@
 }
 
 .previewFrame {
-  background: rgb(255 253 248 / 70%);
-  border: 1px solid var(--studio-line);
-  border-radius: 1.05rem;
-  box-shadow: var(--studio-shadow);
+  background: white;
+  border: 0;
+  border-radius: 1.15rem;
+  box-shadow: 0 26px 80px rgb(41 32 20 / 11%);
   display: grid;
   gap: 0.85rem;
-  overflow: hidden;
+  max-height: calc(100vh - 13rem);
+  overflow: auto;
   padding-bottom: 0.9rem;
 }
 
@@ -995,6 +1138,10 @@
   position: relative;
 }
 
+.editableZone .heroPreview {
+  margin: 0;
+}
+
 .heroPreview::before {
   background: linear-gradient(90deg, rgb(0 0 0 / 72%), rgb(0 0 0 / 16%));
   content: "";
@@ -1002,7 +1149,7 @@
   position: absolute;
 }
 
-.heroPreview div {
+.heroPreview > div {
   max-width: 40rem;
   padding: 2.5rem;
   position: relative;
@@ -1039,6 +1186,67 @@
   padding: 0 1rem;
 }
 
+.editableZone,
+.editableZoneCompact {
+  border: 1px solid transparent;
+  border-radius: 0.85rem;
+  cursor: pointer;
+  position: relative;
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    background 140ms ease;
+}
+
+.editableZone {
+  margin: 0 0.9rem;
+}
+
+.editableZoneCompact {
+  margin: -0.28rem;
+  padding: 0.28rem;
+}
+
+.editableZone:hover,
+.editableZoneCompact:hover,
+.editableZoneActive {
+  border-color: color-mix(in srgb, var(--studio-saffron) 62%, transparent);
+  box-shadow: 0 0 0 3px rgb(200 115 34 / 12%);
+}
+
+.editableZone:hover,
+.editableZoneCompact:hover {
+  background: rgb(255 255 255 / 10%);
+}
+
+.editBadge {
+  background: var(--studio-forest);
+  border-radius: 999px;
+  box-shadow: 0 10px 28px rgb(17 63 43 / 24%);
+  color: white;
+  display: inline-flex;
+  font-size: 0.72rem;
+  font-weight: 850;
+  opacity: 0;
+  padding: 0.3rem 0.58rem;
+  pointer-events: none;
+  position: absolute;
+  right: 0.55rem;
+  top: 0.55rem;
+  transform: translateY(-0.2rem);
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease;
+  z-index: 5;
+}
+
+.editableZone:hover > .editBadge,
+.editableZoneCompact:hover > .editBadge,
+.editableZoneActive > .editBadge {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .previewDots {
   display: flex;
   gap: 0.55rem;
@@ -1058,8 +1266,58 @@
 
 .previewSection,
 .previewStory {
-  margin: 0 0.9rem;
   padding: 0.95rem;
+}
+
+.previewQuote,
+.previewContact {
+  background: rgb(255 253 248 / 88%);
+  border: 1px solid var(--studio-line);
+  border-radius: 1rem;
+  margin: 0;
+  padding: 1.1rem;
+}
+
+.previewQuote blockquote {
+  color: var(--studio-forest);
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 1.8rem;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.previewQuote cite {
+  color: var(--studio-muted);
+  display: block;
+  font-style: normal;
+  margin-top: 0.6rem;
+}
+
+.previewContact {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.previewContact h3,
+.previewContact p {
+  margin: 0;
+}
+
+.previewContact p {
+  color: var(--studio-muted);
+  margin-top: 0.24rem;
+}
+
+.previewContact button {
+  background: var(--studio-saffron);
+  border: 0;
+  border-radius: 0.65rem;
+  color: white;
+  font-weight: 850;
+  min-height: 2.65rem;
+  padding: 0 1rem;
 }
 
 .previewSection p,
@@ -1213,14 +1471,16 @@
   .simplePanel,
   .galleryGrid,
   .colorGrid,
-  .contactGrid {
+  .contactGrid,
+  .visualPageGrid {
     grid-template-columns: 1fr;
   }
 
   .buttonRow,
   .storyEditor,
   .storyPreviewRow,
-  .documentList article {
+  .documentList article,
+  .pageVisualPreview {
     grid-template-columns: 1fr;
   }
 
