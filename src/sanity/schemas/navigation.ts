@@ -25,13 +25,13 @@ export const navigation = defineType({
       readOnly: true,
       group: "help",
       description:
-        "Ce nom sert seulement à identifier ce document. Il n’apparaît pas sur le site."
+        "Ce nom sert seulement a identifier ce document. Il n'apparait pas sur le site."
     }),
     defineField({
       name: "items",
-      title: "Liens affichés dans le menu",
+      title: "Liens affiches dans le menu",
       description:
-        "Ajoutez, supprimez ou déplacez les pages. L’ordre ici est l’ordre visible sur le site.",
+        "Ajoutez, supprimez ou deplacez les pages. L'ordre ici est l'ordre visible sur le site. Pour une page interne, choisissez toujours une page dans la liste : cela evite les liens casses.",
       type: "array",
       group: "menu",
       of: [{ type: "navLink" }],

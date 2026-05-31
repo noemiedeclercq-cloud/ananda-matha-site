@@ -17,6 +17,15 @@ export function Header({
 }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const menuItems = navigation
+    .map((item) => ({
+      item,
+      resolved: resolveLink(item.link, {
+        href: item.url,
+        label: item.label
+      })
+    }))
+    .filter(({ resolved }) => resolved.href && resolved.href !== "#");
 
   return (
     <header
@@ -55,11 +64,7 @@ export function Header({
           className="hidden items-center gap-7 text-sm font-medium lg:flex"
           style={{ color: "var(--menu-text)" }}
         >
-          {navigation.map((item) => {
-            const resolved = resolveLink(item.link, {
-              href: item.url,
-              label: item.label
-            });
+          {menuItems.map(({ item, resolved }) => {
             const active = pathname === resolved.href;
 
             return (
@@ -107,11 +112,7 @@ export function Header({
           style={{ backgroundColor: "var(--header-background)" }}
         >
           <div className="grid gap-2">
-            {navigation.map((item) => {
-              const resolved = resolveLink(item.link, {
-                href: item.url,
-                label: item.label
-              });
+            {menuItems.map(({ item, resolved }) => {
               const active = pathname === resolved.href;
 
               return (

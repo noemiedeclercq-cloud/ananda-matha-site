@@ -64,9 +64,9 @@ export function CardGrid({ cards }: { cards: HomeCard[] }) {
                     }`}
                   >
                     <span
-                      className="absolute inset-0 overflow-hidden rounded-lg border border-stone-200 p-7 text-left shadow-sm [backface-visibility:hidden]"
+                      className="absolute inset-0 overflow-hidden rounded-lg border border-stone-200 text-left shadow-sm [backface-visibility:hidden]"
                       style={{
-                        backgroundColor: frontBackgroundColor,
+                        backgroundColor: frontImage ? undefined : frontBackgroundColor,
                         color: frontTextColor
                       }}
                     >
@@ -76,21 +76,23 @@ export function CardGrid({ cards }: { cards: HomeCard[] }) {
                           alt=""
                           fill
                           sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
-                          className="object-cover opacity-[0.22]"
+                          className="object-cover"
                         />
                       ) : null}
-                      <span
-                        className="absolute inset-0"
-                        style={{
-                          background: `linear-gradient(180deg, color-mix(in srgb, ${frontBackgroundColor} 62%, transparent), ${frontBackgroundColor})`
-                        }}
-                      />
-                      <span className="relative flex h-full flex-col justify-end">
-                        <span className="font-serif text-4xl font-semibold leading-tight">
-                          {card.title}
-                        </span>
-                        <span className="mt-4 text-base leading-7">
-                          {card.frontText || card.text}
+                      <span className="relative flex h-full flex-col justify-end p-7">
+                        <span
+                          className={
+                            frontImage
+                              ? "rounded-md bg-white/88 p-4 shadow-sm backdrop-blur-[2px]"
+                              : ""
+                          }
+                        >
+                          <span className="block font-serif text-4xl font-semibold leading-tight">
+                            {card.title}
+                          </span>
+                          <span className="mt-4 block text-base leading-7">
+                            {card.frontText || card.text}
+                          </span>
                         </span>
                       </span>
                     </span>
@@ -98,7 +100,7 @@ export function CardGrid({ cards }: { cards: HomeCard[] }) {
                     <span
                       className="absolute inset-0 overflow-hidden rounded-lg text-left shadow-sm [backface-visibility:hidden] [transform:rotateY(180deg)]"
                       style={{
-                        backgroundColor: backBackgroundColor,
+                        backgroundColor: backImage ? undefined : backBackgroundColor,
                         color: backTextColor
                       }}
                     >
@@ -111,14 +113,14 @@ export function CardGrid({ cards }: { cards: HomeCard[] }) {
                           className="object-cover"
                         />
                       ) : null}
-                      <span
-                        className="absolute inset-0"
-                        style={{
-                          background: `linear-gradient(180deg, color-mix(in srgb, ${backBackgroundColor} 18%, transparent), color-mix(in srgb, ${backBackgroundColor} 86%, transparent))`
-                        }}
-                      />
                       <span className="relative flex h-full items-end p-7">
-                        <span className="text-base leading-7">
+                        <span
+                          className={
+                            backImage
+                              ? "rounded-md bg-black/55 p-4 text-base leading-7 shadow-sm backdrop-blur-[2px]"
+                              : "text-base leading-7"
+                          }
+                        >
                           {card.backText || card.text}
                         </span>
                       </span>

@@ -72,6 +72,30 @@ function mapPageBlock(block: Record<string, any>) {
   return block;
 }
 
+function normalizeLegacyMenuUrl(url: string | undefined, pageSlugs: Set<string>) {
+  if (!url) return "#";
+  if (url === "/") return "/";
+  if (/^(https?:|mailto:|tel:)/.test(url)) return url;
+
+  const slug = url.replace(/^\/+/, "").trim();
+  if (!slug) return "/";
+
+  return pageSlugs.has(slug) ? `/${slug}` : "#";
+}
+
+function sanitizeNavigationItems(
+  items: NavigationItem[],
+  pageSlugs: Set<string>
+): NavigationItem[] {
+  return items
+    .map((item, index) => ({
+      ...item,
+      order: index,
+      url: item.link ? item.url : normalizeLegacyMenuUrl(item.url, pageSlugs)
+    }))
+    .filter((item) => item.link || item.url !== "#");
+}
+
 export async function getSiteSettings(): Promise<SiteSettings> {
   const settings = await fetchOrNull<Record<string, unknown>>(`*[_id == "siteSettings" && _type == "siteSettings"][0]{
     siteTitle, subtitle, logo, theme, contactEmail, phone, address,
@@ -89,22 +113,23 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 }
 
 export async function getNavigation(): Promise<NavigationItem[]> {
+  const pageSlugs = new Set(
+    (await fetchOrNull<string[]>(`*[_type == "page" && defined(slug.current)][].slug.current`)) ||
+      fallbackPages.map((page) => page.slug)
+  );
   const navigation = await fetchOrNull<{ items?: NavigationItem[] }>(`*[_id == "navigation" && _type == "navigation"][0]{
     items[]{label, url, "order": _key, "link": link${linkProjection}}
   }`);
 
   if (navigation?.items?.length) {
-    return navigation.items.map((item, index) => ({
-      ...item,
-      order: index
-    }));
+    return sanitizeNavigationItems(navigation.items, pageSlugs);
   }
 
   const items = await fetchOrNull<NavigationItem[]>(`*[_type == "navigationItem"] | order(order asc){
     label, url, order, "parent": parent->label
   }`);
 
-  return items?.length ? items : fallbackNavigation;
+  return items?.length ? sanitizeNavigationItems(items, pageSlugs) : fallbackNavigation;
 }
 
 export async function getHomePage(): Promise<HomePage> {

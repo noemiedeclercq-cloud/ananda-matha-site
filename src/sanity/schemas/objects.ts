@@ -8,6 +8,33 @@ export const link = defineType({
   name: "link",
   title: "Lien",
   type: "object",
+  validation: (Rule) =>
+    Rule.custom((value: any) => {
+      if (!value) return true;
+      if (!value.type) return "Choisissez le type de lien.";
+
+      if (value.type === "internal" && !value.internalPage?._ref) {
+        return "Choisissez une page existante dans la liste.";
+      }
+
+      if (value.type === "external" && !value.externalUrl) {
+        return "Ajoutez l'adresse du site externe.";
+      }
+
+      if (value.type === "file" && !value.file?.asset?._ref) {
+        return "Ajoutez ou choisissez un fichier.";
+      }
+
+      if (value.type === "email" && !value.email) {
+        return "Ajoutez l'adresse email.";
+      }
+
+      if (value.type === "phone" && !value.phone) {
+        return "Ajoutez le numero de telephone.";
+      }
+
+      return true;
+    }),
   fields: [
     defineField({
       name: "label",
@@ -37,25 +64,28 @@ export const link = defineType({
       title: "Page du site",
       type: "reference",
       to: [{ type: "page" }],
-      description: "Choisissez une page existante, sans taper l'adresse.",
+      description: "Choisissez une page existante dans la liste. Ne tapez pas l'adresse.",
       hidden: ({ parent }) => parent?.type !== "internal"
     }),
     defineField({
       name: "externalUrl",
       title: "Adresse web externe",
       type: "url",
+      description: "Collez l'adresse complete, par exemple https://www.ocso.org.",
       hidden: ({ parent }) => parent?.type !== "external"
     }),
     defineField({
       name: "file",
       title: "Fichier ou PDF",
       type: "file",
+      description: "Deposez un fichier ou choisissez un fichier deja envoye.",
       hidden: ({ parent }) => parent?.type !== "file"
     }),
     defineField({
       name: "email",
       title: "Adresse email",
       type: "string",
+      description: "Exemple : anandamatha@gmail.com",
       hidden: ({ parent }) => parent?.type !== "email",
       validation: (Rule) => Rule.email().warning("Verifiez l'adresse email.")
     }),
@@ -63,6 +93,7 @@ export const link = defineType({
       name: "phone",
       title: "Numero de telephone",
       type: "string",
+      description: "Exemple : +91 96560 61997",
       hidden: ({ parent }) => parent?.type !== "phone"
     }),
     defineField({
@@ -85,7 +116,12 @@ export const link = defineType({
     },
     prepare: ({ label, type, pageTitle, externalUrl, fileName, email, phone }) => {
       const destination =
-        pageTitle || externalUrl || fileName || email || phone || "Lien a completer";
+        pageTitle ||
+        externalUrl ||
+        fileName ||
+        email ||
+        phone ||
+        (type === "internal" ? "Page manquante ou supprimee" : "Lien a completer");
       return {
         title: label || "Lien",
         subtitle: `${type || "type"} - ${destination}`
@@ -311,28 +347,28 @@ export const homeCard = defineType({
       type: "text",
       rows: 3,
       readOnly: true,
-      hidden: ({ value }) => !value
+      hidden: true
     }),
     defineField({
       name: "image",
       title: "Ancienne photo",
       type: "image",
       readOnly: true,
-      hidden: ({ value }) => !value
+      hidden: true
     }),
     defineField({
       name: "linkLabel",
       title: "Ancien texte du lien",
       type: "string",
       readOnly: true,
-      hidden: ({ value }) => !value
+      hidden: true
     }),
     defineField({
       name: "link",
       title: "Ancien lien",
       type: "string",
       readOnly: true,
-      hidden: ({ value }) => !value
+      hidden: true
     })
   ],
   preview: {
@@ -360,20 +396,33 @@ export const navLink = defineType({
       name: "url",
       title: "Ancien lien",
       type: "string",
-      description: "Ancien champ conserve comme fallback."
+      description: "Ancien champ conserve comme fallback.",
+      readOnly: true,
+      hidden: true
     }),
     defineField({
       name: "link",
       title: "Destination",
       type: "link",
-      description: "Choisissez une page, une URL, un fichier, un email ou un telephone."
+      description:
+        "Choisissez une page existante, une URL externe, un fichier, un email ou un telephone. Pour une page du site, utilisez la liste des pages.",
+      validation: required("Choisissez la destination de ce lien du menu.")
     })
   ],
   preview: {
-    select: { title: "label", subtitle: "url", linkLabel: "link.label" },
-    prepare: ({ title, subtitle, linkLabel }) => ({
+    select: {
+      title: "label",
+      subtitle: "url",
+      linkLabel: "link.label",
+      linkType: "link.type",
+      pageTitle: "link.internalPage.title"
+    },
+    prepare: ({ title, subtitle, linkLabel, linkType, pageTitle }) => ({
       title: title || "Lien du menu",
-      subtitle: linkLabel || subtitle || "Page de destination"
+      subtitle:
+        linkType === "internal" && !pageTitle
+          ? "Attention : page manquante ou supprimee"
+          : linkLabel || pageTitle || subtitle || "Page de destination"
     })
   }
 });

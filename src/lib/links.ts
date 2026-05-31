@@ -56,5 +56,5 @@ export function resolveLink(
     return { href: `tel:${normalizePhone(link.phone)}`, label };
   }
 
-  return { href: fallback?.href || "#", label };
+  return { href: "#", label };
 }

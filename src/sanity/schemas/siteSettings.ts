@@ -165,16 +165,20 @@ export const siteSettings = defineType({
               title: "Ancienne adresse web",
               type: "url",
               readOnly: true,
-              hidden: ({ value }) => !value
+              hidden: true
             }),
             defineField({
               name: "link",
               title: "Destination",
-              type: "link"
+              type: "link",
+              description:
+                "Choisissez la destination sans coder : page interne, URL externe, PDF, email ou telephone.",
+              validation: (Rule) =>
+                Rule.required().error("Choisissez la destination de ce lien.")
             })
           ],
           preview: {
-            select: { title: "label", subtitle: "url" }
+            select: { title: "label", subtitle: "link.label" }
           }
         }
       ]

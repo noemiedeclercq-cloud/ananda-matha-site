@@ -2,11 +2,9 @@ import {
   BlockElementIcon,
   CogIcon,
   ControlsIcon,
-  EarthGlobeIcon,
   HomeIcon,
   ImagesIcon,
-  MasterDetailIcon,
-  PinIcon
+  MasterDetailIcon
 } from "@sanity/icons";
 import type React from "react";
 import type { StructureResolver } from "sanity/structure";
@@ -27,18 +25,16 @@ function singletonItem(
     .child(S.document().schemaType(type).documentId(id).title(title));
 }
 
-// The structure is the real UX entry point. Instead of exposing document types,
-// it presents clear actions: edit homepage, contact details, navigation, etc.
 export const monasteryStructure: StructureResolver = (S) =>
   S.list()
     .title("Administration du site")
     .items([
-      singletonItem(S, "homePage", "homePage", "Modifier la page d’accueil", HomeIcon),
-      singletonItem(S, "siteSettings", "siteSettings", "Coordonnées, logo et couleurs", CogIcon),
+      singletonItem(S, "homePage", "homePage", "Modifier la page d'accueil", HomeIcon),
+      singletonItem(S, "siteSettings", "siteSettings", "Coordonnees, logo et couleurs", CogIcon),
       singletonItem(S, "navigation", "navigation", "Menu principal", ControlsIcon),
       S.divider(),
       S.listItem()
-        .title("Pages du site")
+        .title("Pages du site : creer, publier, dupliquer")
         .icon(BlockElementIcon)
         .child(
           S.documentTypeList("page")
@@ -57,10 +53,7 @@ export const monasteryStructure: StructureResolver = (S) =>
       S.listItem()
         .title("Aide : comment modifier le site")
         .icon(MasterDetailIcon)
-        .child(
-          S.component(StudioHelp)
-            .title("Aide")
-        )
+        .child(S.component(StudioHelp).title("Aide"))
     ]);
 
 export const singletonTemplateFilter = (prev: any[]) =>

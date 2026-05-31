@@ -36,13 +36,15 @@ export const homePage = defineType({
     }),
     defineField({
       name: "heroSlides",
-      title: "Images du diaporama",
+      title: "Photos du haut de la page",
       description:
-        "Ajoutez plusieurs images pour faire defiler le haut de la page. Avec une seule image, elle reste fixe.",
+        "C'est le seul endroit pour gerer les photos du haut de la page. Une seule photo reste fixe. Plusieurs photos defilent automatiquement.",
       type: "array",
       group: "hero",
       of: [{ type: "heroSlide" }],
-      components: { input: VisualArrayInput }
+      components: { input: VisualArrayInput },
+      validation: (Rule) =>
+        Rule.min(1).warning("Ajoutez au moins une photo pour eviter un haut de page vide.")
     }),
     defineField({
       name: "heroButton",
@@ -57,7 +59,7 @@ export const homePage = defineType({
       options: { hotspot: true },
       group: "hero",
       readOnly: true,
-      hidden: ({ value }) => !value,
+      hidden: true,
       components: { field: FriendlyImageInput }
     }),
     defineField({
@@ -66,7 +68,7 @@ export const homePage = defineType({
       type: "string",
       group: "hero",
       readOnly: true,
-      hidden: ({ value }) => !value
+      hidden: true
     }),
     defineField({
       name: "heroButtonLink",
@@ -74,7 +76,7 @@ export const homePage = defineType({
       type: "string",
       group: "hero",
       readOnly: true,
-      hidden: ({ value }) => !value
+      hidden: true
     }),
     defineField({
       name: "values",
@@ -92,7 +94,7 @@ export const homePage = defineType({
       name: "cards",
       title: "Cartes retournables",
       description:
-        "Chaque carte contient un titre, une photo au verso, un court texte et un bouton.",
+        "Chaque carte contient un titre, une photo, un court texte et un bouton. Si une image est ajoutee, sa couleur reste naturelle ; les couleurs de fond servent seulement quand il n'y a pas d'image.",
       type: "array",
       group: "cards",
       of: [{ type: "homeCard" }],
@@ -142,7 +144,7 @@ export const homePage = defineType({
       type: "string",
       group: "visit",
       readOnly: true,
-      hidden: ({ value }) => !value
+      hidden: true
     }),
     defineField({
       name: "invitationButtonLink",
@@ -150,7 +152,7 @@ export const homePage = defineType({
       type: "string",
       group: "visit",
       readOnly: true,
-      hidden: ({ value }) => !value
+      hidden: true
     })
   ],
   preview: {

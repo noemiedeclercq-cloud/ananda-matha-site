@@ -37,7 +37,7 @@ export type SmartLink = {
 
 export type NavigationItem = {
   label: string;
-  url: string;
+  url?: string;
   link?: SmartLink;
   order: number;
   parent?: string;
