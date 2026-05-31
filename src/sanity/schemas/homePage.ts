@@ -1,8 +1,6 @@
 import { defineField, defineType } from "sanity";
 import { HomeIcon } from "@sanity/icons";
-import { FriendlyImageInput } from "../studio/components/FriendlyImageInput";
 import { FriendlyDocumentInput } from "../studio/components/FriendlyDocumentInput";
-import { ScheduleTextInput } from "../studio/components/ScheduleTextInput";
 import { VisualArrayInput } from "../studio/components/VisualArrayInput";
 
 export const homePage = defineType({
@@ -17,8 +15,7 @@ export const homePage = defineType({
     { name: "cards", title: "Cartes Prayer / Work / Community / Hospitality" },
     { name: "story", title: "Our Story" },
     { name: "bands", title: "Bandes photos" },
-    { name: "cta", title: "CTA final" },
-    { name: "legacy", title: "Anciens horaires", hidden: true }
+    { name: "cta", title: "CTA final" }
   ],
   fields: [
     defineField({
@@ -50,13 +47,6 @@ export const homePage = defineType({
         Rule.min(1).warning("Ajoutez au moins une photo pour eviter un haut de page vide.")
     }),
     defineField({
-      name: "heroButton",
-      title: "Ancien bouton du diaporama",
-      type: "link",
-      group: "legacy",
-      hidden: true
-    }),
-    defineField({
       name: "heroButtons",
       title: "Boutons",
       type: "array",
@@ -65,32 +55,6 @@ export const homePage = defineType({
         "Ajoutez, supprimez ou reordonnez les boutons affiches dans la grande photo d'accueil.",
       of: [{ type: "actionButton" }],
       components: { input: VisualArrayInput }
-    }),
-    defineField({
-      name: "heroImage",
-      title: "Ancienne grande photo d'accueil",
-      type: "image",
-      options: { hotspot: true },
-      group: "legacy",
-      readOnly: true,
-      hidden: true,
-      components: { field: FriendlyImageInput }
-    }),
-    defineField({
-      name: "heroButtonLabel",
-      title: "Ancien texte du bouton",
-      type: "string",
-      group: "hero",
-      readOnly: true,
-      hidden: true
-    }),
-    defineField({
-      name: "heroButtonLink",
-      title: "Ancien lien du bouton",
-      type: "string",
-      group: "hero",
-      readOnly: true,
-      hidden: true
     }),
     defineField({
       name: "values",
@@ -115,32 +79,6 @@ export const homePage = defineType({
       components: { input: VisualArrayInput },
       validation: (Rule) =>
         Rule.min(1).error("Ajoutez au moins une carte sur la page d'accueil.")
-    }),
-    defineField({
-      name: "visitingHoursTitle",
-      title: "Titre de la section horaires",
-      type: "string",
-      group: "legacy",
-      hidden: true,
-      initialValue: "Visiting Hours"
-    }),
-    defineField({
-      name: "visitingHoursContent",
-      title: "Horaires d'ouverture",
-      type: "text",
-      rows: 6,
-      group: "legacy",
-      hidden: true,
-      components: { input: ScheduleTextInput }
-    }),
-    defineField({
-      name: "visitingHoursImage",
-      title: "Photo pres des horaires",
-      type: "image",
-      options: { hotspot: true },
-      group: "legacy",
-      hidden: true,
-      components: { field: FriendlyImageInput }
     }),
     defineField({
       name: "story",
@@ -168,37 +106,14 @@ export const homePage = defineType({
       group: "cta"
     }),
     defineField({
-      name: "invitationButton",
-      title: "Ancien bouton d'invitation",
-      type: "link",
-      group: "legacy",
-      hidden: true
-    }),
-    defineField({
       name: "invitationButtons",
-      title: "Boutons",
+      title: "Boutons d'invitation",
       type: "array",
       group: "cta",
       description:
         "Ajoutez, supprimez ou reordonnez les boutons du CTA final. Si aucun bouton n'est ajoute, aucun bouton ne s'affiche.",
       of: [{ type: "actionButton" }],
       components: { input: VisualArrayInput }
-    }),
-    defineField({
-      name: "invitationButtonLabel",
-      title: "Ancien texte du bouton d'invitation",
-      type: "string",
-      group: "legacy",
-      readOnly: true,
-      hidden: true
-    }),
-    defineField({
-      name: "invitationButtonLink",
-      title: "Ancien lien du bouton d'invitation",
-      type: "string",
-      group: "legacy",
-      readOnly: true,
-      hidden: true
     })
   ],
   preview: {
