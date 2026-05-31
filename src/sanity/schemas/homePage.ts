@@ -51,9 +51,20 @@ export const homePage = defineType({
     }),
     defineField({
       name: "heroButton",
-      title: "Bouton du diaporama",
+      title: "Ancien bouton du diaporama",
       type: "link",
-      group: "hero"
+      group: "legacy",
+      hidden: true
+    }),
+    defineField({
+      name: "heroButtons",
+      title: "Boutons",
+      type: "array",
+      group: "hero",
+      description:
+        "Ajoutez, supprimez ou reordonnez les boutons affiches dans la grande photo d'accueil.",
+      of: [{ type: "actionButton" }],
+      components: { input: VisualArrayInput }
     }),
     defineField({
       name: "heroImage",
@@ -158,9 +169,20 @@ export const homePage = defineType({
     }),
     defineField({
       name: "invitationButton",
-      title: "Bouton d'invitation",
+      title: "Ancien bouton d'invitation",
       type: "link",
-      group: "cta"
+      group: "legacy",
+      hidden: true
+    }),
+    defineField({
+      name: "invitationButtons",
+      title: "Boutons",
+      type: "array",
+      group: "cta",
+      description:
+        "Ajoutez, supprimez ou reordonnez les boutons du CTA final. Si aucun bouton n'est ajoute, aucun bouton ne s'affiche.",
+      of: [{ type: "actionButton" }],
+      components: { input: VisualArrayInput }
     }),
     defineField({
       name: "invitationButtonLabel",

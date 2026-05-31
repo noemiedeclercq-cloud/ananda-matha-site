@@ -3,6 +3,7 @@ import { homePage } from "./homePage";
 import { navigationItem } from "./navigationItem";
 import { navigation } from "./navigation";
 import {
+  actionButton,
   heroSection,
   heroSlide,
   homeCard,
@@ -28,6 +29,7 @@ import { page } from "./page";
 import { siteSettings } from "./siteSettings";
 
 export const schemaTypes = [
+  actionButton,
   heroSection,
   link,
   heroSlide,

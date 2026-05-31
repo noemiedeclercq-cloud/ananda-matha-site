@@ -1,9 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
-import { resolveLink } from "@/lib/links";
+import { ButtonList, legacyButton } from "@/components/ButtonList";
 import type { HomeCard } from "@/lib/types";
 
 const hexPattern = /^#[0-9a-fA-F]{6}$/;
@@ -21,10 +20,6 @@ export function CardGrid({ cards }: { cards: HomeCard[] }) {
         <p className="eyebrow">Discover more</p>
         <div className="mt-8 grid gap-7 md:grid-cols-2 lg:grid-cols-4">
           {cards.map((card) => {
-            const resolved = resolveLink(card.button, {
-              href: card.link,
-              label: card.linkLabel
-            });
             const flipped = openCard === card.title;
             const frontImage = card.frontImage || card.image;
             const backImage = card.backImage || card.image;
@@ -38,11 +33,13 @@ export function CardGrid({ cards }: { cards: HomeCard[] }) {
               "var(--color-forest)"
             );
             const backTextColor = safeColor(card.backTextColor, "#ffffff");
-            const buttonBackgroundColor = safeColor(
-              card.buttonBackgroundColor,
-              "var(--color-saffron)"
-            );
-            const buttonTextColor = safeColor(card.buttonTextColor, "#ffffff");
+            const buttons = card.buttons?.length
+              ? card.buttons
+              : legacyButton(card.button).map((button) => ({
+                  ...button,
+                  backgroundColor: card.buttonBackgroundColor,
+                  textColor: card.buttonTextColor
+                }));
 
             return (
               <article key={card.title} className="space-y-5">
@@ -134,18 +131,10 @@ export function CardGrid({ cards }: { cards: HomeCard[] }) {
                   </audio>
                 ) : null}
 
-                <Link
-                  href={resolved.href}
-                  target={resolved.target}
-                  rel={resolved.rel}
-                  className="inline-flex rounded-full px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] transition hover:opacity-85"
-                  style={{
-                    backgroundColor: buttonBackgroundColor,
-                    color: buttonTextColor
-                  }}
-                >
-                  {resolved.label || card.linkLabel}
-                </Link>
+                <ButtonList
+                  buttons={buttons}
+                  fallbackClassName="rounded-full px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] transition hover:opacity-85"
+                />
               </article>
             );
           })}

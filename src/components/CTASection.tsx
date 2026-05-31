@@ -1,19 +1,20 @@
-import Link from "next/link";
-import { resolveLink } from "@/lib/links";
-import type { SmartLink } from "@/lib/types";
+import { ButtonList, legacyButton } from "@/components/ButtonList";
+import type { ActionButton, SmartLink } from "@/lib/types";
 
 export function CTASection({
   text,
   buttonLabel,
   buttonLink,
-  button
+  button,
+  buttons
 }: {
   text: string;
   buttonLabel: string;
   buttonLink: string;
   button?: SmartLink;
+  buttons?: ActionButton[];
 }) {
-  const resolved = resolveLink(button, { href: buttonLink, label: buttonLabel });
+  const ctaButtons = buttons?.length ? buttons : legacyButton(button, "secondary");
 
   return (
     <section className="bg-white px-6 py-20 lg:px-8">
@@ -22,14 +23,7 @@ export function CTASection({
         <blockquote className="font-serif text-4xl font-semibold leading-tight text-forest md:text-6xl">
           “{text}”
         </blockquote>
-        <Link
-          href={resolved.href}
-          target={resolved.target}
-          rel={resolved.rel}
-          className="button-secondary mt-10 inline-flex"
-        >
-          {resolved.label || buttonLabel}
-        </Link>
+        <ButtonList buttons={ctaButtons} className="mt-10 justify-center" />
       </div>
     </section>
   );

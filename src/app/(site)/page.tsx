@@ -19,6 +19,7 @@ export default async function Home() {
         buttonLabel={home.heroButtonLabel}
         buttonLink={home.heroButtonLink}
         button={home.heroButton}
+        buttons={home.heroButtons}
       />
       <ValueStrip values={home.values} />
       <CardGrid cards={home.cards} />
@@ -29,6 +30,7 @@ export default async function Home() {
         buttonLabel={home.invitationButtonLabel}
         buttonLink={home.invitationButtonLink}
         button={home.invitationButton}
+        buttons={home.invitationButtons}
       />
     </>
   );

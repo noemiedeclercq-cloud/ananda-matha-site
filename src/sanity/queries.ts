@@ -20,6 +20,14 @@ const linkProjection = `{
   openInNewTab
 }`;
 
+const buttonProjection = `{
+  enabled,
+  backgroundColor,
+  textColor,
+  style,
+  "link": link${linkProjection}
+}`;
+
 const portableTextProjection = `[]{
   ...,
   markDefs[]{
@@ -95,7 +103,12 @@ function mapHeroSlides(home: Record<string, any>) {
   return fallbackHome.heroSlides;
 }
 
-function normalizeLegacyMenuUrl(url: string | undefined, pageSlugs: Set<string>) {
+function mapButtons(buttons: any[] | undefined, legacyLink?: any) {
+  if (Array.isArray(buttons)) return buttons;
+  return legacyLink ? [{ enabled: true, link: legacyLink }] : [];
+}
+
+function normalizeLegacyMenuUrl(url: string | undefined) {
   if (!url) return "#";
   if (url === "/") return "/";
   if (/^(https?:|mailto:|tel:)/.test(url)) return url;
@@ -103,23 +116,16 @@ function normalizeLegacyMenuUrl(url: string | undefined, pageSlugs: Set<string>)
   const slug = url.replace(/^\/+/, "").trim();
   if (!slug) return "/";
 
-  return pageSlugs.has(slug) ? `/${slug}` : "#";
+  return `/${slug}`;
 }
 
-function sanitizeNavigationItems(
-  items: NavigationItem[],
-  pageSlugs: Set<string>
-): NavigationItem[] {
-  return items
-    .map((item, index) => ({
-      ...item,
-      order: index,
-      url: item.link ? item.url : normalizeLegacyMenuUrl(item.url, pageSlugs),
-      children: item.children?.length
-        ? sanitizeNavigationItems(item.children, pageSlugs)
-        : []
-    }))
-    .filter((item) => item.children?.length || item.link || item.url !== "#");
+function mapNavigationItems(items: NavigationItem[]): NavigationItem[] {
+  return items.map((item, index) => ({
+    ...item,
+    order: index,
+    url: item.link ? item.url : normalizeLegacyMenuUrl(item.url),
+    children: item.children?.length ? mapNavigationItems(item.children) : []
+  }));
 }
 
 export async function getSiteSettings(): Promise<SiteSettings> {
@@ -139,10 +145,6 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 }
 
 export async function getNavigation(): Promise<NavigationItem[]> {
-  const pageSlugs = new Set(
-    (await fetchOrNull<string[]>(`*[_type == "page" && defined(slug.current)][].slug.current`)) ||
-      fallbackPages.map((page) => page.slug)
-  );
   const navigation = await fetchOrNull<{ items?: NavigationItem[] }>(`*[_id == "navigation" && _type == "navigation"][0]{
     items[]{
       label, url, isMenuOnly, "order": _key, "link": link${linkProjection},
@@ -151,19 +153,20 @@ export async function getNavigation(): Promise<NavigationItem[]> {
   }`);
 
   if (navigation?.items?.length) {
-    return sanitizeNavigationItems(navigation.items, pageSlugs);
+    return mapNavigationItems(navigation.items);
   }
 
   const items = await fetchOrNull<NavigationItem[]>(`*[_type == "navigationItem"] | order(order asc){
     label, url, order, "parent": parent->label
   }`);
 
-  return items?.length ? sanitizeNavigationItems(items, pageSlugs) : fallbackNavigation;
+  return items?.length ? mapNavigationItems(items) : fallbackNavigation;
 }
 
 export async function getHomePage(): Promise<HomePage> {
   const home = await fetchOrNull<Record<string, any>>(`*[_id == "homePage" && _type == "homePage"][0]{
     heroTitle, heroSubtitle, heroImage, heroSlides[]{image, alt, caption},
+    heroButtons[]${buttonProjection},
     heroButtonLabel, heroButtonLink, "heroButton": heroButton${linkProjection},
     values[]{icon, title, text},
     cards[]{
@@ -171,16 +174,19 @@ export async function getHomePage(): Promise<HomePage> {
       frontImage, backImage, backText, backBackgroundColor, backTextColor,
       buttonBackgroundColor, buttonTextColor,
       "audioUrl": audio.asset->url,
-      linkLabel, link, "button": button${linkProjection}
+      linkLabel, link, "button": button${linkProjection},
+      buttons[]${buttonProjection}
     },
     story{
       title, subtitle, text${portableTextProjection}, button${linkProjection},
+      buttons[]${buttonProjection},
       image, backgroundColor, textColor
     },
     photoBands[]{image, alt, height, overlay, caption},
     visitingHoursTitle, visitingHoursContent, visitingHoursImage,
     invitationText, invitationButtonLabel, invitationButtonLink,
-    "invitationButton": invitationButton${linkProjection}
+    "invitationButton": invitationButton${linkProjection},
+    invitationButtons[]${buttonProjection}
   }`);
 
   if (!home) return fallbackHome;
@@ -190,6 +196,7 @@ export async function getHomePage(): Promise<HomePage> {
     ...home,
     heroImage: imageUrl(home.heroImage),
     heroSlides: mapHeroSlides(home),
+    heroButtons: mapButtons(home.heroButtons, home.heroButton),
     visitingHoursImage: imageUrl(
       home.visitingHoursImage,
       fallbackHome.visitingHoursImage
@@ -197,7 +204,8 @@ export async function getHomePage(): Promise<HomePage> {
     story: {
       ...fallbackHome.story,
       ...home.story,
-      image: imageUrl(home.story?.image, fallbackHome.story?.image)
+      image: imageUrl(home.story?.image, fallbackHome.story?.image),
+      buttons: mapButtons(home.story?.buttons, home.story?.button)
     },
     photoBands: (home.photoBands?.length
       ? home.photoBands
@@ -210,6 +218,7 @@ export async function getHomePage(): Promise<HomePage> {
       (card: any, index: number) => ({
         ...fallbackHome.cards[index % fallbackHome.cards.length],
         ...card,
+        buttons: mapButtons(card.buttons, card.button),
         image: imageUrl(card.image, fallbackHome.cards[index]?.image),
         frontImage: imageUrl(
           card.frontImage,
@@ -220,7 +229,8 @@ export async function getHomePage(): Promise<HomePage> {
           imageUrl(card.image, fallbackHome.cards[index]?.backImage)
         )
       })
-    )
+    ),
+    invitationButtons: mapButtons(home.invitationButtons, home.invitationButton)
   };
 }
 
@@ -243,7 +253,8 @@ export async function getPageBySlug(slug: string): Promise<PageContent | null> {
       },
       _type == "pageButtonBlock" => {
         ...,
-        "link": link${linkProjection}
+        "link": link${linkProjection},
+        buttons[]${buttonProjection}
       },
       _type == "pagePdfBlock" => {
         ...,
@@ -255,7 +266,8 @@ export async function getPageBySlug(slug: string): Promise<PageContent | null> {
       },
       _type == "pageCtaBlock" => {
         ...,
-        "button": button${linkProjection}
+        "button": button${linkProjection},
+        buttons[]${buttonProjection}
       }
     },
     body${portableTextProjection},

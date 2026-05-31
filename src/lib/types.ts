@@ -35,6 +35,14 @@ export type SmartLink = {
   openInNewTab?: boolean;
 };
 
+export type ActionButton = {
+  enabled?: boolean;
+  link?: SmartLink;
+  backgroundColor?: string;
+  textColor?: string;
+  style?: "primary" | "secondary";
+};
+
 export type NavigationItem = {
   label: string;
   url?: string;
@@ -69,6 +77,7 @@ export type HomeCard = {
   linkLabel: string;
   link: string;
   button?: SmartLink;
+  buttons?: ActionButton[];
 };
 
 export type HeroSlide = {
@@ -82,6 +91,7 @@ export type HomeStory = {
   subtitle?: string;
   text?: PortableTextBlock[] | string;
   button?: SmartLink;
+  buttons?: ActionButton[];
   image?: string;
   backgroundColor?: string;
   textColor?: string;
@@ -103,6 +113,7 @@ export type HomePage = {
   heroButtonLabel: string;
   heroButtonLink: string;
   heroButton?: SmartLink;
+  heroButtons?: ActionButton[];
   values: ValueItem[];
   cards: HomeCard[];
   story?: HomeStory;
@@ -114,6 +125,7 @@ export type HomePage = {
   invitationButtonLabel: string;
   invitationButtonLink: string;
   invitationButton?: SmartLink;
+  invitationButtons?: ActionButton[];
 };
 
 export type PageGalleryImage = {
@@ -141,6 +153,7 @@ export type PageBlock = {
   caption?: string;
   images?: PageGalleryImage[];
   link?: SmartLink;
+  buttons?: ActionButton[];
   button?: SmartLink;
   style?: "primary" | "secondary";
   title?: string;

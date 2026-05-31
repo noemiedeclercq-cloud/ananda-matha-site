@@ -1,8 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import type { PortableTextBlock } from "@portabletext/types";
-import { resolveLink } from "@/lib/links";
+import { ButtonList, legacyButton } from "@/components/ButtonList";
 import type { HomeStory as HomeStoryType } from "@/lib/types";
 
 const hexPattern = /^#[0-9a-fA-F]{6}$/;
@@ -16,10 +15,7 @@ export function HomeStory({ story }: { story?: HomeStoryType }) {
 
   const backgroundColor = safeColor(story.backgroundColor, "var(--color-forest)");
   const textColor = safeColor(story.textColor, "#ffffff");
-  const resolved = resolveLink(story.button, {
-    href: "/history",
-    label: "Read more"
-  });
+  const buttons = story.buttons?.length ? story.buttons : legacyButton(story.button, "secondary");
 
   return (
     <section className="bg-cream px-6 py-20 lg:px-8">
@@ -55,16 +51,7 @@ export function HomeStory({ story }: { story?: HomeStoryType }) {
             ) : story.text ? (
               <p>{story.text}</p>
             ) : null}
-            {resolved.href && resolved.href !== "#" ? (
-              <Link
-                href={resolved.href}
-                target={resolved.target}
-                rel={resolved.rel}
-                className="button-secondary mt-8 inline-flex self-start"
-              >
-                {resolved.label || "Read more"}
-              </Link>
-            ) : null}
+            <ButtonList buttons={buttons} className="mt-8" />
           </div>
         </div>
       </div>

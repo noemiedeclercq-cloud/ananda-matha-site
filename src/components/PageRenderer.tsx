@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import type { PortableTextBlock } from "@portabletext/types";
 import type { ReactNode } from "react";
+import { ButtonList, legacyButton } from "@/components/ButtonList";
 import { resolveLink } from "@/lib/links";
 import type { PageBlock, PageContent, SmartLink } from "@/lib/types";
 
@@ -19,31 +20,6 @@ const portableTextComponents = {
     }
   }
 };
-
-function ButtonLink({
-  link,
-  fallbackLabel,
-  className = "button-primary"
-}: {
-  link?: SmartLink;
-  fallbackLabel?: string;
-  className?: string;
-}) {
-  const resolved = resolveLink(link, { href: "#", label: fallbackLabel || "Read more" });
-
-  if (!resolved.href || resolved.href === "#") return null;
-
-  return (
-    <Link
-      className={`inline-flex ${className}`}
-      href={resolved.href}
-      target={resolved.target}
-      rel={resolved.rel}
-    >
-      {resolved.label || fallbackLabel || "Read more"}
-    </Link>
-  );
-}
 
 function LegacyBody({ body }: { body: string | PortableTextBlock[] }) {
   return (
@@ -126,9 +102,9 @@ function PageBlockRenderer({ block }: { block: PageBlock }) {
     case "pageButtonBlock":
       return (
         <section className="mx-auto flex max-w-4xl justify-center">
-          <ButtonLink
-            link={block.link}
-            className={block.style === "secondary" ? "button-secondary" : "button-primary"}
+          <ButtonList
+            buttons={block.buttons?.length ? block.buttons : legacyButton(block.link, block.style)}
+            className="justify-center"
           />
         </section>
       );
@@ -199,7 +175,10 @@ function PageBlockRenderer({ block }: { block: PageBlock }) {
             </p>
           )}
           <div className="mt-7">
-            <ButtonLink link={block.button} className="button-primary" />
+            <ButtonList
+              buttons={block.buttons?.length ? block.buttons : legacyButton(block.button)}
+              className="justify-center"
+            />
           </div>
         </section>
       );

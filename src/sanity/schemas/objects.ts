@@ -208,6 +208,68 @@ export const heroSection = defineType({
   }
 });
 
+export const actionButton = defineType({
+  name: "actionButton",
+  title: "Bouton",
+  type: "object",
+  fields: [
+    defineField({
+      name: "enabled",
+      title: "Afficher ce bouton",
+      type: "boolean",
+      initialValue: true,
+      description: "Desactivez ce bouton pour le masquer sans le supprimer."
+    }),
+    defineField({
+      name: "link",
+      title: "Lien du bouton",
+      type: "link",
+      description:
+        "Choisissez une page interne, une URL externe, un PDF/fichier, un email ou un telephone.",
+      validation: required("Choisissez le lien du bouton.")
+    }),
+    defineField({
+      name: "backgroundColor",
+      title: "Couleur du bouton",
+      type: "string",
+      components: { input: ColorSwatchInput },
+      description: "Optionnel."
+    }),
+    defineField({
+      name: "textColor",
+      title: "Couleur du texte",
+      type: "string",
+      components: { input: ColorSwatchInput },
+      description: "Optionnel."
+    }),
+    defineField({
+      name: "style",
+      title: "Style",
+      type: "string",
+      initialValue: "primary",
+      options: {
+        layout: "radio",
+        list: [
+          { title: "Bouton principal", value: "primary" },
+          { title: "Bouton discret", value: "secondary" }
+        ]
+      }
+    })
+  ],
+  preview: {
+    select: {
+      enabled: "enabled",
+      label: "link.label",
+      type: "link.type",
+      pageTitle: "link.internalPage.title"
+    },
+    prepare: ({ enabled, label, type, pageTitle }) => ({
+      title: label || pageTitle || "Bouton",
+      subtitle: `${enabled === false ? "Masque" : "Visible"} - ${type || "destination"}`
+    })
+  }
+});
+
 export const valueStatement = defineType({
   name: "valueStatement",
   title: "Phrase spirituelle",
@@ -339,7 +401,16 @@ export const homeCard = defineType({
     defineField({
       name: "button",
       title: "Bouton",
-      type: "link"
+      type: "link",
+      hidden: true
+    }),
+    defineField({
+      name: "buttons",
+      title: "Boutons",
+      type: "array",
+      description:
+        "Ajoutez un ou plusieurs boutons sous cette carte. Si aucun bouton n'est ajoute, rien ne s'affiche.",
+      of: [{ type: "actionButton" }]
     }),
     defineField({
       name: "text",
@@ -547,7 +618,15 @@ export const homeStorySection = defineType({
       name: "button",
       title: "Bouton",
       type: "link",
-      description: "Exemple : Read more vers la page Our Story."
+      description: "Ancien bouton conserve comme migration.",
+      hidden: true
+    }),
+    defineField({
+      name: "buttons",
+      title: "Boutons",
+      type: "array",
+      description: "Ajoutez, supprimez ou reordonnez les boutons.",
+      of: [{ type: "actionButton" }]
     }),
     defineField({
       name: "image",
@@ -796,22 +875,32 @@ export const pageGalleryBlock = defineType({
 
 export const pageButtonBlock = defineType({
   name: "pageButtonBlock",
-  title: "Bouton",
+  title: "Boutons",
   type: "object",
   fields: [
     defineField({
+      name: "buttons",
+      title: "Boutons",
+      type: "array",
+      description:
+        "Cliquez sur Ajouter un bouton. Vous pouvez ensuite les reordonner ou en supprimer.",
+      of: [{ type: "actionButton" }],
+      validation: (Rule) => Rule.min(1).warning("Ajoutez au moins un bouton.")
+    }),
+    defineField({
       name: "link",
-      title: "Bouton",
+      title: "Ancien bouton",
       type: "link",
       description:
         "Choisissez la destination du bouton : page, site externe, PDF, email ou telephone.",
-      validation: required("Configurez le bouton.")
+      hidden: true
     }),
     defineField({
       name: "style",
-      title: "Style du bouton",
+      title: "Ancien style du bouton",
       type: "string",
       initialValue: "primary",
+      hidden: true,
       options: {
         layout: "radio",
         list: [
@@ -822,10 +911,12 @@ export const pageButtonBlock = defineType({
     })
   ],
   preview: {
-    select: { title: "link.label", type: "link.type" },
-    prepare: ({ title, type }) => ({
-      title: title || "Bouton",
-      subtitle: type || "Destination a choisir"
+    select: { buttons: "buttons", legacyTitle: "link.label" },
+    prepare: ({ buttons, legacyTitle }) => ({
+      title: "Boutons",
+      subtitle: buttons?.length
+        ? `${buttons.length} bouton(s)`
+        : legacyTitle || "Groupe de boutons"
     })
   }
 });
@@ -985,7 +1076,15 @@ export const pageCtaBlock = defineType({
       name: "button",
       title: "Bouton",
       type: "link",
-      description: "Optionnel."
+      description: "Ancien champ conserve comme migration.",
+      hidden: true
+    }),
+    defineField({
+      name: "buttons",
+      title: "Boutons",
+      type: "array",
+      description: "Ajoutez, supprimez ou reordonnez les boutons de ce CTA.",
+      of: [{ type: "actionButton" }]
     })
   ],
   preview: {

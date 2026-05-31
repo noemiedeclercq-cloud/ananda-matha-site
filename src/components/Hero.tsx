@@ -1,10 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { resolveLink } from "@/lib/links";
-import type { HeroSlide, SmartLink } from "@/lib/types";
+import { ButtonList, legacyButton } from "@/components/ButtonList";
+import type { ActionButton, HeroSlide, SmartLink } from "@/lib/types";
 
 export function Hero({
   title,
@@ -13,7 +12,8 @@ export function Hero({
   slides,
   buttonLabel,
   buttonLink,
-  button
+  button,
+  buttons
 }: {
   title: string;
   subtitle: string;
@@ -22,16 +22,14 @@ export function Hero({
   buttonLabel: string;
   buttonLink: string;
   button?: SmartLink;
+  buttons?: ActionButton[];
 }) {
   const visibleSlides = useMemo(() => {
     const cmsSlides = (slides || []).filter((slide) => slide.image);
     return cmsSlides.length ? cmsSlides : image ? [{ image, alt: "" }] : [];
   }, [image, slides]);
   const [activeIndex, setActiveIndex] = useState(0);
-  const resolvedButton = resolveLink(button, {
-    href: buttonLink,
-    label: buttonLabel
-  });
+  const heroButtons = buttons?.length ? buttons : legacyButton(button);
 
   useEffect(() => {
     setActiveIndex(0);
@@ -72,14 +70,7 @@ export function Hero({
           <p className="mt-6 max-w-2xl text-lg leading-8 text-cream/88 md:text-xl">
             {subtitle}
           </p>
-          <Link
-            href={resolvedButton.href}
-            target={resolvedButton.target}
-            rel={resolvedButton.rel}
-            className="button-primary mt-9 inline-flex"
-          >
-            {resolvedButton.label || buttonLabel}
-          </Link>
+          <ButtonList buttons={heroButtons} className="mt-9" />
         </div>
       </div>
       {visibleSlides.length > 1 ? (

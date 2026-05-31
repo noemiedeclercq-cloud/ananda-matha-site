@@ -78,6 +78,17 @@ export const fallbackHome: HomePage = {
     type: "internal",
     internalPage: { title: "About Us", slug: "about-us" }
   },
+  heroButtons: [
+    {
+      enabled: true,
+      style: "primary",
+      link: {
+        label: "Read more",
+        type: "internal",
+        internalPage: { title: "About Us", slug: "about-us" }
+      }
+    }
+  ],
   values: [
     {
       title: "In silence, we listen.",
@@ -113,7 +124,19 @@ export const fallbackHome: HomePage = {
         label: "Read more",
         type: "internal",
         internalPage: { title: "About Us", slug: "about-us" }
-      }
+      },
+      buttons: [
+        {
+          enabled: true,
+          backgroundColor: "#c8741d",
+          textColor: "#ffffff",
+          link: {
+            label: "Read more",
+            type: "internal",
+            internalPage: { title: "About Us", slug: "about-us" }
+          }
+        }
+      ]
     },
     {
       title: "Our Life",
@@ -135,7 +158,19 @@ export const fallbackHome: HomePage = {
         label: "Read more",
         type: "internal",
         internalPage: { title: "Monastic Life", slug: "monastic-life" }
-      }
+      },
+      buttons: [
+        {
+          enabled: true,
+          backgroundColor: "#c8741d",
+          textColor: "#ffffff",
+          link: {
+            label: "Read more",
+            type: "internal",
+            internalPage: { title: "Monastic Life", slug: "monastic-life" }
+          }
+        }
+      ]
     },
     {
       title: "Monastic Hospitality",
@@ -157,7 +192,19 @@ export const fallbackHome: HomePage = {
         label: "Read more",
         type: "internal",
         internalPage: { title: "Hospitality", slug: "hospitality" }
-      }
+      },
+      buttons: [
+        {
+          enabled: true,
+          backgroundColor: "#c8741d",
+          textColor: "#ffffff",
+          link: {
+            label: "Read more",
+            type: "internal",
+            internalPage: { title: "Hospitality", slug: "hospitality" }
+          }
+        }
+      ]
     }
   ],
   story: {
@@ -172,7 +219,18 @@ export const fallbackHome: HomePage = {
       label: "Read more",
       type: "internal",
       internalPage: { title: "History", slug: "history" }
-    }
+    },
+    buttons: [
+      {
+        enabled: true,
+        style: "secondary",
+        link: {
+          label: "Read more",
+          type: "internal",
+          internalPage: { title: "History", slug: "history" }
+        }
+      }
+    ]
   },
   photoBands: [
     {
@@ -194,7 +252,18 @@ export const fallbackHome: HomePage = {
     label: "Contact us",
     type: "internal",
     internalPage: { title: "Contact", slug: "contact" }
-  }
+  },
+  invitationButtons: [
+    {
+      enabled: true,
+      style: "secondary",
+      link: {
+        label: "Contact us",
+        type: "internal",
+        internalPage: { title: "Contact", slug: "contact" }
+      }
+    }
+  ]
 };
 
 export const fallbackPages: PageContent[] = [
