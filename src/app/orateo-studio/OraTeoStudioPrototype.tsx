@@ -11,9 +11,7 @@ import {
   Home,
   Image as ImageIcon,
   Mail,
-  Maximize2,
   Menu,
-  Minimize2,
   Monitor,
   Palette,
   Pencil,
@@ -41,6 +39,7 @@ import type { OraTeoHomeDraft, OraTeoStudioData } from "./services/sanity/types"
 
 type BlockKey = "hero" | "slideshow" | "cards" | "story" | "quote" | "contact";
 type PreviewMode = "preview" | "edit";
+type ViewMode = "editor" | "split" | "preview";
 
 const sections = [
   { label: "Accueil", icon: Home },
@@ -192,7 +191,7 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
   const [savedDraft, setSavedDraft] = useState<OraTeoHomeDraft>(initialData.home);
   const [lastSavedLabel, setLastSavedLabel] = useState("Brouillon initial");
   const [draggedPhotoId, setDraggedPhotoId] = useState<string | null>(null);
-  const [previewWide, setPreviewWide] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>("split");
   const [previewMode, setPreviewMode] = useState<PreviewMode>("edit");
   const [selectedBlock, setSelectedBlock] = useState<BlockKey>("hero");
   const [uploadNotice, setUploadNotice] = useState("");
@@ -638,7 +637,32 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
           </div>
         </header>
 
-        <div className={previewWide ? styles.mainGridWide : styles.mainGrid}>
+        <div className={styles.viewControls} aria-label="Disposition de travail">
+          <button
+            className={viewMode === "editor" ? styles.viewModeActive : styles.viewModeButton}
+            onClick={() => setViewMode("editor")}
+            type="button"
+          >
+            Édition seule
+          </button>
+          <button
+            className={viewMode === "split" ? styles.viewModeActive : styles.viewModeButton}
+            onClick={() => setViewMode("split")}
+            type="button"
+          >
+            Édition + aperçu
+          </button>
+          <button
+            className={viewMode === "preview" ? styles.viewModeActive : styles.viewModeButton}
+            onClick={() => setViewMode("preview")}
+            type="button"
+          >
+            Aperçu seul
+          </button>
+        </div>
+
+        <div className={styles[viewMode === "editor" ? "mainGridEditor" : viewMode === "preview" ? "mainGridPreview" : "mainGrid"]}>
+          {viewMode !== "preview" ? (
           <section className={styles.editorPanel} aria-label="Édition de l'accueil">
             <div className={styles.pageTitle}>
               <div className={styles.pageIcon}>
@@ -732,7 +756,9 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
               <ReadOnlySection activeSection={activeSection} data={initialData} />
             )}
           </section>
+          ) : null}
 
+          {viewMode !== "editor" ? (
           <aside className={styles.previewPanel} aria-label="Aperçu de l'accueil">
             <div className={styles.previewTitle}>
               <div>
@@ -742,18 +768,6 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
                 </span>
                 <p>Une vue immédiate de ce que verra le visiteur.</p>
               </div>
-              <button
-                className={styles.previewToggle}
-                onClick={() => setPreviewWide((current) => !current)}
-                type="button"
-              >
-                {previewWide ? (
-                  <Minimize2 aria-hidden="true" size={16} />
-                ) : (
-                  <Maximize2 aria-hidden="true" size={16} />
-                )}
-                {previewWide ? "Réduire l'aperçu" : "Agrandir l'aperçu"}
-              </button>
               <div className={styles.modeSwitch} aria-label="Mode de l'aperçu">
                 <button
                   className={previewMode === "preview" ? styles.modeActive : styles.modeButton}
@@ -785,6 +799,7 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
               quote={draft.quote}
             />
           </aside>
+          ) : null}
         </div>
 
         <footer className={styles.statusBar}>
@@ -939,20 +954,19 @@ function ButtonManager({
       <div className={styles.buttonRows}>
         {buttons.map((button, index) => (
           <article className={styles.buttonRow} key={button.id}>
-            <div className={styles.rowHandle}>
-              <GripVertical aria-hidden="true" size={18} />
-              <div className={styles.reorderButtons}>
-                <button disabled={index === 0} onClick={() => onReorderButton(button.id, -1)} type="button">
-                  ↑
-                </button>
-                <button
-                  disabled={index === buttons.length - 1}
-                  onClick={() => onReorderButton(button.id, 1)}
-                  type="button"
-                >
-                  ↓
-                </button>
-              </div>
+            <div className={styles.buttonCardHeader}>
+              <span>
+                <GripVertical aria-hidden="true" size={18} />
+                Bouton {index + 1}
+              </span>
+              <button
+                aria-label="Supprimer ce bouton"
+                className={styles.iconOnly}
+                onClick={() => onRemoveButton(button.id)}
+                type="button"
+              >
+                <Trash2 aria-hidden="true" size={16} />
+              </button>
             </div>
             <label>
               <span>Texte</span>
@@ -989,14 +1003,18 @@ function ButtonManager({
                 type="button"
               />
             </label>
-            <button
-              aria-label="Supprimer ce bouton"
-              className={styles.iconOnly}
-              onClick={() => onRemoveButton(button.id)}
-              type="button"
-            >
-              <Trash2 aria-hidden="true" size={16} />
-            </button>
+            <div className={styles.reorderButtons}>
+              <button disabled={index === 0} onClick={() => onReorderButton(button.id, -1)} type="button">
+                Monter
+              </button>
+              <button
+                disabled={index === buttons.length - 1}
+                onClick={() => onReorderButton(button.id, 1)}
+                type="button"
+              >
+                Descendre
+              </button>
+            </div>
           </article>
         ))}
       </div>
@@ -1186,6 +1204,11 @@ function QuickCardsEditor({
             value={selectedCard.image}
             onChange={(event) => onUpdateCard(selectedCard.id, { image: event.target.value })}
           />
+          <button className={styles.secondaryAction} type="button">
+            <ImageIcon aria-hidden="true" size={16} />
+            Choisir une image
+          </button>
+          <small className={styles.localImageNote}>Image locale uniquement, non publiée.</small>
         </label>
         <div className={styles.managerCard}>
           <ButtonManager
