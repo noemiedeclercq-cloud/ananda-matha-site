@@ -14,17 +14,12 @@ type MenuEntry = {
   children: MenuEntry[];
 };
 
-function resolveMenuItem(item: NavigationItem): MenuEntry | null {
+function resolveMenuItem(item: NavigationItem): MenuEntry {
   const resolved = resolveLink(item.link, {
     href: item.url,
     label: item.label
   });
-  const children = (item.children || [])
-    .map(resolveMenuItem)
-    .filter(Boolean) as MenuEntry[];
-  const hasHref = Boolean(resolved.href && resolved.href !== "#");
-
-  if (!hasHref && !children.length) return null;
+  const children = (item.children || []).map(resolveMenuItem);
 
   return { item, resolved, children };
 }
@@ -187,7 +182,7 @@ export function Header({
 }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const menuItems = navigation.map(resolveMenuItem).filter(Boolean) as MenuEntry[];
+  const menuItems = navigation.map(resolveMenuItem);
 
   return (
     <header

@@ -18,8 +18,7 @@ export function Footer({
         href: item.url,
         label: item.label
       })
-    }))
-    .filter(({ resolved }) => resolved.href && resolved.href !== "#");
+    }));
 
   return (
     <footer className="border-t border-saffron/20 bg-forest text-cream">
@@ -36,7 +35,7 @@ export function Footer({
         <div>
           <p className="footer-title">Explore</p>
           <div className="mt-4 grid grid-cols-2 gap-2 text-sm text-cream/75">
-            {menuItems.slice(0, 10).map(({ item, resolved }) => {
+            {menuItems.map(({ item, resolved }) => {
               return (
                 <Link
                   key={`${item.label}-${resolved.href}`}
