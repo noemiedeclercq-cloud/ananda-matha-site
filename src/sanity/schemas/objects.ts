@@ -383,8 +383,17 @@ export const homeCard = defineType({
 
 export const navLink = defineType({
   name: "navLink",
-  title: "Lien du menu",
+  title: "Element du menu",
   type: "object",
+  validation: (Rule) =>
+    Rule.custom((value: any) => {
+      if (!value) return true;
+      if (!value.label) return "Ajoutez le nom visible dans le menu.";
+      if (!value.link && !value.children?.length) {
+        return "Ajoutez un lien ou au moins une sous-page.";
+      }
+      return true;
+    }),
   fields: [
     defineField({
       name: "label",
@@ -402,11 +411,26 @@ export const navLink = defineType({
     }),
     defineField({
       name: "link",
-      title: "Destination",
+      title: "Lien de cette entree",
       type: "link",
       description:
-        "Choisissez une page existante, une URL externe, un fichier, un email ou un telephone. Pour une page du site, utilisez la liste des pages.",
-      validation: required("Choisissez la destination de ce lien du menu.")
+        "Optionnel si cette entree sert seulement a ouvrir un sous-menu. Pour une page du site, choisissez une page dans la liste."
+    }),
+    defineField({
+      name: "isMenuOnly",
+      title: "Cette entree ouvre seulement le sous-menu",
+      type: "boolean",
+      initialValue: false,
+      description:
+        "Activez ceci si le titre ne doit pas etre cliquable et sert seulement a afficher les sous-pages.",
+      hidden: ({ parent }) => !parent?.children?.length
+    }),
+    defineField({
+      name: "children",
+      title: "Sous-pages",
+      type: "array",
+      description: "Ajoutez ici les pages qui apparaitront sous ce menu.",
+      of: [{ type: "navSubLink" }]
     })
   ],
   preview: {
@@ -423,6 +447,57 @@ export const navLink = defineType({
         linkType === "internal" && !pageTitle
           ? "Attention : page manquante ou supprimee"
           : linkLabel || pageTitle || subtitle || "Page de destination"
+    })
+  }
+});
+
+export const navSubLink = defineType({
+  name: "navSubLink",
+  title: "Sous-page du menu",
+  type: "object",
+  validation: (Rule) =>
+    Rule.custom((value: any) => {
+      if (!value) return true;
+      if (!value.label) return "Ajoutez le nom visible dans le sous-menu.";
+      if (!value.link) return "Choisissez le lien de cette sous-page.";
+      return true;
+    }),
+  fields: [
+    defineField({
+      name: "label",
+      title: "Nom visible dans le sous-menu",
+      type: "string",
+      validation: required("Ecrivez le nom visible dans le sous-menu.")
+    }),
+    defineField({
+      name: "url",
+      title: "Ancien lien",
+      type: "string",
+      readOnly: true,
+      hidden: true
+    }),
+    defineField({
+      name: "link",
+      title: "Lien de cette sous-page",
+      type: "link",
+      description:
+        "Choisissez une page interne dans la liste, une URL externe, un PDF, un email ou un telephone.",
+      validation: required("Choisissez le lien de cette sous-page.")
+    })
+  ],
+  preview: {
+    select: {
+      title: "label",
+      linkLabel: "link.label",
+      pageTitle: "link.internalPage.title",
+      linkType: "link.type"
+    },
+    prepare: ({ title, linkLabel, pageTitle, linkType }) => ({
+      title: title || "Sous-page",
+      subtitle:
+        linkType === "internal" && !pageTitle
+          ? "Attention : page manquante ou supprimee"
+          : linkLabel || pageTitle || "Destination"
     })
   }
 });

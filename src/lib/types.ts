@@ -39,6 +39,8 @@ export type NavigationItem = {
   label: string;
   url?: string;
   link?: SmartLink;
+  isMenuOnly?: boolean;
+  children?: NavigationItem[];
   order: number;
   parent?: string;
 };

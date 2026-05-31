@@ -91,9 +91,12 @@ function sanitizeNavigationItems(
     .map((item, index) => ({
       ...item,
       order: index,
-      url: item.link ? item.url : normalizeLegacyMenuUrl(item.url, pageSlugs)
+      url: item.link ? item.url : normalizeLegacyMenuUrl(item.url, pageSlugs),
+      children: item.children?.length
+        ? sanitizeNavigationItems(item.children, pageSlugs)
+        : []
     }))
-    .filter((item) => item.link || item.url !== "#");
+    .filter((item) => item.children?.length || item.link || item.url !== "#");
 }
 
 export async function getSiteSettings(): Promise<SiteSettings> {
@@ -118,7 +121,10 @@ export async function getNavigation(): Promise<NavigationItem[]> {
       fallbackPages.map((page) => page.slug)
   );
   const navigation = await fetchOrNull<{ items?: NavigationItem[] }>(`*[_id == "navigation" && _type == "navigation"][0]{
-    items[]{label, url, "order": _key, "link": link${linkProjection}}
+    items[]{
+      label, url, isMenuOnly, "order": _key, "link": link${linkProjection},
+      children[]{label, url, "order": _key, "link": link${linkProjection}}
+    }
   }`);
 
   if (navigation?.items?.length) {

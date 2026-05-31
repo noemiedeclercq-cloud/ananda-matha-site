@@ -29,7 +29,18 @@ export const fallbackSettings: SiteSettings = {
 
 export const fallbackNavigation: NavigationItem[] = [
   { label: "Home", url: "/", order: 0 },
-  { label: "About Us", url: "/about-us", order: 1 },
+  {
+    label: "Who are we ?",
+    url: "/who-are-we",
+    order: 1,
+    children: [
+      { label: "Cistercian order", url: "/cistercian-order", order: 0 },
+      { label: "Our story", url: "/our-story", order: 1 },
+      { label: "Monastic life", url: "/monastic-life", order: 2 },
+      { label: "How to become", url: "/how-to-become", order: 3 }
+    ]
+  },
+  { label: "About Us", url: "/about-us", order: 2 },
   { label: "History", url: "/history", order: 2 },
   { label: "Our Vision", url: "/our-vision", order: 3 },
   { label: "Monastic Life", url: "/monastic-life", order: 4 },
@@ -187,6 +198,42 @@ export const fallbackHome: HomePage = {
 };
 
 export const fallbackPages: PageContent[] = [
+  {
+    title: "Who are we ?",
+    slug: "who-are-we",
+    heroImage: monasteryImage,
+    excerpt:
+      "A Cistercian community seeking God through prayer, work, silence, and hospitality.",
+    body:
+      "Ananda Matha Monastery is a Cistercian community in Kerala, rooted in the Rule of Saint Benedict and the tradition of contemplative monastic life.\n\nThe community lives a daily rhythm of prayer, manual work, silence, study, and hospitality."
+  },
+  {
+    title: "Cistercian Order",
+    slug: "cistercian-order",
+    heroImage: prayerImage,
+    excerpt:
+      "The Cistercian tradition follows the Rule of Saint Benedict in simplicity, prayer, and work.",
+    body:
+      "The Cistercian Order is a monastic family rooted in the Rule of Saint Benedict. Its life is marked by liturgical prayer, lectio divina, manual work, silence, simplicity, and fraternal charity.\n\nAnanda Matha Monastery belongs to this tradition and lives it in the cultural and spiritual landscape of Kerala."
+  },
+  {
+    title: "Our Story",
+    slug: "our-story",
+    heroImage: gardenImage,
+    excerpt:
+      "The story of Ananda Matha Monastery, from its foundation to its life in Wayanad.",
+    body:
+      "Ananda Matha Ashram was founded as a place of prayer and monastic hospitality. Over time, the community came to Wayanad, where the hills, gardens, and quiet daily rhythm became part of its vocation.\n\nIts story is one of faithfulness, simplicity, and trust in God's providence."
+  },
+  {
+    title: "How to Become",
+    slug: "how-to-become",
+    heroImage: monasteryImage,
+    excerpt:
+      "A first orientation for women discerning a Cistercian monastic vocation.",
+    body:
+      "A monastic vocation begins with listening. Anyone discerning this path is invited to take time for prayer, conversation, and patient accompaniment.\n\nThe first step is usually to contact the monastery and begin a simple dialogue with the community."
+  },
   {
     title: "About Us",
     slug: "about-us",

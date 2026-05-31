@@ -31,7 +31,7 @@ export const navigation = defineType({
       name: "items",
       title: "Liens affiches dans le menu",
       description:
-        "Ajoutez, supprimez ou deplacez les pages. L'ordre ici est l'ordre visible sur le site. Pour une page interne, choisissez toujours une page dans la liste : cela evite les liens casses.",
+        "Ajoutez, supprimez ou deplacez les pages. L'ordre ici est l'ordre visible sur le site. Pour creer un sous-menu, ouvrez un element puis ajoutez des sous-pages. Pour une page interne, choisissez toujours une page dans la liste : cela evite les liens casses.",
       type: "array",
       group: "menu",
       of: [{ type: "navLink" }],
