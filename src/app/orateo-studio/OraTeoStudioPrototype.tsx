@@ -137,12 +137,20 @@ function valuesMatch(first: unknown, second: unknown) {
 
 function createLocalButton(index: number): StudioButton {
   return {
-    id: `local-button-${Date.now()}-${index}`,
+    id: createLocalId("local-button", index),
     label: "Nouveau bouton",
     destination: editablePages[0] ?? "Accueil",
     color: fallbackSettings.theme?.forest ?? "#173f2d",
     enabled: true
   };
+}
+
+function createLocalId(prefix: string, index = 0) {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return `${prefix}-${crypto.randomUUID()}`;
+  }
+
+  return `${prefix}-${Date.now()}-${index}-${Math.random().toString(36).slice(2)}`;
 }
 
 function reorderItems<T extends { id: string }>(items: T[], id: string, direction: -1 | 1) {
@@ -262,7 +270,7 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
         buttons: [
           ...current.hero.buttons,
           {
-            id: `button-${Date.now()}`,
+            id: createLocalId("button", current.hero.buttons.length),
             label: "Nouveau bouton",
             destination: editablePages[0] ?? "Accueil",
             color: fallbackSettings.theme?.forest ?? "#173f2d",
@@ -290,6 +298,8 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
         photos: current.slideshow.photos.filter((photo) => photo.id !== id)
       }
     }));
+    setDraggedPhotoId((current) => (current === id ? null : current));
+    setUploadNotice("Photo supprimée du brouillon local. Enregistrez le brouillon pour la garder supprimée après rechargement.");
   }
 
   function addPhotoFromFile(fileName: string, image: string) {
@@ -299,7 +309,7 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
         photos: [
           ...current.slideshow.photos,
           {
-            id: `photo-${Date.now()}`,
+            id: createLocalId("photo", current.slideshow.photos.length),
             image,
             label: fileName
           }
@@ -1068,12 +1078,27 @@ function PhotoManager({
                 Position {index + 1}
               </span>
               <div>
-                <button onClick={() => onMoveToStart(photo)} type="button">
+                <button
+                  draggable={false}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    onMoveToStart(photo);
+                  }}
+                  onMouseDown={(event) => event.stopPropagation()}
+                  type="button"
+                >
                   En premier
                 </button>
                 <button
                   aria-label={`Supprimer ${photo.label}`}
-                  onClick={() => onRemovePhoto(photo.id)}
+                  draggable={false}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    onRemovePhoto(photo.id);
+                  }}
+                  onMouseDown={(event) => event.stopPropagation()}
                   type="button"
                 >
                   <Trash2 aria-hidden="true" size={15} />
