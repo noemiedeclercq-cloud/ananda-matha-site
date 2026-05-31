@@ -1136,28 +1136,68 @@ function QuickCardsEditor({
   onUpdateButton: (cardId: string, buttonId: string, next: Partial<StudioButton>) => void;
   onUpdateCard: (cardId: string, next: Partial<StudioCard>) => void;
 }) {
+  const [selectedCardId, setSelectedCardId] = useState(cards[0]?.id ?? "");
+  const selectedCard = cards.find((card) => card.id === selectedCardId) || cards[0];
+
+  useEffect(() => {
+    if (!cards.some((card) => card.id === selectedCardId)) {
+      setSelectedCardId(cards[0]?.id ?? "");
+    }
+  }, [cards, selectedCardId]);
+
+  if (!selectedCard) {
+    return <EmptyState text="Aucune carte disponible pour le moment." />;
+  }
+
   return (
-    <div className={styles.quickEditorGrid}>
-      {cards.map((card) => (
-        <article key={card.id}>
-          <img alt="" src={card.image} />
+    <div className={styles.cardEditorLayout}>
+      <div className={styles.cardPickerList}>
+        {cards.map((card) => (
+          <button
+            className={card.id === selectedCard.id ? styles.cardPickerActive : styles.cardPickerButton}
+            key={card.id}
+            onClick={() => setSelectedCardId(card.id)}
+            type="button"
+          >
+            <img alt="" src={card.image} />
+            <span>{card.title}</span>
+          </button>
+        ))}
+      </div>
+
+      <section className={styles.cardEditPanel}>
+        <div className={styles.cardEditHero}>
+          <img alt="" src={selectedCard.image} />
           <div>
-            <input
-              aria-label={`Titre ${card.title}`}
-              value={card.title}
-              onChange={(event) => onUpdateCard(card.id, { title: event.target.value })}
-            />
-            <ButtonManager
-              buttons={card.buttons || []}
-              onAddButton={() => onAddButton(card.id)}
-              onRemoveButton={(buttonId) => onRemoveButton(card.id, buttonId)}
-              onReorderButton={(buttonId, direction) => onReorderButton(card.id, buttonId, direction)}
-              onUpdateButton={(buttonId, next) => onUpdateButton(card.id, buttonId, next)}
-              title="Boutons"
-            />
+            <h3>Modifier la carte</h3>
+            <p>Les changements restent dans le brouillon local.</p>
           </div>
-        </article>
-      ))}
+        </div>
+        <label className={styles.fieldCard}>
+          <span>Titre</span>
+          <input
+            value={selectedCard.title}
+            onChange={(event) => onUpdateCard(selectedCard.id, { title: event.target.value })}
+          />
+        </label>
+        <label className={styles.fieldCard}>
+          <span>Image</span>
+          <input
+            value={selectedCard.image}
+            onChange={(event) => onUpdateCard(selectedCard.id, { image: event.target.value })}
+          />
+        </label>
+        <div className={styles.managerCard}>
+          <ButtonManager
+            buttons={selectedCard.buttons || []}
+            onAddButton={() => onAddButton(selectedCard.id)}
+            onRemoveButton={(buttonId) => onRemoveButton(selectedCard.id, buttonId)}
+            onReorderButton={(buttonId, direction) => onReorderButton(selectedCard.id, buttonId, direction)}
+            onUpdateButton={(buttonId, next) => onUpdateButton(selectedCard.id, buttonId, next)}
+            title="Boutons de la carte"
+          />
+        </div>
+      </section>
     </div>
   );
 }

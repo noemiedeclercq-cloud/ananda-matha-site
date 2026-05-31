@@ -265,7 +265,6 @@
 .publishAction,
 .addBigButton,
 .iconOnly,
-.quickEditorGrid button,
 .previewCards button,
 .previewToggle {
   align-items: center;
@@ -543,7 +542,6 @@
 .fieldCard input,
 .buttonRow input,
 .buttonRow select,
-.quickEditorGrid input,
 .storyEditor input,
 .simplePanel input,
 .fieldCard textarea,
@@ -560,7 +558,6 @@
 .fieldCard input,
 .buttonRow input,
 .buttonRow select,
-.quickEditorGrid input,
 .storyEditor input,
 .simplePanel input {
   min-height: 2.75rem;
@@ -605,7 +602,6 @@
 
 .photoTile img,
 .photoTileDragging img,
-.quickEditorGrid img,
 .previewCards img,
 .storyEditor img,
 .storyPreviewRow img {
@@ -800,42 +796,106 @@
   padding: 0;
 }
 
-.quickEditorGrid {
+.cardEditorLayout {
   display: grid;
-  gap: 0.85rem;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  grid-template-columns: minmax(13rem, 0.42fr) minmax(0, 1fr);
 }
 
-.quickEditorGrid article {
-  background: #fffaf3;
-  border: 1px solid var(--studio-line);
-  border-radius: 0.95rem;
-  display: grid;
-  grid-template-columns: 8.2rem minmax(0, 1fr);
-  overflow: hidden;
-}
-
-.quickEditorGrid img {
-  min-height: 8.5rem;
-}
-
-.quickEditorGrid article > div {
-  align-content: center;
+.cardPickerList {
+  align-content: start;
   display: grid;
   gap: 0.65rem;
-  padding: 0.8rem;
 }
 
-.quickEditorGrid .managerCard {
+.cardPickerButton,
+.cardPickerActive {
+  align-items: center;
+  background: #fffaf3;
+  border: 1px solid var(--studio-line);
+  border-radius: 0.9rem;
+  color: var(--studio-ink);
+  cursor: pointer;
+  display: grid;
+  font: inherit;
+  gap: 0.65rem;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  padding: 0.55rem;
+  text-align: left;
+}
+
+.cardPickerActive {
+  border-color: color-mix(in srgb, var(--studio-saffron) 58%, var(--studio-line));
+  box-shadow: 0 0 0 3px rgb(200 115 34 / 10%);
+}
+
+.cardPickerButton img,
+.cardPickerActive img {
+  aspect-ratio: 1 / 0.78;
+  border-radius: 0.62rem;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.cardPickerButton span,
+.cardPickerActive span {
+  font-weight: 850;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.cardEditPanel {
+  background: rgb(255 253 248 / 86%);
+  border: 1px solid var(--studio-line);
+  border-radius: 1rem;
+  box-shadow: 0 14px 46px rgb(41 32 20 / 5%);
+  display: grid;
+  gap: 0.85rem;
+  min-width: 0;
+  padding: 1rem;
+}
+
+.cardEditHero {
+  align-items: center;
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: 7rem minmax(0, 1fr);
+}
+
+.cardEditHero img {
+  aspect-ratio: 1 / 0.78;
+  border-radius: 0.9rem;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.cardEditHero h3,
+.cardEditHero p {
+  margin: 0;
+}
+
+.cardEditHero p {
+  color: var(--studio-muted);
+  margin-top: 0.25rem;
+}
+
+.cardEditPanel .fieldCard,
+.cardEditPanel .managerCard {
   box-shadow: none;
-  padding: 0.75rem;
 }
 
-.quickEditorGrid .buttonRow {
-  grid-template-columns: 1fr;
+.cardEditPanel .buttonRow {
+  grid-template-columns: auto minmax(8rem, 1fr) minmax(8rem, 1fr);
 }
 
-.quickEditorGrid button,
+.cardEditPanel .colorField,
+.cardEditPanel .switchField,
+.cardEditPanel .iconOnly {
+  justify-self: start;
+}
+
 .previewCards button {
   background: var(--studio-forest);
   border: 0;
@@ -1621,7 +1681,6 @@
   }
 
   .photoGrid,
-  .quickEditorGrid,
   .previewCards,
   .simplePanel,
   .galleryGrid,
@@ -1635,11 +1694,15 @@
   .storyEditor,
   .storyPreviewRow,
   .documentList article,
-  .pageVisualPreview {
+  .pageVisualPreview,
+  .cardEditorLayout,
+  .cardEditPanel .buttonRow {
     grid-template-columns: 1fr;
   }
 
-  .quickEditorGrid article {
+  .cardEditHero,
+  .cardPickerButton,
+  .cardPickerActive {
     grid-template-columns: 1fr;
   }
 }
