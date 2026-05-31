@@ -6,6 +6,10 @@ export type OraTeoPageSummary = {
   addressLabel: string;
   status: "Publié" | "Brouillon";
   updatedAt: string;
+  image?: string;
+  content?: string;
+  buttons?: StudioButton[];
+  pdfs?: OraTeoPdfDocument[];
 };
 
 export type OraTeoMenuItem = {
@@ -50,6 +54,7 @@ export type OraTeoHomeDraft = {
     title: string;
     text: string;
     image: string;
+    buttons: StudioButton[];
   };
   quote: {
     text: string;
@@ -58,6 +63,7 @@ export type OraTeoHomeDraft = {
   contact: {
     message: string;
     buttonLabel: string;
+    buttons: StudioButton[];
   };
 };
 

@@ -47,7 +47,36 @@ export async function getOraTeoStudioData(): Promise<OraTeoStudioData> {
       _id,
       _updatedAt,
       title,
-      "slug": slug.current
+      "slug": slug.current,
+      heroImage,
+      body,
+      blocks[]{
+        _type,
+        content,
+        _type == "pageButtonBlock" => {
+          buttons[]{
+            enabled,
+            backgroundColor,
+            textColor,
+            style,
+            "link": link{
+              label,
+              type,
+              "internalPage": internalPage->{title},
+              externalUrl,
+              email,
+              phone
+            }
+          }
+        }
+      },
+      "buttons": blocks[_type == "pageButtonBlock"].buttons[],
+      "pdfs": blocks[_type == "pagePdfBlock"]{
+        _key,
+        title,
+        "fileName": file.asset->originalFilename,
+        "url": file.asset->url
+      }
     }`),
     fetchOrEmpty<Record<string, any>>(`*[_type == "galleryItem"] | order(_updatedAt desc){
       _id,
@@ -88,7 +117,12 @@ export async function getOraTeoStudioData(): Promise<OraTeoStudioData> {
   return {
     source: "sanity",
     home: mapHomeToDraft(home),
-    pages: mapPagesToSummaries(pages),
+    pages: mapPagesToSummaries(
+      pages.map((page) => ({
+        ...page,
+        heroImage: imageUrl(page.heroImage, fallbackHome.heroImage)
+      }))
+    ),
     menu: mapMenuItems(navigation),
     gallery,
     pdfs,

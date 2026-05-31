@@ -17,6 +17,7 @@ export type StudioCard = {
   id: string;
   title: string;
   image: string;
+  buttons?: StudioButton[];
 };
 
 export type StudioPhoto = {

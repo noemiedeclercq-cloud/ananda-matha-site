@@ -10,7 +10,7 @@ import type {
   OraTeoStudioData
 } from "./types";
 
-function plainText(value: unknown): string {
+export function plainText(value: unknown): string {
   if (typeof value === "string") return value;
   if (!Array.isArray(value)) return "";
 
@@ -53,7 +53,10 @@ function mapCard(card: HomeCard, index: number) {
   return {
     id: `sanity-card-${index}`,
     title: card.title,
-    image: card.frontImage || card.image || card.backImage || "/images/monastery-hero.svg"
+    image: card.frontImage || card.image || card.backImage || "/images/monastery-hero.svg",
+    buttons: (card.buttons?.length ? card.buttons : []).map((button, buttonIndex) =>
+      mapButton(button, buttonIndex)
+    )
   };
 }
 
@@ -77,7 +80,8 @@ export function mapHomeToDraft(home: HomePage): OraTeoHomeDraft {
     story: {
       title: home.story?.title || "Our Story",
       text: plainText(home.story?.text) || fallbackHome.story?.text?.toString() || "",
-      image: home.story?.image || fallbackHome.story?.image || "/images/monastery-hero.svg"
+      image: home.story?.image || fallbackHome.story?.image || "/images/monastery-hero.svg",
+      buttons: (home.story?.buttons?.length ? home.story.buttons : []).map(mapButton)
     },
     quote: {
       text: home.values?.[0]?.title || "In silence, we listen.",
@@ -88,7 +92,8 @@ export function mapHomeToDraft(home: HomePage): OraTeoHomeDraft {
       buttonLabel:
         home.invitationButtons?.[0]?.link?.label ||
         home.invitationButtonLabel ||
-        "Contact us"
+        "Contact us",
+      buttons: (home.invitationButtons?.length ? home.invitationButtons : []).map(mapButton)
     }
   };
 }
@@ -101,7 +106,13 @@ export function mapPagesToSummaries(pages: Array<Record<string, any>>): OraTeoPa
     status: page._id?.startsWith("drafts.") ? "Brouillon" : "Publié",
     updatedAt: page._updatedAt
       ? new Intl.DateTimeFormat("fr-BE", { dateStyle: "medium" }).format(new Date(page._updatedAt))
-      : "Date inconnue"
+      : "Date inconnue",
+    image: page.heroImage,
+    content: plainText(page.blocks?.flatMap((block: Record<string, any>) => block.content || []) || page.body),
+    buttons: (page.buttons || []).map((button: ActionButton, buttonIndex: number) =>
+      mapButton(button, buttonIndex)
+    ),
+    pdfs: mapPdfs(page.pdfs || [])
   }));
 }
 

@@ -26,7 +26,7 @@ import {
   UploadCloud
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import type { ReactNode } from "react";
+import type { ChangeEvent, ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { fallbackSettings } from "@/lib/fallbacks";
 import styles from "./orateo-studio.module.css";
@@ -131,6 +131,53 @@ function draftsMatch(first: OraTeoHomeDraft, second: OraTeoHomeDraft) {
   return JSON.stringify(first) === JSON.stringify(second);
 }
 
+function valuesMatch(first: unknown, second: unknown) {
+  return JSON.stringify(first) === JSON.stringify(second);
+}
+
+function createLocalButton(index: number): StudioButton {
+  return {
+    id: `local-button-${Date.now()}-${index}`,
+    label: "Nouveau bouton",
+    destination: editablePages[0] ?? "Accueil",
+    color: fallbackSettings.theme?.forest ?? "#173f2d",
+    enabled: true
+  };
+}
+
+function reorderItems<T extends { id: string }>(items: T[], id: string, direction: -1 | 1) {
+  const currentIndex = items.findIndex((item) => item.id === id);
+  const nextIndex = currentIndex + direction;
+
+  if (currentIndex < 0 || nextIndex < 0 || nextIndex >= items.length) {
+    return items;
+  }
+
+  const next = [...items];
+  const [item] = next.splice(currentIndex, 1);
+  next.splice(nextIndex, 0, item);
+  return next;
+}
+
+function getPendingChanges(draft: OraTeoHomeDraft, savedDraft: OraTeoHomeDraft) {
+  const changes: string[] = [];
+
+  if (!valuesMatch(draft.hero, savedDraft.hero)) changes.push("Hero modifié");
+  if (!valuesMatch(draft.story, savedDraft.story)) changes.push("Our Story modifié");
+  if (!valuesMatch(draft.cards, savedDraft.cards)) changes.push("Cartes modifiées");
+  if (!valuesMatch(draft.contact, savedDraft.contact)) changes.push("Contact modifié");
+  if (!valuesMatch(draft.quote, savedDraft.quote)) changes.push("Citation modifiée");
+
+  const savedPhotoIds = new Set(savedDraft.slideshow.photos.map((photo) => photo.id));
+  const addedPhotos = draft.slideshow.photos.filter((photo) => !savedPhotoIds.has(photo.id)).length;
+  if (addedPhotos) changes.push(`${addedPhotos} photo${addedPhotos > 1 ? "s" : ""} ajoutée${addedPhotos > 1 ? "s" : ""}`);
+  if (!addedPhotos && !valuesMatch(draft.slideshow, savedDraft.slideshow)) {
+    changes.push("Diaporama modifié");
+  }
+
+  return changes;
+}
+
 export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStudioData }) {
   const [activeSection, setActiveSection] = useState("Accueil");
   const [draft, setDraft] = useState<OraTeoHomeDraft>(initialData.home);
@@ -140,6 +187,7 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
   const [previewWide, setPreviewWide] = useState(false);
   const [previewMode, setPreviewMode] = useState<PreviewMode>("edit");
   const [selectedBlock, setSelectedBlock] = useState<BlockKey>("hero");
+  const [uploadNotice, setUploadNotice] = useState("");
   const [openBlocks, setOpenBlocks] = useState<Record<BlockKey, boolean>>({
     hero: true,
     slideshow: true,
@@ -164,6 +212,7 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
     () => draft.hero.buttons.filter((button) => button.enabled),
     [draft.hero.buttons]
   );
+  const pendingChanges = useMemo(() => getPendingChanges(draft, savedDraft), [draft, savedDraft]);
 
   function toggleBlock(key: BlockKey) {
     setOpenBlocks((current) => ({ ...current, [key]: !current[key] }));
@@ -183,7 +232,7 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
     });
   }
 
-  function updateButton(id: string, next: Partial<StudioButton>) {
+  function updateHeroButton(id: string, next: Partial<StudioButton>) {
     setDraft((current) => ({
       ...current,
       hero: {
@@ -195,7 +244,7 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
     }));
   }
 
-  function removeButton(id: string) {
+  function removeHeroButton(id: string) {
     setDraft((current) => ({
       ...current,
       hero: {
@@ -205,7 +254,7 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
     }));
   }
 
-  function addButton() {
+  function addHeroButton() {
     setDraft((current) => ({
       ...current,
       hero: {
@@ -224,6 +273,16 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
     }));
   }
 
+  function reorderHeroButton(id: string, direction: -1 | 1) {
+    setDraft((current) => ({
+      ...current,
+      hero: {
+        ...current.hero,
+        buttons: reorderItems(current.hero.buttons, id, direction)
+      }
+    }));
+  }
+
   function removePhoto(id: string) {
     setDraft((current) => ({
       ...current,
@@ -233,7 +292,7 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
     }));
   }
 
-  function addPhoto() {
+  function addPhotoFromFile(fileName: string, image: string) {
     setDraft((current) => ({
       ...current,
       slideshow: {
@@ -241,15 +300,13 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
           ...current.slideshow.photos,
           {
             id: `photo-${Date.now()}`,
-            image:
-              current.slideshow.photos.length % 2 === 0
-                ? "/images/garden-work.svg"
-                : "/images/prayer-hills.svg",
-            label: `Nouvelle photo ${current.slideshow.photos.length + 1}`
+            image,
+            label: fileName
           }
         ]
       }
     }));
+    setUploadNotice("Image ajoutée au brouillon local. Non publiée.");
   }
 
   function movePhotoToStart(photo: StudioPhoto) {
@@ -306,6 +363,104 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
     }));
   }
 
+  function updateStoryButton(id: string, next: Partial<StudioButton>) {
+    setDraft((current) => ({
+      ...current,
+      story: {
+        ...current.story,
+        buttons: current.story.buttons.map((button) =>
+          button.id === id ? { ...button, ...next } : button
+        )
+      }
+    }));
+  }
+
+  function addStoryButton() {
+    setDraft((current) => ({
+      ...current,
+      story: {
+        ...current.story,
+        buttons: [...current.story.buttons, createLocalButton(current.story.buttons.length)]
+      }
+    }));
+  }
+
+  function removeStoryButton(id: string) {
+    setDraft((current) => ({
+      ...current,
+      story: {
+        ...current.story,
+        buttons: current.story.buttons.filter((button) => button.id !== id)
+      }
+    }));
+  }
+
+  function reorderStoryButton(id: string, direction: -1 | 1) {
+    setDraft((current) => ({
+      ...current,
+      story: {
+        ...current.story,
+        buttons: reorderItems(current.story.buttons, id, direction)
+      }
+    }));
+  }
+
+  function updateCard(cardId: string, next: Partial<StudioCard>) {
+    setDraft((current) => ({
+      ...current,
+      cards: current.cards.map((card) => (card.id === cardId ? { ...card, ...next } : card))
+    }));
+  }
+
+  function updateCardButton(cardId: string, buttonId: string, next: Partial<StudioButton>) {
+    setDraft((current) => ({
+      ...current,
+      cards: current.cards.map((card) =>
+        card.id === cardId
+          ? {
+              ...card,
+              buttons: (card.buttons || []).map((button) =>
+                button.id === buttonId ? { ...button, ...next } : button
+              )
+            }
+          : card
+      )
+    }));
+  }
+
+  function addCardButton(cardId: string) {
+    setDraft((current) => ({
+      ...current,
+      cards: current.cards.map((card) =>
+        card.id === cardId
+          ? { ...card, buttons: [...(card.buttons || []), createLocalButton(card.buttons?.length || 0)] }
+          : card
+      )
+    }));
+  }
+
+  function removeCardButton(cardId: string, buttonId: string) {
+    setDraft((current) => ({
+      ...current,
+      cards: current.cards.map((card) =>
+        card.id === cardId
+          ? { ...card, buttons: (card.buttons || []).filter((button) => button.id !== buttonId) }
+          : card
+      )
+    }));
+  }
+
+  function reorderCardButton(cardId: string, buttonId: string, direction: -1 | 1) {
+    setDraft((current) => ({
+      ...current,
+      cards: current.cards.map((card) =>
+        card.id === cardId
+          ? { ...card, buttons: reorderItems(card.buttons || [], buttonId, direction) }
+          : card
+      )
+    }));
+  }
+
   function updateQuote(next: Partial<OraTeoHomeDraft["quote"]>) {
     setDraft((current) => ({
       ...current,
@@ -326,6 +481,48 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
     }));
   }
 
+  function updateContactButton(id: string, next: Partial<StudioButton>) {
+    setDraft((current) => ({
+      ...current,
+      contact: {
+        ...current.contact,
+        buttons: current.contact.buttons.map((button) =>
+          button.id === id ? { ...button, ...next } : button
+        )
+      }
+    }));
+  }
+
+  function addContactButton() {
+    setDraft((current) => ({
+      ...current,
+      contact: {
+        ...current.contact,
+        buttons: [...current.contact.buttons, createLocalButton(current.contact.buttons.length)]
+      }
+    }));
+  }
+
+  function removeContactButton(id: string) {
+    setDraft((current) => ({
+      ...current,
+      contact: {
+        ...current.contact,
+        buttons: current.contact.buttons.filter((button) => button.id !== id)
+      }
+    }));
+  }
+
+  function reorderContactButton(id: string, direction: -1 | 1) {
+    setDraft((current) => ({
+      ...current,
+      contact: {
+        ...current.contact,
+        buttons: reorderItems(current.contact.buttons, id, direction)
+      }
+    }));
+  }
+
   function saveDraft() {
     window.localStorage.setItem(draftStorageKey, JSON.stringify(draft));
     setSavedDraft(draft);
@@ -335,6 +532,7 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
   function cancelChanges() {
     setDraft(savedDraft);
     setDraggedPhotoId(null);
+    setUploadNotice("");
   }
 
   return (
@@ -442,6 +640,7 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
                 <p>Ouvrez un bloc, modifiez son contenu, puis regardez l'aperçu se mettre à jour.</p>
               </div>
             </div>
+            <PendingChanges changes={pendingChanges} source={initialData.source} />
 
             {activeSection === "Accueil" ? (
               <div className={styles.blockStack}>
@@ -459,11 +658,12 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
                       <HeroEditor
                         buttons={draft.hero.buttons}
                         intro={draft.hero.intro}
-                        onAddButton={addButton}
-                        onRemoveButton={removeButton}
+                        onAddButton={addHeroButton}
+                        onRemoveButton={removeHeroButton}
+                        onReorderButton={reorderHeroButton}
                         onSetIntro={(intro) => updateHero({ intro })}
                         onSetTitle={(title) => updateHero({ title })}
-                        onUpdateButton={updateButton}
+                        onUpdateButton={updateHeroButton}
                         title={draft.hero.title}
                       />
                     )}
@@ -471,25 +671,49 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
                     {block.key === "slideshow" && (
                       <PhotoManager
                         draggedPhotoId={draggedPhotoId}
-                        onAddPhoto={addPhoto}
+                        onAddPhoto={addPhotoFromFile}
                         onDragEnd={() => setDraggedPhotoId(null)}
                         onDragStart={setDraggedPhotoId}
                         onMoveToStart={movePhotoToStart}
                         onRemovePhoto={removePhoto}
                         onReorderPhoto={reorderPhoto}
                         photos={draft.slideshow.photos}
+                        uploadNotice={uploadNotice}
                       />
                     )}
 
-                    {block.key === "cards" && <QuickCardsEditor cards={draft.cards} />}
+                    {block.key === "cards" && (
+                      <QuickCardsEditor
+                        cards={draft.cards}
+                        onAddButton={addCardButton}
+                        onRemoveButton={removeCardButton}
+                        onReorderButton={reorderCardButton}
+                        onUpdateButton={updateCardButton}
+                        onUpdateCard={updateCard}
+                      />
+                    )}
                     {block.key === "story" && (
-                      <StoryEditor onUpdate={updateStory} story={draft.story} />
+                      <StoryEditor
+                        onAddButton={addStoryButton}
+                        onRemoveButton={removeStoryButton}
+                        onReorderButton={reorderStoryButton}
+                        onUpdate={updateStory}
+                        onUpdateButton={updateStoryButton}
+                        story={draft.story}
+                      />
                     )}
                     {block.key === "quote" && (
                       <QuoteEditor onUpdate={updateQuote} quote={draft.quote} />
                     )}
                     {block.key === "contact" && (
-                      <ContactEditor contact={draft.contact} onUpdate={updateContact} />
+                      <ContactEditor
+                        contact={draft.contact}
+                        onAddButton={addContactButton}
+                        onRemoveButton={removeContactButton}
+                        onReorderButton={reorderContactButton}
+                        onUpdate={updateContact}
+                        onUpdateButton={updateContactButton}
+                      />
                     )}
                   </StudioBlock>
                 ))}
@@ -603,11 +827,36 @@ function StudioBlock({
   );
 }
 
+function PendingChanges({
+  changes,
+  source
+}: {
+  changes: string[];
+  source: OraTeoStudioData["source"];
+}) {
+  return (
+    <aside className={changes.length ? styles.pendingPanelActive : styles.pendingPanel}>
+      <div>
+        <strong>{changes.length ? `${changes.length} modification${changes.length > 1 ? "s" : ""} non publiée${changes.length > 1 ? "s" : ""}` : "Synchronisé avec Sanity"}</strong>
+        <span>{changes.length ? "Brouillon local" : source === "sanity" ? "Données lues depuis Sanity" : "Données de démonstration"}</span>
+      </div>
+      {changes.length ? (
+        <ul>
+          {changes.map((change) => (
+            <li key={change}>{change}</li>
+          ))}
+        </ul>
+      ) : null}
+    </aside>
+  );
+}
+
 function HeroEditor({
   buttons,
   intro,
   onAddButton,
   onRemoveButton,
+  onReorderButton,
   onSetIntro,
   onSetTitle,
   onUpdateButton,
@@ -617,6 +866,7 @@ function HeroEditor({
   intro: string;
   onAddButton: () => void;
   onRemoveButton: (id: string) => void;
+  onReorderButton: (id: string, direction: -1 | 1) => void;
   onSetIntro: (value: string) => void;
   onSetTitle: (value: string) => void;
   onUpdateButton: (id: string, next: Partial<StudioButton>) => void;
@@ -635,71 +885,112 @@ function HeroEditor({
       </label>
 
       <div className={styles.managerCard}>
-        <div className={styles.managerHeader}>
-          <div>
-            <h3>Boutons d'action</h3>
-            <p>Choisissez le texte, la destination, la couleur et l'affichage.</p>
-          </div>
-          <button className={styles.addBigButton} onClick={onAddButton} type="button">
-            <Plus aria-hidden="true" size={18} />
-            Ajouter un bouton
-          </button>
-        </div>
-
-        <div className={styles.buttonRows}>
-          {buttons.map((button) => (
-            <article className={styles.buttonRow} key={button.id}>
-              <div className={styles.rowHandle}>
-                <GripVertical aria-hidden="true" size={18} />
-              </div>
-              <label>
-                <span>Texte</span>
-                <input
-                  value={button.label}
-                  onChange={(event) => onUpdateButton(button.id, { label: event.target.value })}
-                />
-              </label>
-              <label>
-                <span>Destination</span>
-                <select
-                  value={button.destination}
-                  onChange={(event) => onUpdateButton(button.id, { destination: event.target.value })}
-                >
-                  {[...new Set([...editablePages, ...menuItems])].map((page) => (
-                    <option key={page}>{page}</option>
-                  ))}
-                </select>
-              </label>
-              <label className={styles.colorField}>
-                <span>Couleur</span>
-                <input
-                  type="color"
-                  value={button.color}
-                  onChange={(event) => onUpdateButton(button.id, { color: event.target.value })}
-                />
-              </label>
-              <label className={styles.switchField}>
-                <span>{button.enabled ? "Visible" : "Masqué"}</span>
-                <button
-                  aria-label={button.enabled ? "Masquer ce bouton" : "Afficher ce bouton"}
-                  className={button.enabled ? styles.switchOn : styles.switchOff}
-                  onClick={() => onUpdateButton(button.id, { enabled: !button.enabled })}
-                  type="button"
-                />
-              </label>
-              <button
-                aria-label="Supprimer ce bouton"
-                className={styles.iconOnly}
-                onClick={() => onRemoveButton(button.id)}
-                type="button"
-              >
-                <Trash2 aria-hidden="true" size={16} />
-              </button>
-            </article>
-          ))}
-        </div>
+        <ButtonManager
+          buttons={buttons}
+          onAddButton={onAddButton}
+          onRemoveButton={onRemoveButton}
+          onReorderButton={onReorderButton}
+          onUpdateButton={onUpdateButton}
+          title="Boutons d'action"
+        />
       </div>
     </div>
+  );
+}
+
+function ButtonManager({
+  buttons,
+  onAddButton,
+  onRemoveButton,
+  onReorderButton,
+  onUpdateButton,
+  title
+}: {
+  buttons: StudioButton[];
+  onAddButton: () => void;
+  onRemoveButton: (id: string) => void;
+  onReorderButton: (id: string, direction: -1 | 1) => void;
+  onUpdateButton: (id: string, next: Partial<StudioButton>) => void;
+  title: string;
+}) {
+  return (
+    <>
+      <div className={styles.managerHeader}>
+        <div>
+          <h3>{title}</h3>
+          <p>Texte, destination, couleur, ordre et visibilité.</p>
+        </div>
+        <button className={styles.addBigButton} onClick={onAddButton} type="button">
+          <Plus aria-hidden="true" size={18} />
+          Ajouter un bouton
+        </button>
+      </div>
+
+      <div className={styles.buttonRows}>
+        {buttons.map((button, index) => (
+          <article className={styles.buttonRow} key={button.id}>
+            <div className={styles.rowHandle}>
+              <GripVertical aria-hidden="true" size={18} />
+              <div className={styles.reorderButtons}>
+                <button disabled={index === 0} onClick={() => onReorderButton(button.id, -1)} type="button">
+                  ↑
+                </button>
+                <button
+                  disabled={index === buttons.length - 1}
+                  onClick={() => onReorderButton(button.id, 1)}
+                  type="button"
+                >
+                  ↓
+                </button>
+              </div>
+            </div>
+            <label>
+              <span>Texte</span>
+              <input
+                value={button.label}
+                onChange={(event) => onUpdateButton(button.id, { label: event.target.value })}
+              />
+            </label>
+            <label>
+              <span>Destination</span>
+              <select
+                value={button.destination}
+                onChange={(event) => onUpdateButton(button.id, { destination: event.target.value })}
+              >
+                {[...new Set([...editablePages, ...menuItems])].map((page) => (
+                  <option key={page}>{page}</option>
+                ))}
+              </select>
+            </label>
+            <label className={styles.colorField}>
+              <span>Couleur</span>
+              <input
+                type="color"
+                value={button.color}
+                onChange={(event) => onUpdateButton(button.id, { color: event.target.value })}
+              />
+            </label>
+            <label className={styles.switchField}>
+              <span>{button.enabled ? "Visible" : "Masqué"}</span>
+              <button
+                aria-label={button.enabled ? "Masquer ce bouton" : "Afficher ce bouton"}
+                className={button.enabled ? styles.switchOn : styles.switchOff}
+                onClick={() => onUpdateButton(button.id, { enabled: !button.enabled })}
+                type="button"
+              />
+            </label>
+            <button
+              aria-label="Supprimer ce bouton"
+              className={styles.iconOnly}
+              onClick={() => onRemoveButton(button.id)}
+              type="button"
+            >
+              <Trash2 aria-hidden="true" size={16} />
+            </button>
+          </article>
+        ))}
+      </div>
+    </>
   );
 }
 
@@ -711,29 +1002,53 @@ function PhotoManager({
   onMoveToStart,
   onRemovePhoto,
   onReorderPhoto,
-  photos
+  photos,
+  uploadNotice
 }: {
   draggedPhotoId: string | null;
-  onAddPhoto: () => void;
+  onAddPhoto: (fileName: string, image: string) => void;
   onDragEnd: () => void;
   onDragStart: (id: string) => void;
   onMoveToStart: (photo: StudioPhoto) => void;
   onRemovePhoto: (id: string) => void;
   onReorderPhoto: (id: string) => void;
   photos: StudioPhoto[];
+  uploadNotice: string;
 }) {
+  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        onAddPhoto(file.name, reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+    event.target.value = "";
+  }
+
   return (
     <div className={styles.managerCard}>
+      <input
+        accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+        className={styles.hiddenFileInput}
+        id="orateo-photo-upload"
+        onChange={handleFileChange}
+        type="file"
+      />
       <div className={styles.managerHeader}>
         <div>
           <h3>Photos du diaporama</h3>
           <p>Glissez les photos pour changer leur ordre. La première devient l'image principale.</p>
         </div>
-        <button className={styles.addBigButton} onClick={onAddPhoto} type="button">
+        <label className={styles.addBigButton} htmlFor="orateo-photo-upload">
           <Plus aria-hidden="true" size={18} />
           Ajouter une photo
-        </button>
+        </label>
       </div>
+      {uploadNotice ? <p className={styles.localNotice}>{uploadNotice}</p> : null}
 
       <div className={styles.photoGrid}>
         {photos.map((photo, index) => (
@@ -768,28 +1083,50 @@ function PhotoManager({
           </article>
         ))}
 
-        <button className={styles.addPhotoCard} onClick={onAddPhoto} type="button">
+        <label className={styles.addPhotoCard} htmlFor="orateo-photo-upload">
           <Plus aria-hidden="true" size={28} />
           <strong>Ajouter une photo</strong>
           <span>Choisir une image pour le diaporama</span>
-        </button>
+        </label>
       </div>
     </div>
   );
 }
 
-function QuickCardsEditor({ cards }: { cards: StudioCard[] }) {
+function QuickCardsEditor({
+  cards,
+  onAddButton,
+  onRemoveButton,
+  onReorderButton,
+  onUpdateButton,
+  onUpdateCard
+}: {
+  cards: StudioCard[];
+  onAddButton: (cardId: string) => void;
+  onRemoveButton: (cardId: string, buttonId: string) => void;
+  onReorderButton: (cardId: string, buttonId: string, direction: -1 | 1) => void;
+  onUpdateButton: (cardId: string, buttonId: string, next: Partial<StudioButton>) => void;
+  onUpdateCard: (cardId: string, next: Partial<StudioCard>) => void;
+}) {
   return (
     <div className={styles.quickEditorGrid}>
       {cards.map((card) => (
         <article key={card.id}>
           <img alt="" src={card.image} />
           <div>
-            <input aria-label={`Titre ${card.title}`} defaultValue={card.title} />
-            <button onClick={() => console.log("Modification simulée", card.title)} type="button">
-              <Pencil aria-hidden="true" size={15} />
-              Modifier
-            </button>
+            <input
+              aria-label={`Titre ${card.title}`}
+              value={card.title}
+              onChange={(event) => onUpdateCard(card.id, { title: event.target.value })}
+            />
+            <ButtonManager
+              buttons={card.buttons || []}
+              onAddButton={() => onAddButton(card.id)}
+              onRemoveButton={(buttonId) => onRemoveButton(card.id, buttonId)}
+              onReorderButton={(buttonId, direction) => onReorderButton(card.id, buttonId, direction)}
+              onUpdateButton={(buttonId, next) => onUpdateButton(card.id, buttonId, next)}
+              title="Boutons"
+            />
           </div>
         </article>
       ))}
@@ -798,10 +1135,18 @@ function QuickCardsEditor({ cards }: { cards: StudioCard[] }) {
 }
 
 function StoryEditor({
+  onAddButton,
+  onRemoveButton,
+  onReorderButton,
   onUpdate,
+  onUpdateButton,
   story
 }: {
+  onAddButton: () => void;
+  onRemoveButton: (id: string) => void;
+  onReorderButton: (id: string, direction: -1 | 1) => void;
   onUpdate: (next: Partial<OraTeoHomeDraft["story"]>) => void;
+  onUpdateButton: (id: string, next: Partial<StudioButton>) => void;
   story: OraTeoHomeDraft["story"];
 }) {
   return (
@@ -823,6 +1168,16 @@ function StoryEditor({
           <Pencil aria-hidden="true" size={15} />
           Modifier l'image
         </button>
+        <div className={styles.managerCard}>
+          <ButtonManager
+            buttons={story.buttons}
+            onAddButton={onAddButton}
+            onRemoveButton={onRemoveButton}
+            onReorderButton={onReorderButton}
+            onUpdateButton={onUpdateButton}
+            title="Boutons Our Story"
+          />
+        </div>
       </div>
     </div>
   );
@@ -854,10 +1209,18 @@ function QuoteEditor({
 
 function ContactEditor({
   contact,
-  onUpdate
+  onAddButton,
+  onRemoveButton,
+  onReorderButton,
+  onUpdate,
+  onUpdateButton
 }: {
   contact: OraTeoHomeDraft["contact"];
+  onAddButton: () => void;
+  onRemoveButton: (id: string) => void;
+  onReorderButton: (id: string, direction: -1 | 1) => void;
   onUpdate: (next: Partial<OraTeoHomeDraft["contact"]>) => void;
+  onUpdateButton: (id: string, next: Partial<StudioButton>) => void;
 }) {
   return (
     <div className={styles.simplePanel}>
@@ -875,6 +1238,16 @@ function ContactEditor({
           onChange={(event) => onUpdate({ buttonLabel: event.target.value })}
         />
       </label>
+      <div className={styles.managerCard}>
+        <ButtonManager
+          buttons={contact.buttons}
+          onAddButton={onAddButton}
+          onRemoveButton={onRemoveButton}
+          onReorderButton={onReorderButton}
+          onUpdateButton={onUpdateButton}
+          title="Boutons CTA"
+        />
+      </div>
     </div>
   );
 }
@@ -886,48 +1259,8 @@ function ReadOnlySection({
   activeSection: string;
   data: OraTeoStudioData;
 }) {
-  const featuredPages = useMemo(() => {
-    const wanted = ["Home", "Who are we ?", "Hospitality", "Pictures", "Contact"];
-    const byTitle = new Map(data.pages.map((page) => [page.title, page]));
-
-    return wanted.map((title, index) => ({
-      id: byTitle.get(title)?.id || `featured-${index}`,
-      title,
-      status: byTitle.get(title)?.status || "Publié",
-      updatedAt: byTitle.get(title)?.updatedAt || "Page prête à consulter",
-      image:
-        data.home.cards[index % Math.max(data.home.cards.length, 1)]?.image ||
-        data.home.slideshow.photos[0]?.image ||
-        "/images/monastery-hero.svg"
-    }));
-  }, [data.home.cards, data.home.slideshow.photos, data.pages]);
-  const [selectedPageTitle, setSelectedPageTitle] = useState(featuredPages[0]?.title || "Home");
-  const selectedPage = featuredPages.find((page) => page.title === selectedPageTitle) || featuredPages[0];
-
   if (activeSection === "Pages du site") {
-    return (
-      <div className={styles.readOnlyPanel}>
-        <SectionIntro
-          title="Pages du site"
-          text="Choisissez une page pour la voir comme un visiteur, sans modifier le site."
-        />
-        <div className={styles.visualPageGrid}>
-          {featuredPages.map((page) => (
-            <button
-              className={selectedPageTitle === page.title ? styles.visualPageActive : styles.visualPageCard}
-              key={page.id}
-              onClick={() => setSelectedPageTitle(page.title)}
-              type="button"
-            >
-              <img alt="" src={page.image} />
-              <strong>{page.title}</strong>
-              <span>{page.status}</span>
-            </button>
-          ))}
-        </div>
-        {selectedPage ? <PageVisualPreview page={selectedPage} /> : null}
-      </div>
-    );
+    return <PageEditorPanel data={data} />;
   }
 
   if (activeSection === "Menu principal") {
@@ -1065,18 +1398,114 @@ function ReadOnlySection({
   );
 }
 
+type LocalPageDraft = {
+  buttons: StudioButton[];
+  content: string;
+  id: string;
+  image: string;
+  pdfs: OraTeoStudioData["pdfs"];
+  status: string;
+  title: string;
+  updatedAt: string;
+};
+
+function PageEditorPanel({ data }: { data: OraTeoStudioData }) {
+  const featuredPages = useMemo<LocalPageDraft[]>(() => {
+    const wanted = ["Home", "Who are we ?", "Our Story", "Monastic Life", "How to become", "Hospitality", "Contact"];
+    const byTitle = new Map(data.pages.map((page) => [page.title, page]));
+
+    return wanted.map((title, index) => {
+      const page = byTitle.get(title);
+      return {
+        id: page?.id || `featured-${index}`,
+        title,
+        status: page?.status || "Publié",
+        updatedAt: page?.updatedAt || "Page prête à consulter",
+        content: page?.content || "Contenu de la page disponible ici en brouillon local.",
+        buttons: page?.buttons || [],
+        pdfs: page?.pdfs || [],
+        image:
+          page?.image ||
+          data.home.cards[index % Math.max(data.home.cards.length, 1)]?.image ||
+          data.home.slideshow.photos[0]?.image ||
+          "/images/monastery-hero.svg"
+      };
+    });
+  }, [data]);
+  const [pages, setPages] = useState(featuredPages);
+  const [selectedPageTitle, setSelectedPageTitle] = useState(featuredPages[0]?.title || "Home");
+  const selectedPage = pages.find((page) => page.title === selectedPageTitle) || pages[0];
+
+  function updatePage(id: string, next: Partial<LocalPageDraft>) {
+    setPages((current) => current.map((page) => (page.id === id ? { ...page, ...next } : page)));
+  }
+
+  if (!selectedPage) {
+    return <EmptyState text="Aucune page disponible pour le moment." />;
+  }
+
+  return (
+    <div className={styles.readOnlyPanel}>
+      <SectionIntro
+        title="Pages du site"
+        text="Ouvrez une page et préparez des changements dans le brouillon local."
+      />
+      <div className={styles.visualPageGrid}>
+        {pages.map((page) => (
+          <button
+            className={selectedPageTitle === page.title ? styles.visualPageActive : styles.visualPageCard}
+            key={page.id}
+            onClick={() => setSelectedPageTitle(page.title)}
+            type="button"
+          >
+            <img alt="" src={page.image} />
+            <strong>{page.title}</strong>
+            <span>{page.status}</span>
+          </button>
+        ))}
+      </div>
+      <PageVisualPreview onUpdatePage={updatePage} page={selectedPage} />
+    </div>
+  );
+}
+
 function PageVisualPreview({
+  onUpdatePage,
   page
 }: {
-  page: { image: string; status: string; title: string; updatedAt: string };
+  onUpdatePage: (id: string, next: Partial<LocalPageDraft>) => void;
+  page: LocalPageDraft;
 }) {
   return (
     <article className={styles.pageVisualPreview}>
       <img alt="" src={page.image} />
       <div>
         <span>{page.status}</span>
-        <h3>{page.title}</h3>
-        <p>Cette page est affichée ici en consultation. La modification viendra dans une étape suivante.</p>
+        <label>
+          <small>Titre</small>
+          <input value={page.title} onChange={(event) => onUpdatePage(page.id, { title: event.target.value })} />
+        </label>
+        <label>
+          <small>Contenu</small>
+          <textarea
+            value={page.content}
+            onChange={(event) => onUpdatePage(page.id, { content: event.target.value })}
+          />
+        </label>
+        <div className={styles.pageLinkedItems}>
+          <strong>Boutons</strong>
+          {page.buttons.length ? (
+            page.buttons.map((button) => <span key={button.id}>{button.label}</span>)
+          ) : (
+            <span>Aucun bouton repéré</span>
+          )}
+          <strong>PDF liés</strong>
+          {page.pdfs.length ? (
+            page.pdfs.map((pdf) => <span key={pdf.id}>{pdf.title}</span>)
+          ) : (
+            <span>Aucun PDF lié</span>
+          )}
+        </div>
         <small>Mis à jour : {page.updatedAt}</small>
       </div>
     </article>
