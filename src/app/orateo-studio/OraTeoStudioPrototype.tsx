@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { fallbackHome, fallbackSettings } from "@/lib/fallbacks";
 import styles from "./orateo-studio.module.css";
 import {
@@ -41,6 +41,31 @@ import {
 } from "./studioData";
 
 type BlockKey = "hero" | "slideshow" | "cards" | "story" | "quote" | "contact";
+
+type StudioHomeDraft = {
+  hero: {
+    title: string;
+    intro: string;
+    buttons: StudioButton[];
+  };
+  slideshow: {
+    photos: StudioPhoto[];
+  };
+  cards: typeof studioCards;
+  story: {
+    title: string;
+    text: string;
+    image: string;
+  };
+  quote: {
+    text: string;
+    signature: string;
+  };
+  contact: {
+    message: string;
+    buttonLabel: string;
+  };
+};
 
 const sections = [
   { label: "Accueil", icon: Home },
@@ -100,12 +125,73 @@ const blockMeta: Array<{
 const introduction =
   "A Cistercian monastery in Kerala, India.\nA place of prayer, silence and hospitality.\nAll are welcome.";
 
+const draftStorageKey = "orateo-studio-home-draft-v1";
+
+const initialDraft: StudioHomeDraft = {
+  hero: {
+    title: fallbackHome.heroTitle,
+    intro: introduction,
+    buttons: studioButtons
+  },
+  slideshow: {
+    photos: studioPhotos
+  },
+  cards: studioCards,
+  story: {
+    title: fallbackHome.story?.title ?? "Our Story",
+    text:
+      typeof fallbackHome.story?.text === "string"
+        ? fallbackHome.story.text
+        : "A place of prayer and peace, rooted in the Cistercian tradition.",
+    image: fallbackHome.story?.image ?? "/images/monastery-hero.svg"
+  },
+  quote: {
+    text: "In silence, we listen. In prayer, we unite.",
+    signature: "Ananda Matha Monastery"
+  },
+  contact: {
+    message: fallbackHome.invitationText,
+    buttonLabel: fallbackHome.invitationButtonLabel
+  }
+};
+
+function readStoredDraft(): StudioHomeDraft | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const stored = window.localStorage.getItem(draftStorageKey);
+    if (!stored) {
+      return null;
+    }
+
+    const parsed = JSON.parse(stored) as Partial<StudioHomeDraft>;
+
+    return {
+      ...initialDraft,
+      ...parsed,
+      hero: { ...initialDraft.hero, ...parsed.hero },
+      slideshow: { ...initialDraft.slideshow, ...parsed.slideshow },
+      story: { ...initialDraft.story, ...parsed.story },
+      quote: { ...initialDraft.quote, ...parsed.quote },
+      contact: { ...initialDraft.contact, ...parsed.contact },
+      cards: parsed.cards ?? initialDraft.cards
+    };
+  } catch {
+    return null;
+  }
+}
+
+function draftsMatch(first: StudioHomeDraft, second: StudioHomeDraft) {
+  return JSON.stringify(first) === JSON.stringify(second);
+}
+
 export function OraTeoStudioPrototype() {
   const [activeSection, setActiveSection] = useState("Accueil");
-  const [title, setTitle] = useState(fallbackHome.heroTitle);
-  const [intro, setIntro] = useState(introduction);
-  const [photos, setPhotos] = useState(studioPhotos);
-  const [buttons, setButtons] = useState(studioButtons);
+  const [draft, setDraft] = useState<StudioHomeDraft>(initialDraft);
+  const [savedDraft, setSavedDraft] = useState<StudioHomeDraft>(initialDraft);
+  const [lastSavedLabel, setLastSavedLabel] = useState("Brouillon initial");
   const [draggedPhotoId, setDraggedPhotoId] = useState<string | null>(null);
   const [previewWide, setPreviewWide] = useState(false);
   const [openBlocks, setOpenBlocks] = useState<Record<BlockKey, boolean>>({
@@ -117,10 +203,20 @@ export function OraTeoStudioPrototype() {
     contact: false
   });
 
-  const heroPhoto = photos[0]?.image ?? fallbackHome.heroImage ?? "/images/monastery-hero.svg";
+  useEffect(() => {
+    const storedDraft = readStoredDraft();
+    if (storedDraft) {
+      setDraft(storedDraft);
+      setSavedDraft(storedDraft);
+      setLastSavedLabel("Brouillon restauré");
+    }
+  }, []);
+
+  const hasUnsavedChanges = !draftsMatch(draft, savedDraft);
+  const heroPhoto = draft.slideshow.photos[0]?.image ?? fallbackHome.heroImage ?? "/images/monastery-hero.svg";
   const enabledButtons = useMemo(
-    () => buttons.filter((button) => button.enabled),
-    [buttons]
+    () => draft.hero.buttons.filter((button) => button.enabled),
+    [draft.hero.buttons]
   );
 
   function toggleBlock(key: BlockKey) {
@@ -128,45 +224,81 @@ export function OraTeoStudioPrototype() {
   }
 
   function updateButton(id: string, next: Partial<StudioButton>) {
-    setButtons((current) =>
-      current.map((button) => (button.id === id ? { ...button, ...next } : button))
-    );
+    setDraft((current) => ({
+      ...current,
+      hero: {
+        ...current.hero,
+        buttons: current.hero.buttons.map((button) =>
+          button.id === id ? { ...button, ...next } : button
+        )
+      }
+    }));
   }
 
   function removeButton(id: string) {
-    setButtons((current) => current.filter((button) => button.id !== id));
+    setDraft((current) => ({
+      ...current,
+      hero: {
+        ...current.hero,
+        buttons: current.hero.buttons.filter((button) => button.id !== id)
+      }
+    }));
   }
 
   function addButton() {
-    setButtons((current) => [
+    setDraft((current) => ({
       ...current,
-      {
-        id: `button-${current.length + 1}`,
-        label: "Nouveau bouton",
-        destination: editablePages[0] ?? "Accueil",
-        color: fallbackSettings.theme?.forest ?? "#173f2d",
-        enabled: true
+      hero: {
+        ...current.hero,
+        buttons: [
+          ...current.hero.buttons,
+          {
+            id: `button-${Date.now()}`,
+            label: "Nouveau bouton",
+            destination: editablePages[0] ?? "Accueil",
+            color: fallbackSettings.theme?.forest ?? "#173f2d",
+            enabled: true
+          }
+        ]
       }
-    ]);
+    }));
   }
 
   function removePhoto(id: string) {
-    setPhotos((current) => current.filter((photo) => photo.id !== id));
+    setDraft((current) => ({
+      ...current,
+      slideshow: {
+        photos: current.slideshow.photos.filter((photo) => photo.id !== id)
+      }
+    }));
   }
 
   function addPhoto() {
-    setPhotos((current) => [
+    setDraft((current) => ({
       ...current,
-      {
-        id: `photo-${current.length + 1}`,
-        image: current.length % 2 === 0 ? "/images/garden-work.svg" : "/images/prayer-hills.svg",
-        label: `Nouvelle photo ${current.length + 1}`
+      slideshow: {
+        photos: [
+          ...current.slideshow.photos,
+          {
+            id: `photo-${Date.now()}`,
+            image:
+              current.slideshow.photos.length % 2 === 0
+                ? "/images/garden-work.svg"
+                : "/images/prayer-hills.svg",
+            label: `Nouvelle photo ${current.slideshow.photos.length + 1}`
+          }
+        ]
       }
-    ]);
+    }));
   }
 
   function movePhotoToStart(photo: StudioPhoto) {
-    setPhotos((current) => [photo, ...current.filter((item) => item.id !== photo.id)]);
+    setDraft((current) => ({
+      ...current,
+      slideshow: {
+        photos: [photo, ...current.slideshow.photos.filter((item) => item.id !== photo.id)]
+      }
+    }));
   }
 
   function reorderPhoto(targetId: string) {
@@ -174,19 +306,75 @@ export function OraTeoStudioPrototype() {
       return;
     }
 
-    setPhotos((current) => {
-      const dragged = current.find((photo) => photo.id === draggedPhotoId);
-      const targetIndex = current.findIndex((photo) => photo.id === targetId);
+    setDraft((current) => {
+      const dragged = current.slideshow.photos.find((photo) => photo.id === draggedPhotoId);
+      const targetIndex = current.slideshow.photos.findIndex((photo) => photo.id === targetId);
 
       if (!dragged || targetIndex < 0) {
         return current;
       }
 
-      const withoutDragged = current.filter((photo) => photo.id !== draggedPhotoId);
+      const withoutDragged = current.slideshow.photos.filter((photo) => photo.id !== draggedPhotoId);
       const next = [...withoutDragged];
       next.splice(targetIndex, 0, dragged);
-      return next;
+      return {
+        ...current,
+        slideshow: {
+          photos: next
+        }
+      };
     });
+  }
+
+  function updateHero(next: Partial<StudioHomeDraft["hero"]>) {
+    setDraft((current) => ({
+      ...current,
+      hero: {
+        ...current.hero,
+        ...next
+      }
+    }));
+  }
+
+  function updateStory(next: Partial<StudioHomeDraft["story"]>) {
+    setDraft((current) => ({
+      ...current,
+      story: {
+        ...current.story,
+        ...next
+      }
+    }));
+  }
+
+  function updateQuote(next: Partial<StudioHomeDraft["quote"]>) {
+    setDraft((current) => ({
+      ...current,
+      quote: {
+        ...current.quote,
+        ...next
+      }
+    }));
+  }
+
+  function updateContact(next: Partial<StudioHomeDraft["contact"]>) {
+    setDraft((current) => ({
+      ...current,
+      contact: {
+        ...current.contact,
+        ...next
+      }
+    }));
+  }
+
+  function saveDraft() {
+    window.localStorage.setItem(draftStorageKey, JSON.stringify(draft));
+    setSavedDraft(draft);
+    setLastSavedLabel("Brouillon enregistré à l'instant");
+  }
+
+  function cancelChanges() {
+    setDraft(savedDraft);
+    setDraggedPhotoId(null);
   }
 
   return (
@@ -253,7 +441,24 @@ export function OraTeoStudioPrototype() {
               <ExternalLink aria-hidden="true" size={15} />
             </a>
             <button
+              className={styles.secondaryAction}
+              disabled={!hasUnsavedChanges}
+              onClick={cancelChanges}
+              type="button"
+            >
+              Annuler les modifications
+            </button>
+            <button
               className={styles.primaryAction}
+              disabled={!hasUnsavedChanges}
+              onClick={saveDraft}
+              type="button"
+            >
+              <CheckCircle2 aria-hidden="true" size={17} />
+              Enregistrer le brouillon
+            </button>
+            <button
+              className={styles.publishAction}
               onClick={() => console.log("Publication simulée depuis OraTeo Studio")}
               type="button"
             >
@@ -288,14 +493,14 @@ export function OraTeoStudioPrototype() {
                 >
                   {block.key === "hero" && (
                     <HeroEditor
-                      buttons={buttons}
-                      intro={intro}
+                      buttons={draft.hero.buttons}
+                      intro={draft.hero.intro}
                       onAddButton={addButton}
                       onRemoveButton={removeButton}
-                      onSetIntro={setIntro}
-                      onSetTitle={setTitle}
+                      onSetIntro={(intro) => updateHero({ intro })}
+                      onSetTitle={(title) => updateHero({ title })}
                       onUpdateButton={updateButton}
-                      title={title}
+                      title={draft.hero.title}
                     />
                   )}
 
@@ -308,14 +513,20 @@ export function OraTeoStudioPrototype() {
                       onMoveToStart={movePhotoToStart}
                       onRemovePhoto={removePhoto}
                       onReorderPhoto={reorderPhoto}
-                      photos={photos}
+                      photos={draft.slideshow.photos}
                     />
                   )}
 
                   {block.key === "cards" && <QuickCardsEditor />}
-                  {block.key === "story" && <StoryEditor />}
-                  {block.key === "quote" && <QuoteEditor />}
-                  {block.key === "contact" && <ContactEditor />}
+                  {block.key === "story" && (
+                    <StoryEditor onUpdate={updateStory} story={draft.story} />
+                  )}
+                  {block.key === "quote" && (
+                    <QuoteEditor onUpdate={updateQuote} quote={draft.quote} />
+                  )}
+                  {block.key === "contact" && (
+                    <ContactEditor contact={draft.contact} onUpdate={updateContact} />
+                  )}
                 </StudioBlock>
               ))}
             </div>
@@ -346,17 +557,17 @@ export function OraTeoStudioPrototype() {
             <HomepagePreview
               buttons={enabledButtons}
               heroPhoto={heroPhoto}
-              intro={intro}
-              title={title}
+              intro={draft.hero.intro}
+              title={draft.hero.title}
             />
           </aside>
         </div>
 
         <footer className={styles.statusBar}>
-          <span>Dernière sauvegarde locale : il y a 5 minutes</span>
-          <span>
+          <span>{lastSavedLabel}</span>
+          <span className={hasUnsavedChanges ? styles.unsavedStatus : styles.savedStatus}>
             <CheckCircle2 aria-hidden="true" size={17} />
-            Tout est prêt dans ce prototype
+            {hasUnsavedChanges ? "Modifications non enregistrées" : "Tout est enregistré"}
           </span>
         </footer>
       </section>
@@ -594,23 +805,26 @@ function QuickCardsEditor() {
   );
 }
 
-function StoryEditor() {
+function StoryEditor({
+  onUpdate,
+  story
+}: {
+  onUpdate: (next: Partial<StudioHomeDraft["story"]>) => void;
+  story: StudioHomeDraft["story"];
+}) {
   return (
     <div className={styles.storyEditor}>
-      <img alt="" src={fallbackHome.story?.image ?? "/images/monastery-hero.svg"} />
+      <img alt="" src={story.image} />
       <div>
         <label>
           <span>Titre</span>
-          <input defaultValue={fallbackHome.story?.title ?? "Our Story"} />
+          <input value={story.title} onChange={(event) => onUpdate({ title: event.target.value })} />
         </label>
         <label>
           <span>Texte</span>
           <textarea
-            defaultValue={
-              typeof fallbackHome.story?.text === "string"
-                ? fallbackHome.story.text
-                : "A place of prayer and peace, rooted in the Cistercian tradition."
-            }
+            value={story.text}
+            onChange={(event) => onUpdate({ text: event.target.value })}
           />
         </label>
         <button className={styles.secondaryAction} type="button">
@@ -622,31 +836,52 @@ function StoryEditor() {
   );
 }
 
-function QuoteEditor() {
+function QuoteEditor({
+  onUpdate,
+  quote
+}: {
+  onUpdate: (next: Partial<StudioHomeDraft["quote"]>) => void;
+  quote: StudioHomeDraft["quote"];
+}) {
   return (
     <div className={styles.simplePanel}>
       <label>
         <span>Citation</span>
-        <textarea defaultValue="In silence, we listen. In prayer, we unite." />
+        <textarea value={quote.text} onChange={(event) => onUpdate({ text: event.target.value })} />
       </label>
       <label>
         <span>Signature</span>
-        <input defaultValue="Ananda Matha Monastery" />
+        <input
+          value={quote.signature}
+          onChange={(event) => onUpdate({ signature: event.target.value })}
+        />
       </label>
     </div>
   );
 }
 
-function ContactEditor() {
+function ContactEditor({
+  contact,
+  onUpdate
+}: {
+  contact: StudioHomeDraft["contact"];
+  onUpdate: (next: Partial<StudioHomeDraft["contact"]>) => void;
+}) {
   return (
     <div className={styles.simplePanel}>
       <label>
         <span>Message d'invitation</span>
-        <textarea defaultValue={fallbackHome.invitationText} />
+        <textarea
+          value={contact.message}
+          onChange={(event) => onUpdate({ message: event.target.value })}
+        />
       </label>
       <label>
         <span>Bouton</span>
-        <input defaultValue={fallbackHome.invitationButtonLabel} />
+        <input
+          value={contact.buttonLabel}
+          onChange={(event) => onUpdate({ buttonLabel: event.target.value })}
+        />
       </label>
     </div>
   );

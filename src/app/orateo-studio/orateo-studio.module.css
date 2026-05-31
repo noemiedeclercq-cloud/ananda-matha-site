@@ -255,6 +255,7 @@
 
 .secondaryAction,
 .primaryAction,
+.publishAction,
 .addBigButton,
 .iconOnly,
 .quickEditorGrid button,
@@ -283,6 +284,7 @@
 }
 
 .primaryAction,
+.publishAction,
 .addBigButton {
   background: linear-gradient(135deg, #145033, #082f20);
   border: 0;
@@ -293,9 +295,18 @@
 
 .secondaryAction:hover,
 .primaryAction:hover,
+.publishAction:hover,
 .addBigButton:hover,
 .previewToggle:hover {
   transform: translateY(-1px);
+}
+
+.secondaryAction:disabled,
+.primaryAction:disabled,
+.publishAction:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+  transform: none;
 }
 
 .mainGrid,
@@ -923,8 +934,12 @@
   font-size: 0.88rem;
 }
 
-.statusBar span:last-child {
+.statusBar .savedStatus {
   color: var(--studio-forest);
+}
+
+.statusBar .unsavedStatus {
+  color: #9b5b12;
 }
 
 @media (max-width: 1260px) {

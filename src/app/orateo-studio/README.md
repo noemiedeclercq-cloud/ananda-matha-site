@@ -11,12 +11,14 @@ Route locale : `/orateo-studio`
 - Gestionnaire de boutons avec texte, destination, couleur et activation.
 - Aperçu de la page d'accueil mis à jour en direct avec un mode aperçu large.
 - Un seul indicateur "Prototype local" dans le header.
+- Brouillon local conservé dans le navigateur : enregistrer, annuler les changements et restaurer au rechargement.
 
 ## Données utilisées
 
 - Le prototype lit les contenus de repli existants depuis `src/lib/fallbacks.ts`.
 - Aucune modification n'est encore envoyée à Sanity.
 - Les boutons, cartes rapides, actions d'ajout/suppression, ordre des photos et sélections de liens sont simulés en local dans le navigateur.
+- Le brouillon local est sauvegardé temporairement dans `localStorage`, sans modifier le site public.
 
 ## Prochain branchement Sanity
 
