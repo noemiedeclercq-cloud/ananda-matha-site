@@ -20,6 +20,14 @@ const linkProjection = `{
   openInNewTab
 }`;
 
+const portableTextProjection = `[]{
+  ...,
+  markDefs[]{
+    ...,
+    _type == "smartLink" => ${linkProjection}
+  }
+}`;
+
 async function fetchOrNull<T>(query: string, params?: Record<string, string>) {
   if (!isSanityConfigured) return null;
 
@@ -39,6 +47,29 @@ function imageUrl(value: unknown, fallback?: string) {
   } catch {
     return fallback;
   }
+}
+
+function mapPageBlock(block: Record<string, any>) {
+  if (!block) return block;
+
+  if (block._type === "pageImageBlock") {
+    return {
+      ...block,
+      image: imageUrl(block.image)
+    };
+  }
+
+  if (block._type === "pageGalleryBlock") {
+    return {
+      ...block,
+      images: block.images?.map((item: Record<string, any>) => ({
+        ...item,
+        image: imageUrl(item.image)
+      }))
+    };
+  }
+
+  return block;
 }
 
 export async function getSiteSettings(): Promise<SiteSettings> {
@@ -134,22 +165,38 @@ export async function getHomePage(): Promise<HomePage> {
 export async function getPageBySlug(slug: string): Promise<PageContent | null> {
   const page = await fetchOrNull<Record<string, any>>(`*[_type == "page" && slug.current == $slug][0]{
     title, "slug": slug.current, heroImage, excerpt,
-    body[]{
+    blocks[]{
       ...,
-      markDefs[]{
+      _type == "pageTextBlock" => {
         ...,
-        _type == "smartLink" => {
-          label,
-          type,
-          "internalPage": internalPage->{title, "slug": slug.current},
-          externalUrl,
-          "fileUrl": file.asset->url,
-          email,
-          phone,
-          openInNewTab
-        }
+        content${portableTextProjection}
+      },
+      _type == "pageImageBlock" => {
+        ...,
+        image
+      },
+      _type == "pageGalleryBlock" => {
+        ...,
+        images[]{..., image}
+      },
+      _type == "pageButtonBlock" => {
+        ...,
+        "link": link${linkProjection}
+      },
+      _type == "pagePdfBlock" => {
+        ...,
+        "fileUrl": file.asset->url
+      },
+      _type == "pageAudioBlock" => {
+        ...,
+        "fileUrl": file.asset->url
+      },
+      _type == "pageCtaBlock" => {
+        ...,
+        "button": button${linkProjection}
       }
     },
+    body${portableTextProjection},
     seoTitle, seoDescription
   }`, { slug });
 
@@ -157,7 +204,8 @@ export async function getPageBySlug(slug: string): Promise<PageContent | null> {
 
   return {
     ...page,
-    heroImage: imageUrl(page.heroImage)
+    heroImage: imageUrl(page.heroImage),
+    blocks: page.blocks?.map(mapPageBlock)
   } as PageContent;
 }
 

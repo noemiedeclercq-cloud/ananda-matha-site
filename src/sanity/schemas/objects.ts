@@ -377,3 +377,385 @@ export const navLink = defineType({
     })
   }
 });
+
+export const pageTextBlock = defineType({
+  name: "pageTextBlock",
+  title: "Texte",
+  type: "object",
+  fields: [
+    defineField({
+      name: "content",
+      title: "Texte",
+      type: "array",
+      description:
+        "Ecrivez ici un texte simple. Pour un bouton, une image, un PDF ou un audio, ajoutez plutot un bloc separe.",
+      validation: required("Ajoutez le texte de ce bloc."),
+      of: [
+        {
+          type: "block",
+          styles: [
+            { title: "Paragraphe", value: "normal" },
+            { title: "Titre de section", value: "h2" },
+            { title: "Petit titre", value: "h3" }
+          ],
+          lists: [{ title: "Liste simple", value: "bullet" }],
+          marks: {
+            decorators: [
+              { title: "Gras", value: "strong" },
+              { title: "Italique", value: "em" }
+            ],
+            annotations: [
+              {
+                name: "smartLink",
+                title: "Lien discret dans le texte",
+                type: "link"
+              }
+            ]
+          }
+        }
+      ]
+    })
+  ],
+  preview: {
+    prepare: () => ({
+      title: "Texte",
+      subtitle: "Paragraphe ou titre de section"
+    })
+  }
+});
+
+export const pageImageBlock = defineType({
+  name: "pageImageBlock",
+  title: "Image",
+  type: "object",
+  fields: [
+    defineField({
+      name: "image",
+      title: "Image",
+      type: "image",
+      options: { hotspot: true },
+      components: { field: FriendlyImageInput },
+      validation: required("Ajoutez une image.")
+    }),
+    defineField({
+      name: "alt",
+      title: "Description de l'image",
+      type: "string",
+      description:
+        "Texte court pour les personnes qui ne voient pas l'image. Exemple : Chapelle du monastere.",
+      validation: (Rule) =>
+        Rule.required().warning("Ajoutez une courte description de l'image.")
+    }),
+    defineField({
+      name: "caption",
+      title: "Legende",
+      type: "string",
+      description: "Optionnel. Peut rester vide."
+    })
+  ],
+  preview: {
+    select: { title: "alt", subtitle: "caption", media: "image" },
+    prepare: ({ title, subtitle, media }) => ({
+      title: title || "Image",
+      subtitle: subtitle || "Photo de la page",
+      media
+    })
+  }
+});
+
+export const pageGalleryImage = defineType({
+  name: "pageGalleryImage",
+  title: "Photo de galerie",
+  type: "object",
+  fields: [
+    defineField({
+      name: "image",
+      title: "Photo",
+      type: "image",
+      options: { hotspot: true },
+      components: { field: FriendlyImageInput },
+      validation: required("Ajoutez une photo.")
+    }),
+    defineField({
+      name: "alt",
+      title: "Description de la photo",
+      type: "string",
+      validation: (Rule) =>
+        Rule.required().warning("Ajoutez une description courte de la photo.")
+    }),
+    defineField({
+      name: "caption",
+      title: "Legende",
+      type: "string"
+    })
+  ],
+  preview: {
+    select: { title: "alt", subtitle: "caption", media: "image" },
+    prepare: ({ title, subtitle, media }) => ({
+      title: title || "Photo",
+      subtitle: subtitle || "Image de galerie",
+      media
+    })
+  }
+});
+
+export const pageGalleryBlock = defineType({
+  name: "pageGalleryBlock",
+  title: "Galerie",
+  type: "object",
+  fields: [
+    defineField({
+      name: "title",
+      title: "Titre de la galerie",
+      type: "string",
+      description: "Optionnel."
+    }),
+    defineField({
+      name: "images",
+      title: "Photos",
+      type: "array",
+      description:
+        "Ajoutez les photos, puis changez leur ordre par glisser-deposer si besoin.",
+      of: [{ type: "pageGalleryImage" }],
+      validation: (Rule) =>
+        Rule.min(1).error("Ajoutez au moins une photo dans la galerie.")
+    })
+  ],
+  preview: {
+    select: { title: "title", images: "images" },
+    prepare: ({ title, images }) => ({
+      title: title || "Galerie",
+      subtitle: `${images?.length || 0} photo(s)`
+    })
+  }
+});
+
+export const pageButtonBlock = defineType({
+  name: "pageButtonBlock",
+  title: "Bouton",
+  type: "object",
+  fields: [
+    defineField({
+      name: "link",
+      title: "Bouton",
+      type: "link",
+      description:
+        "Choisissez la destination du bouton : page, site externe, PDF, email ou telephone.",
+      validation: required("Configurez le bouton.")
+    }),
+    defineField({
+      name: "style",
+      title: "Style du bouton",
+      type: "string",
+      initialValue: "primary",
+      options: {
+        layout: "radio",
+        list: [
+          { title: "Bouton principal", value: "primary" },
+          { title: "Bouton discret", value: "secondary" }
+        ]
+      }
+    })
+  ],
+  preview: {
+    select: { title: "link.label", type: "link.type" },
+    prepare: ({ title, type }) => ({
+      title: title || "Bouton",
+      subtitle: type || "Destination a choisir"
+    })
+  }
+});
+
+export const pagePdfBlock = defineType({
+  name: "pagePdfBlock",
+  title: "PDF a telecharger",
+  type: "object",
+  fields: [
+    defineField({
+      name: "title",
+      title: "Titre",
+      type: "string",
+      validation: required("Ajoutez un titre pour ce PDF.")
+    }),
+    defineField({
+      name: "text",
+      title: "Petit texte",
+      type: "text",
+      rows: 3,
+      description: "Optionnel."
+    }),
+    defineField({
+      name: "file",
+      title: "Fichier PDF",
+      type: "file",
+      description: "Deposez un PDF ou choisissez un fichier deja ajoute.",
+      options: { accept: ".pdf,application/pdf" },
+      validation: required("Ajoutez le fichier PDF.")
+    }),
+    defineField({
+      name: "buttonLabel",
+      title: "Texte du bouton",
+      type: "string",
+      initialValue: "Download PDF"
+    })
+  ],
+  preview: {
+    select: { title: "title", fileName: "file.asset.originalFilename" },
+    prepare: ({ title, fileName }) => ({
+      title: title || "PDF a telecharger",
+      subtitle: fileName || "Fichier PDF"
+    })
+  }
+});
+
+export const pageAudioBlock = defineType({
+  name: "pageAudioBlock",
+  title: "Audio",
+  type: "object",
+  fields: [
+    defineField({
+      name: "title",
+      title: "Titre de l'audio",
+      type: "string",
+      validation: required("Ajoutez un titre pour cet audio.")
+    }),
+    defineField({
+      name: "text",
+      title: "Petit texte",
+      type: "text",
+      rows: 3,
+      description: "Optionnel."
+    }),
+    defineField({
+      name: "file",
+      title: "Fichier audio",
+      type: "file",
+      description: "Deposez un fichier audio ou choisissez un fichier existant.",
+      options: { accept: "audio/*" },
+      validation: required("Ajoutez le fichier audio.")
+    })
+  ],
+  preview: {
+    select: { title: "title", fileName: "file.asset.originalFilename" },
+    prepare: ({ title, fileName }) => ({
+      title: title || "Audio",
+      subtitle: fileName || "Fichier audio"
+    })
+  }
+});
+
+export const pageQuoteBlock = defineType({
+  name: "pageQuoteBlock",
+  title: "Citation",
+  type: "object",
+  fields: [
+    defineField({
+      name: "quote",
+      title: "Citation",
+      type: "text",
+      rows: 4,
+      validation: required("Ajoutez le texte de la citation.")
+    }),
+    defineField({
+      name: "attribution",
+      title: "Auteur ou source",
+      type: "string",
+      description: "Optionnel."
+    })
+  ],
+  preview: {
+    select: { title: "quote", subtitle: "attribution" },
+    prepare: ({ title, subtitle }) => ({
+      title: title || "Citation",
+      subtitle: subtitle || "Texte mis en valeur"
+    })
+  }
+});
+
+export const pageInfoBlock = defineType({
+  name: "pageInfoBlock",
+  title: "Encadre d'information",
+  type: "object",
+  fields: [
+    defineField({
+      name: "title",
+      title: "Titre",
+      type: "string",
+      validation: required("Ajoutez un titre pour l'encadre.")
+    }),
+    defineField({
+      name: "text",
+      title: "Texte",
+      type: "text",
+      rows: 5,
+      validation: required("Ajoutez le texte de l'encadre.")
+    })
+  ],
+  preview: {
+    select: { title: "title", subtitle: "text" },
+    prepare: ({ title, subtitle }) => ({
+      title: title || "Encadre d'information",
+      subtitle: subtitle || "Information importante"
+    })
+  }
+});
+
+export const pageCtaBlock = defineType({
+  name: "pageCtaBlock",
+  title: "CTA - appel a l'action",
+  type: "object",
+  fields: [
+    defineField({
+      name: "title",
+      title: "Titre",
+      type: "string",
+      validation: required("Ajoutez un titre.")
+    }),
+    defineField({
+      name: "text",
+      title: "Texte",
+      type: "text",
+      rows: 4
+    }),
+    defineField({
+      name: "button",
+      title: "Bouton",
+      type: "link",
+      description: "Optionnel."
+    })
+  ],
+  preview: {
+    select: { title: "title", subtitle: "text" },
+    prepare: ({ title, subtitle }) => ({
+      title: title || "Appel a l'action",
+      subtitle: subtitle || "Titre, texte et bouton"
+    })
+  }
+});
+
+export const pageDividerBlock = defineType({
+  name: "pageDividerBlock",
+  title: "Separateur",
+  type: "object",
+  fields: [
+    defineField({
+      name: "spacing",
+      title: "Espace autour du separateur",
+      type: "string",
+      initialValue: "normal",
+      options: {
+        layout: "radio",
+        list: [
+          { title: "Normal", value: "normal" },
+          { title: "Grand", value: "large" }
+        ]
+      }
+    })
+  ],
+  preview: {
+    prepare: () => ({
+      title: "Separateur",
+      subtitle: "Ligne fine entre deux parties"
+    })
+  }
+});

@@ -94,11 +94,48 @@ export type HomePage = {
   invitationButton?: SmartLink;
 };
 
+export type PageGalleryImage = {
+  image?: string;
+  alt?: string;
+  caption?: string;
+};
+
+export type PageBlock = {
+  _key?: string;
+  _type:
+    | "pageTextBlock"
+    | "pageImageBlock"
+    | "pageGalleryBlock"
+    | "pageButtonBlock"
+    | "pagePdfBlock"
+    | "pageAudioBlock"
+    | "pageQuoteBlock"
+    | "pageInfoBlock"
+    | "pageCtaBlock"
+    | "pageDividerBlock";
+  content?: PortableTextBlock[];
+  image?: string;
+  alt?: string;
+  caption?: string;
+  images?: PageGalleryImage[];
+  link?: SmartLink;
+  button?: SmartLink;
+  style?: "primary" | "secondary";
+  title?: string;
+  text?: string;
+  fileUrl?: string;
+  buttonLabel?: string;
+  quote?: string;
+  attribution?: string;
+  spacing?: "normal" | "large";
+};
+
 export type PageContent = {
   title: string;
   slug: string;
   heroImage?: string;
   excerpt: string;
+  blocks?: PageBlock[];
   body: string | PortableTextBlock[];
   seoTitle?: string;
   seoDescription?: string;

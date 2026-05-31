@@ -1,5 +1,5 @@
-import { defineField, defineType } from "sanity";
 import { BlockElementIcon } from "@sanity/icons";
+import { defineField, defineType } from "sanity";
 import { FriendlyDocumentInput } from "../studio/components/FriendlyDocumentInput";
 import { FriendlyImageInput } from "../studio/components/FriendlyImageInput";
 
@@ -41,27 +41,48 @@ export const page = defineType({
       type: "slug",
       group: "content",
       description:
-        "Ce champ crée l’adresse web. Exemple : prayer donne /prayer. En cas de doute, ne le modifiez pas.",
+        "Ce champ cree l'adresse web. Exemple : prayer donne /prayer. En cas de doute, ne le modifiez pas.",
       options: { source: "title", maxLength: 96 },
       validation: (Rule) =>
         Rule.required().error("La page doit avoir une adresse web.")
     }),
     defineField({
       name: "excerpt",
-      title: "Petit résumé",
+      title: "Petit resume",
       type: "text",
       rows: 3,
       group: "content",
       description:
-        "Ce texte court apparaît en haut de la page et aide aussi les moteurs de recherche."
+        "Ce texte court apparait en haut de la page et aide aussi les moteurs de recherche."
     }),
     defineField({
-      name: "body",
-      title: "Texte principal",
+      name: "blocks",
+      title: "Blocs de la page",
       type: "array",
       group: "content",
       description:
-        "Écrivez le texte de la page. La barre d’outils est volontairement simple.",
+        "Cliquez sur Ajouter un bloc pour construire la page : texte, image, galerie, bouton, PDF, audio, citation, encadre, CTA ou separateur. Vous pouvez changer l'ordre par glisser-deposer, supprimer ou dupliquer un bloc.",
+      of: [
+        { type: "pageTextBlock" },
+        { type: "pageImageBlock" },
+        { type: "pageGalleryBlock" },
+        { type: "pageButtonBlock" },
+        { type: "pagePdfBlock" },
+        { type: "pageAudioBlock" },
+        { type: "pageQuoteBlock" },
+        { type: "pageInfoBlock" },
+        { type: "pageCtaBlock" },
+        { type: "pageDividerBlock" }
+      ]
+    }),
+    defineField({
+      name: "body",
+      title: "Ancien texte principal",
+      type: "array",
+      group: "content",
+      description:
+        "Ancien champ conserve pour les pages deja existantes. Pour les nouvelles pages, utilisez les blocs ci-dessus.",
+      hidden: ({ parent }) => Array.isArray(parent?.blocks) && parent.blocks.length > 0,
       of: [
         {
           type: "block",
