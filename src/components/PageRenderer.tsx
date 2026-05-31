@@ -166,9 +166,9 @@ function PageBlockRenderer({ block }: { block: PageBlock }) {
     case "pageQuoteBlock":
       return (
         <figure className="mx-auto max-w-4xl border-l-4 border-saffron py-3 pl-6">
-          <blockquote className="font-serif text-3xl leading-snug text-forest md:text-4xl">
+          <p className="whitespace-pre-line font-serif text-3xl leading-snug text-forest md:text-4xl">
             {block.quote}
-          </blockquote>
+          </p>
           {block.attribution && (
             <figcaption className="mt-4 text-sm font-bold uppercase tracking-[0.2em] text-saffron">
               {block.attribution}
