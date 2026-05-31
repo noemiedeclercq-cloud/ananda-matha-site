@@ -625,6 +625,29 @@
   position: absolute;
 }
 
+.photoDeleteButton {
+  align-items: center;
+  background: rgb(255 255 255 / 94%);
+  border: 1px solid rgb(255 255 255 / 58%);
+  border-radius: 0.65rem;
+  box-shadow: 0 12px 28px rgb(0 0 0 / 18%);
+  color: #7b2d24;
+  cursor: pointer;
+  display: inline-flex;
+  height: 2.25rem;
+  justify-content: center;
+  position: absolute;
+  right: 0.6rem;
+  top: 0.6rem;
+  width: 2.25rem;
+  z-index: 4;
+}
+
+.photoDeleteButton:hover {
+  background: #fff5ef;
+  border-color: #e2b8aa;
+}
+
 .photoOverlay span,
 .photoOverlay div {
   align-items: center;

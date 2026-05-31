@@ -299,7 +299,7 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
       }
     }));
     setDraggedPhotoId((current) => (current === id ? null : current));
-    setUploadNotice("Photo supprimée du brouillon local. Enregistrez le brouillon pour la garder supprimée après rechargement.");
+    setUploadNotice("Photo supprimée du brouillon. Enregistrez pour conserver ce changement.");
   }
 
   function addPhotoFromFile(fileName: string, image: string) {
@@ -1072,6 +1072,22 @@ function PhotoManager({
             onDrop={() => onReorderPhoto(photo.id)}
           >
             <img alt={photo.label} src={photo.image} />
+            <button
+              aria-label="Supprimer cette photo"
+              className={styles.photoDeleteButton}
+              draggable={false}
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                if (window.confirm("Supprimer cette photo du brouillon ?")) {
+                  onRemovePhoto(photo.id);
+                }
+              }}
+              onMouseDown={(event) => event.stopPropagation()}
+              type="button"
+            >
+              <Trash2 aria-hidden="true" size={16} />
+            </button>
             <div className={styles.photoOverlay}>
               <span>
                 <GripVertical aria-hidden="true" size={17} />
@@ -1089,19 +1105,6 @@ function PhotoManager({
                   type="button"
                 >
                   En premier
-                </button>
-                <button
-                  aria-label={`Supprimer ${photo.label}`}
-                  draggable={false}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    onRemovePhoto(photo.id);
-                  }}
-                  onMouseDown={(event) => event.stopPropagation()}
-                  type="button"
-                >
-                  <Trash2 aria-hidden="true" size={15} />
                 </button>
               </div>
             </div>
