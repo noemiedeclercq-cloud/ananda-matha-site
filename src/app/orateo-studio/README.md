@@ -4,17 +4,19 @@ Route locale : `/orateo-studio`
 
 ## Fonctionnel en phase 1
 
-- Navigation visuelle en français pour Accueil, Pages, Menus, Photos, Documents, Apparence, Contact et Paramètres.
+- Navigation visuelle en français pour Accueil, Pages du site, Menu principal, Galerie photos, Documents PDF, Apparence, Contact et Paramètres.
+- Page Accueil organisée en blocs repliables : Hero, Diaporama, Cartes rapides, Our Story, Citation et Contact.
 - Édition locale du titre de bienvenue, du texte d'introduction, des photos du diaporama et des boutons d'action.
-- Aperçu de la page d'accueil mis à jour en direct dans le panneau de droite.
-- Cartes rapides et section Our Story affichées sous forme modifiable pour valider l'ergonomie.
-- Badges discrets "Prototype - non connecté" sur les zones qui ne modifient pas encore Sanity.
+- Gestionnaire de photos avec ajout local, suppression locale, ordre visuel et glisser-déposer.
+- Gestionnaire de boutons avec texte, destination, couleur et activation.
+- Aperçu de la page d'accueil mis à jour en direct avec un mode aperçu large.
+- Un seul indicateur "Prototype local" dans le header.
 
 ## Données utilisées
 
 - Le prototype lit les contenus de repli existants depuis `src/lib/fallbacks.ts`.
 - Aucune modification n'est encore envoyée à Sanity.
-- Les boutons, cartes rapides, actions d'ajout/suppression et sélections de liens sont simulés en local dans le navigateur.
+- Les boutons, cartes rapides, actions d'ajout/suppression, ordre des photos et sélections de liens sont simulés en local dans le navigateur.
 
 ## Prochain branchement Sanity
 
