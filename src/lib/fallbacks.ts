@@ -56,6 +56,7 @@ export const fallbackHome: HomePage = {
   heroTitle: "Welcome to Ananda Matha Monastery",
   heroSubtitle:
     "A Cistercian Monastery in the Wayanad District of Kerala, India.",
+  heroOverlayStrength: "light",
   heroImage: monasteryImage,
   heroSlides: [
     {

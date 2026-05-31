@@ -65,6 +65,7 @@ export function mapHomeToDraft(home: HomePage): OraTeoHomeDraft {
     hero: {
       title: home.heroTitle,
       intro: home.heroSubtitle,
+      overlayStrength: home.heroOverlayStrength || "light",
       buttons: (home.heroButtons?.length ? home.heroButtons : fallbackHome.heroButtons || []).map(mapButton)
     },
     slideshow: {

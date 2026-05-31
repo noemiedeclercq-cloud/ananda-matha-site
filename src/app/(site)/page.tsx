@@ -14,6 +14,7 @@ export default async function Home() {
       <Hero
         title={home.heroTitle}
         subtitle={home.heroSubtitle}
+        overlayStrength={home.heroOverlayStrength}
         image={home.heroImage}
         slides={home.heroSlides}
         buttonLabel={home.heroButtonLabel}

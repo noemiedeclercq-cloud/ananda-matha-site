@@ -43,6 +43,8 @@ export type ActionButton = {
   style?: "primary" | "secondary";
 };
 
+export type HeroOverlayStrength = "none" | "light" | "medium" | "strong";
+
 export type NavigationItem = {
   label: string;
   url?: string;
@@ -108,6 +110,7 @@ export type HomePhotoBand = {
 export type HomePage = {
   heroTitle: string;
   heroSubtitle: string;
+  heroOverlayStrength?: HeroOverlayStrength;
   heroImage?: string;
   heroSlides?: HeroSlide[];
   heroButtonLabel: string;

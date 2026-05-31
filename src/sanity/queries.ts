@@ -7,7 +7,13 @@ import {
   fallbackPages,
   fallbackSettings
 } from "@/lib/fallbacks";
-import type { HomePage, NavigationItem, PageContent, SiteSettings } from "@/lib/types";
+import type {
+  HeroOverlayStrength,
+  HomePage,
+  NavigationItem,
+  PageContent,
+  SiteSettings
+} from "@/lib/types";
 
 const linkProjection = `{
   label,
@@ -108,6 +114,10 @@ function mapButtons(buttons: any[] | undefined, legacyLink?: any) {
   return legacyLink ? [{ enabled: true, link: legacyLink }] : [];
 }
 
+function normalizeOverlayStrength(value: unknown): HeroOverlayStrength {
+  return value === "none" || value === "medium" || value === "strong" ? value : "light";
+}
+
 function normalizeLegacyMenuUrl(url: string | undefined) {
   if (!url) return "#";
   if (url === "/") return "/";
@@ -165,7 +175,7 @@ export async function getNavigation(): Promise<NavigationItem[]> {
 
 export async function getHomePage(): Promise<HomePage> {
   const home = await fetchOrNull<Record<string, any>>(`*[_id == "homePage" && _type == "homePage"][0]{
-    heroTitle, heroSubtitle, heroImage, heroSlides[]{image, alt, caption},
+    heroTitle, heroSubtitle, heroOverlayStrength, heroImage, heroSlides[]{image, alt, caption},
     heroButtons[]${buttonProjection},
     heroButtonLabel, heroButtonLink, "heroButton": heroButton${linkProjection},
     values[]{icon, title, text},
@@ -195,6 +205,7 @@ export async function getHomePage(): Promise<HomePage> {
     ...fallbackHome,
     ...home,
     heroImage: imageUrl(home.heroImage),
+    heroOverlayStrength: normalizeOverlayStrength(home.heroOverlayStrength),
     heroSlides: mapHeroSlides(home),
     heroButtons: mapButtons(home.heroButtons, home.heroButton),
     visitingHoursImage: imageUrl(

@@ -1,4 +1,5 @@
 import type { StudioButton, StudioCard, StudioPhoto } from "../../studioData";
+import type { HeroOverlayStrength } from "@/lib/types";
 
 export type OraTeoPageSummary = {
   id: string;
@@ -44,6 +45,7 @@ export type OraTeoHomeDraft = {
   hero: {
     title: string;
     intro: string;
+    overlayStrength: HeroOverlayStrength;
     buttons: StudioButton[];
   };
   slideshow: {
