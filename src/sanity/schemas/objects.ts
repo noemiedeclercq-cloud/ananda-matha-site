@@ -427,6 +427,146 @@ export const navLink = defineType({
   }
 });
 
+export const homeStorySection = defineType({
+  name: "homeStorySection",
+  title: "Our Story",
+  type: "object",
+  fields: [
+    defineField({
+      name: "title",
+      title: "Titre",
+      type: "string",
+      initialValue: "Our Story",
+      validation: required("Ajoutez le titre de cette section.")
+    }),
+    defineField({
+      name: "subtitle",
+      title: "Petit titre",
+      type: "string",
+      description: "Optionnel."
+    }),
+    defineField({
+      name: "text",
+      title: "Texte",
+      type: "array",
+      description: "Texte principal de la section Our Story.",
+      of: [
+        {
+          type: "block",
+          styles: [
+            { title: "Paragraphe", value: "normal" },
+            { title: "Petit titre", value: "h3" }
+          ],
+          lists: [{ title: "Liste simple", value: "bullet" }],
+          marks: {
+            decorators: [
+              { title: "Gras", value: "strong" },
+              { title: "Italique", value: "em" }
+            ],
+            annotations: []
+          }
+        }
+      ]
+    }),
+    defineField({
+      name: "button",
+      title: "Bouton",
+      type: "link",
+      description: "Exemple : Read more vers la page Our Story."
+    }),
+    defineField({
+      name: "image",
+      title: "Photo",
+      type: "image",
+      options: { hotspot: true },
+      components: { field: FriendlyImageInput },
+      description: "Optionnel."
+    }),
+    defineField({
+      name: "backgroundColor",
+      title: "Couleur de fond",
+      type: "string",
+      components: { input: ColorSwatchInput },
+      description: "Optionnel. Si vide, le site utilise le vert profond."
+    }),
+    defineField({
+      name: "textColor",
+      title: "Couleur du texte",
+      type: "string",
+      components: { input: ColorSwatchInput },
+      description: "Optionnel. Gardez un bon contraste avec le fond."
+    })
+  ],
+  preview: {
+    select: { title: "title", subtitle: "subtitle", media: "image" },
+    prepare: ({ title, subtitle, media }) => ({
+      title: title || "Our Story",
+      subtitle: subtitle || "Titre, texte, image et bouton",
+      media
+    })
+  }
+});
+
+export const homePhotoBand = defineType({
+  name: "homePhotoBand",
+  title: "Bande photo",
+  type: "object",
+  fields: [
+    defineField({
+      name: "image",
+      title: "Image pleine largeur",
+      type: "image",
+      options: { hotspot: true },
+      components: { field: FriendlyImageInput },
+      validation: required("Ajoutez une image pour cette bande photo.")
+    }),
+    defineField({
+      name: "alt",
+      title: "Description de l'image",
+      type: "string",
+      description: "Courte description pour les lecteurs d'ecran.",
+      validation: (Rule) =>
+        Rule.required().warning("Ajoutez une description courte de l'image.")
+    }),
+    defineField({
+      name: "height",
+      title: "Hauteur",
+      type: "string",
+      initialValue: "medium",
+      options: {
+        layout: "radio",
+        list: [
+          { title: "Normale", value: "medium" },
+          { title: "Grande", value: "large" },
+          { title: "Tres grande", value: "xlarge" }
+        ]
+      }
+    }),
+    defineField({
+      name: "overlay",
+      title: "Assombrir legerement l'image",
+      type: "boolean",
+      initialValue: false,
+      description:
+        "Optionnel. Utile seulement si une legende doit rester lisible sur l'image."
+    }),
+    defineField({
+      name: "caption",
+      title: "Legende",
+      type: "string",
+      description: "Optionnel."
+    })
+  ],
+  preview: {
+    select: { title: "caption", subtitle: "alt", media: "image" },
+    prepare: ({ title, subtitle, media }) => ({
+      title: title || "Bande photo",
+      subtitle: subtitle || "Image pleine largeur",
+      media
+    })
+  }
+});
+
 export const pageTextBlock = defineType({
   name: "pageTextBlock",
   title: "Texte",

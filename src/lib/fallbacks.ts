@@ -149,6 +149,29 @@ export const fallbackHome: HomePage = {
       }
     }
   ],
+  story: {
+    title: "Our Story",
+    subtitle: "A Cistercian community in the hills of Wayanad",
+    text:
+      "Ananda Matha Ashram was founded as a place of prayer, silence, work, and hospitality. Rooted in the Cistercian tradition, the community seeks God in the ordinary rhythm of monastic life and welcomes guests into a peaceful home.",
+    image: monasteryImage,
+    backgroundColor: "#173f2d",
+    textColor: "#ffffff",
+    button: {
+      label: "Read more",
+      type: "internal",
+      internalPage: { title: "History", slug: "history" }
+    }
+  },
+  photoBands: [
+    {
+      image: prayerImage,
+      alt: "The hills of Wayanad around Ananda Matha Monastery",
+      height: "large",
+      overlay: false,
+      caption: "Wayanad, Kerala"
+    }
+  ],
   visitingHoursTitle: "Visiting Hours",
   visitingHoursContent:
     "Mon - Fri: 8am-8pm\nSaturday: 9am-7pm\nSunday: 9am-8pm\n\nFor retreat stays or the hermitage, please contact the monastery before visiting.",

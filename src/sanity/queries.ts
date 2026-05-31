@@ -144,6 +144,11 @@ export async function getHomePage(): Promise<HomePage> {
       "audioUrl": audio.asset->url,
       linkLabel, link, "button": button${linkProjection}
     },
+    story{
+      title, subtitle, text${portableTextProjection}, button${linkProjection},
+      image, backgroundColor, textColor
+    },
+    photoBands[]{image, alt, height, overlay, caption},
     visitingHoursTitle, visitingHoursContent, visitingHoursImage,
     invitationText, invitationButtonLabel, invitationButtonLink,
     "invitationButton": invitationButton${linkProjection}
@@ -169,6 +174,18 @@ export async function getHomePage(): Promise<HomePage> {
       home.visitingHoursImage,
       fallbackHome.visitingHoursImage
     ),
+    story: {
+      ...fallbackHome.story,
+      ...home.story,
+      image: imageUrl(home.story?.image, fallbackHome.story?.image)
+    },
+    photoBands: (home.photoBands?.length
+      ? home.photoBands
+      : fallbackHome.photoBands
+    )?.map((band: any, index: number) => ({
+      ...band,
+      image: imageUrl(band.image, fallbackHome.photoBands?.[index]?.image)
+    })),
     cards: (home.cards?.length ? home.cards : fallbackHome.cards).map(
       (card: any, index: number) => ({
         ...fallbackHome.cards[index % fallbackHome.cards.length],

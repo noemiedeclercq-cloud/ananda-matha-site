@@ -12,10 +12,13 @@ export const homePage = defineType({
   icon: HomeIcon,
   components: { input: FriendlyDocumentInput },
   groups: [
-    { name: "hero", title: "Diaporama d'accueil", default: true },
+    { name: "hero", title: "Grande photo d'accueil", default: true },
     { name: "values", title: "Trois phrases" },
-    { name: "cards", title: "Cartes retournables" },
-    { name: "visit", title: "Horaires et invitation" }
+    { name: "cards", title: "Cartes Prayer / Work / Community / Hospitality" },
+    { name: "story", title: "Our Story" },
+    { name: "bands", title: "Bandes photos" },
+    { name: "cta", title: "CTA final" },
+    { name: "legacy", title: "Anciens horaires", hidden: true }
   ],
   fields: [
     defineField({
@@ -106,7 +109,8 @@ export const homePage = defineType({
       name: "visitingHoursTitle",
       title: "Titre de la section horaires",
       type: "string",
-      group: "visit",
+      group: "legacy",
+      hidden: true,
       initialValue: "Visiting Hours"
     }),
     defineField({
@@ -114,7 +118,8 @@ export const homePage = defineType({
       title: "Horaires d'ouverture",
       type: "text",
       rows: 6,
-      group: "visit",
+      group: "legacy",
+      hidden: true,
       components: { input: ScheduleTextInput }
     }),
     defineField({
@@ -122,27 +127,46 @@ export const homePage = defineType({
       title: "Photo pres des horaires",
       type: "image",
       options: { hotspot: true },
-      group: "visit",
+      group: "legacy",
+      hidden: true,
       components: { field: FriendlyImageInput }
+    }),
+    defineField({
+      name: "story",
+      title: "Section Our Story",
+      type: "homeStorySection",
+      group: "story",
+      description:
+        "Grand bloc visuel avec titre, texte, bouton et photo optionnelle."
+    }),
+    defineField({
+      name: "photoBands",
+      title: "Bandes photos pleine largeur",
+      type: "array",
+      group: "bands",
+      description:
+        "Ajoutez des paysages ou photos horizontales entre les sections de la page d'accueil.",
+      of: [{ type: "homePhotoBand" }],
+      components: { input: VisualArrayInput }
     }),
     defineField({
       name: "invitationText",
       title: "Phrase d'invitation",
       type: "text",
       rows: 3,
-      group: "visit"
+      group: "cta"
     }),
     defineField({
       name: "invitationButton",
       title: "Bouton d'invitation",
       type: "link",
-      group: "visit"
+      group: "cta"
     }),
     defineField({
       name: "invitationButtonLabel",
       title: "Ancien texte du bouton d'invitation",
       type: "string",
-      group: "visit",
+      group: "legacy",
       readOnly: true,
       hidden: true
     }),
@@ -150,7 +174,7 @@ export const homePage = defineType({
       name: "invitationButtonLink",
       title: "Ancien lien du bouton d'invitation",
       type: "string",
-      group: "visit",
+      group: "legacy",
       readOnly: true,
       hidden: true
     })

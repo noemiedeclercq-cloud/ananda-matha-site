@@ -75,6 +75,24 @@ export type HeroSlide = {
   caption?: string;
 };
 
+export type HomeStory = {
+  title?: string;
+  subtitle?: string;
+  text?: PortableTextBlock[] | string;
+  button?: SmartLink;
+  image?: string;
+  backgroundColor?: string;
+  textColor?: string;
+};
+
+export type HomePhotoBand = {
+  image?: string;
+  alt?: string;
+  height?: "medium" | "large" | "xlarge";
+  overlay?: boolean;
+  caption?: string;
+};
+
 export type HomePage = {
   heroTitle: string;
   heroSubtitle: string;
@@ -85,6 +103,8 @@ export type HomePage = {
   heroButton?: SmartLink;
   values: ValueItem[];
   cards: HomeCard[];
+  story?: HomeStory;
+  photoBands?: HomePhotoBand[];
   visitingHoursTitle: string;
   visitingHoursContent: string;
   visitingHoursImage?: string;
