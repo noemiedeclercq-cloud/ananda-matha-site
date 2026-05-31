@@ -28,44 +28,18 @@ import {
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
-import { fallbackHome, fallbackSettings } from "@/lib/fallbacks";
+import { fallbackSettings } from "@/lib/fallbacks";
 import styles from "./orateo-studio.module.css";
 import {
   editablePages,
   menuItems,
-  studioButtons,
-  studioCards,
-  studioPhotos,
   type StudioButton,
+  type StudioCard,
   type StudioPhoto
 } from "./studioData";
+import type { OraTeoHomeDraft, OraTeoStudioData } from "./services/sanity/types";
 
 type BlockKey = "hero" | "slideshow" | "cards" | "story" | "quote" | "contact";
-
-type StudioHomeDraft = {
-  hero: {
-    title: string;
-    intro: string;
-    buttons: StudioButton[];
-  };
-  slideshow: {
-    photos: StudioPhoto[];
-  };
-  cards: typeof studioCards;
-  story: {
-    title: string;
-    text: string;
-    image: string;
-  };
-  quote: {
-    text: string;
-    signature: string;
-  };
-  contact: {
-    message: string;
-    buttonLabel: string;
-  };
-};
 
 const sections = [
   { label: "Accueil", icon: Home },
@@ -122,40 +96,9 @@ const blockMeta: Array<{
   }
 ];
 
-const introduction =
-  "A Cistercian monastery in Kerala, India.\nA place of prayer, silence and hospitality.\nAll are welcome.";
-
 const draftStorageKey = "orateo-studio-home-draft-v1";
 
-const initialDraft: StudioHomeDraft = {
-  hero: {
-    title: fallbackHome.heroTitle,
-    intro: introduction,
-    buttons: studioButtons
-  },
-  slideshow: {
-    photos: studioPhotos
-  },
-  cards: studioCards,
-  story: {
-    title: fallbackHome.story?.title ?? "Our Story",
-    text:
-      typeof fallbackHome.story?.text === "string"
-        ? fallbackHome.story.text
-        : "A place of prayer and peace, rooted in the Cistercian tradition.",
-    image: fallbackHome.story?.image ?? "/images/monastery-hero.svg"
-  },
-  quote: {
-    text: "In silence, we listen. In prayer, we unite.",
-    signature: "Ananda Matha Monastery"
-  },
-  contact: {
-    message: fallbackHome.invitationText,
-    buttonLabel: fallbackHome.invitationButtonLabel
-  }
-};
-
-function readStoredDraft(): StudioHomeDraft | null {
+function readStoredDraft(baseDraft: OraTeoHomeDraft): OraTeoHomeDraft | null {
   if (typeof window === "undefined") {
     return null;
   }
@@ -166,31 +109,31 @@ function readStoredDraft(): StudioHomeDraft | null {
       return null;
     }
 
-    const parsed = JSON.parse(stored) as Partial<StudioHomeDraft>;
+    const parsed = JSON.parse(stored) as Partial<OraTeoHomeDraft>;
 
     return {
-      ...initialDraft,
+      ...baseDraft,
       ...parsed,
-      hero: { ...initialDraft.hero, ...parsed.hero },
-      slideshow: { ...initialDraft.slideshow, ...parsed.slideshow },
-      story: { ...initialDraft.story, ...parsed.story },
-      quote: { ...initialDraft.quote, ...parsed.quote },
-      contact: { ...initialDraft.contact, ...parsed.contact },
-      cards: parsed.cards ?? initialDraft.cards
+      hero: { ...baseDraft.hero, ...parsed.hero },
+      slideshow: { ...baseDraft.slideshow, ...parsed.slideshow },
+      story: { ...baseDraft.story, ...parsed.story },
+      quote: { ...baseDraft.quote, ...parsed.quote },
+      contact: { ...baseDraft.contact, ...parsed.contact },
+      cards: parsed.cards ?? baseDraft.cards
     };
   } catch {
     return null;
   }
 }
 
-function draftsMatch(first: StudioHomeDraft, second: StudioHomeDraft) {
+function draftsMatch(first: OraTeoHomeDraft, second: OraTeoHomeDraft) {
   return JSON.stringify(first) === JSON.stringify(second);
 }
 
-export function OraTeoStudioPrototype() {
+export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStudioData }) {
   const [activeSection, setActiveSection] = useState("Accueil");
-  const [draft, setDraft] = useState<StudioHomeDraft>(initialDraft);
-  const [savedDraft, setSavedDraft] = useState<StudioHomeDraft>(initialDraft);
+  const [draft, setDraft] = useState<OraTeoHomeDraft>(initialData.home);
+  const [savedDraft, setSavedDraft] = useState<OraTeoHomeDraft>(initialData.home);
   const [lastSavedLabel, setLastSavedLabel] = useState("Brouillon initial");
   const [draggedPhotoId, setDraggedPhotoId] = useState<string | null>(null);
   const [previewWide, setPreviewWide] = useState(false);
@@ -204,16 +147,16 @@ export function OraTeoStudioPrototype() {
   });
 
   useEffect(() => {
-    const storedDraft = readStoredDraft();
+    const storedDraft = readStoredDraft(initialData.home);
     if (storedDraft) {
       setDraft(storedDraft);
       setSavedDraft(storedDraft);
       setLastSavedLabel("Brouillon restauré");
     }
-  }, []);
+  }, [initialData.home]);
 
   const hasUnsavedChanges = !draftsMatch(draft, savedDraft);
-  const heroPhoto = draft.slideshow.photos[0]?.image ?? fallbackHome.heroImage ?? "/images/monastery-hero.svg";
+  const heroPhoto = draft.slideshow.photos[0]?.image ?? "/images/monastery-hero.svg";
   const enabledButtons = useMemo(
     () => draft.hero.buttons.filter((button) => button.enabled),
     [draft.hero.buttons]
@@ -326,7 +269,7 @@ export function OraTeoStudioPrototype() {
     });
   }
 
-  function updateHero(next: Partial<StudioHomeDraft["hero"]>) {
+  function updateHero(next: Partial<OraTeoHomeDraft["hero"]>) {
     setDraft((current) => ({
       ...current,
       hero: {
@@ -336,7 +279,7 @@ export function OraTeoStudioPrototype() {
     }));
   }
 
-  function updateStory(next: Partial<StudioHomeDraft["story"]>) {
+  function updateStory(next: Partial<OraTeoHomeDraft["story"]>) {
     setDraft((current) => ({
       ...current,
       story: {
@@ -346,7 +289,7 @@ export function OraTeoStudioPrototype() {
     }));
   }
 
-  function updateQuote(next: Partial<StudioHomeDraft["quote"]>) {
+  function updateQuote(next: Partial<OraTeoHomeDraft["quote"]>) {
     setDraft((current) => ({
       ...current,
       quote: {
@@ -356,7 +299,7 @@ export function OraTeoStudioPrototype() {
     }));
   }
 
-  function updateContact(next: Partial<StudioHomeDraft["contact"]>) {
+  function updateContact(next: Partial<OraTeoHomeDraft["contact"]>) {
     setDraft((current) => ({
       ...current,
       contact: {
@@ -431,7 +374,9 @@ export function OraTeoStudioPrototype() {
       <section className={styles.workspace}>
         <header className={styles.topbar}>
           <div className={styles.headerTitle}>
-            <span className={styles.localBadge}>🟡 Prototype local</span>
+            <span className={initialData.source === "sanity" ? styles.connectedBadge : styles.localBadge}>
+              {initialData.source === "sanity" ? "🟢 Connecté à Sanity" : "🟡 Données de démonstration"}
+            </span>
             <h1>Ananda Matha Monastery</h1>
             <p>Un espace simple pour préparer les changements du site.</p>
           </div>
@@ -459,11 +404,11 @@ export function OraTeoStudioPrototype() {
             </button>
             <button
               className={styles.publishAction}
-              onClick={() => console.log("Publication simulée depuis OraTeo Studio")}
+              disabled
               type="button"
             >
               <UploadCloud aria-hidden="true" size={17} />
-              Publier les changements
+              Publication désactivée
             </button>
           </div>
         </header>
@@ -481,55 +426,59 @@ export function OraTeoStudioPrototype() {
               </div>
             </div>
 
-            <div className={styles.blockStack}>
-              {blockMeta.map((block) => (
-                <StudioBlock
-                  icon={block.icon}
-                  isOpen={openBlocks[block.key]}
-                  key={block.key}
-                  onToggle={() => toggleBlock(block.key)}
-                  summary={block.summary}
-                  title={block.title}
-                >
-                  {block.key === "hero" && (
-                    <HeroEditor
-                      buttons={draft.hero.buttons}
-                      intro={draft.hero.intro}
-                      onAddButton={addButton}
-                      onRemoveButton={removeButton}
-                      onSetIntro={(intro) => updateHero({ intro })}
-                      onSetTitle={(title) => updateHero({ title })}
-                      onUpdateButton={updateButton}
-                      title={draft.hero.title}
-                    />
-                  )}
+            {activeSection === "Accueil" ? (
+              <div className={styles.blockStack}>
+                {blockMeta.map((block) => (
+                  <StudioBlock
+                    icon={block.icon}
+                    isOpen={openBlocks[block.key]}
+                    key={block.key}
+                    onToggle={() => toggleBlock(block.key)}
+                    summary={block.summary}
+                    title={block.title}
+                  >
+                    {block.key === "hero" && (
+                      <HeroEditor
+                        buttons={draft.hero.buttons}
+                        intro={draft.hero.intro}
+                        onAddButton={addButton}
+                        onRemoveButton={removeButton}
+                        onSetIntro={(intro) => updateHero({ intro })}
+                        onSetTitle={(title) => updateHero({ title })}
+                        onUpdateButton={updateButton}
+                        title={draft.hero.title}
+                      />
+                    )}
 
-                  {block.key === "slideshow" && (
-                    <PhotoManager
-                      draggedPhotoId={draggedPhotoId}
-                      onAddPhoto={addPhoto}
-                      onDragEnd={() => setDraggedPhotoId(null)}
-                      onDragStart={setDraggedPhotoId}
-                      onMoveToStart={movePhotoToStart}
-                      onRemovePhoto={removePhoto}
-                      onReorderPhoto={reorderPhoto}
-                      photos={draft.slideshow.photos}
-                    />
-                  )}
+                    {block.key === "slideshow" && (
+                      <PhotoManager
+                        draggedPhotoId={draggedPhotoId}
+                        onAddPhoto={addPhoto}
+                        onDragEnd={() => setDraggedPhotoId(null)}
+                        onDragStart={setDraggedPhotoId}
+                        onMoveToStart={movePhotoToStart}
+                        onRemovePhoto={removePhoto}
+                        onReorderPhoto={reorderPhoto}
+                        photos={draft.slideshow.photos}
+                      />
+                    )}
 
-                  {block.key === "cards" && <QuickCardsEditor />}
-                  {block.key === "story" && (
-                    <StoryEditor onUpdate={updateStory} story={draft.story} />
-                  )}
-                  {block.key === "quote" && (
-                    <QuoteEditor onUpdate={updateQuote} quote={draft.quote} />
-                  )}
-                  {block.key === "contact" && (
-                    <ContactEditor contact={draft.contact} onUpdate={updateContact} />
-                  )}
-                </StudioBlock>
-              ))}
-            </div>
+                    {block.key === "cards" && <QuickCardsEditor cards={draft.cards} />}
+                    {block.key === "story" && (
+                      <StoryEditor onUpdate={updateStory} story={draft.story} />
+                    )}
+                    {block.key === "quote" && (
+                      <QuoteEditor onUpdate={updateQuote} quote={draft.quote} />
+                    )}
+                    {block.key === "contact" && (
+                      <ContactEditor contact={draft.contact} onUpdate={updateContact} />
+                    )}
+                  </StudioBlock>
+                ))}
+              </div>
+            ) : (
+              <ReadOnlySection activeSection={activeSection} data={initialData} />
+            )}
           </section>
 
           <aside className={styles.previewPanel} aria-label="Aperçu de l'accueil">
@@ -556,8 +505,10 @@ export function OraTeoStudioPrototype() {
             </div>
             <HomepagePreview
               buttons={enabledButtons}
+              cards={draft.cards}
               heroPhoto={heroPhoto}
               intro={draft.hero.intro}
+              story={draft.story}
               title={draft.hero.title}
             />
           </aside>
@@ -786,10 +737,10 @@ function PhotoManager({
   );
 }
 
-function QuickCardsEditor() {
+function QuickCardsEditor({ cards }: { cards: StudioCard[] }) {
   return (
     <div className={styles.quickEditorGrid}>
-      {studioCards.map((card) => (
+      {cards.map((card) => (
         <article key={card.id}>
           <img alt="" src={card.image} />
           <div>
@@ -809,8 +760,8 @@ function StoryEditor({
   onUpdate,
   story
 }: {
-  onUpdate: (next: Partial<StudioHomeDraft["story"]>) => void;
-  story: StudioHomeDraft["story"];
+  onUpdate: (next: Partial<OraTeoHomeDraft["story"]>) => void;
+  story: OraTeoHomeDraft["story"];
 }) {
   return (
     <div className={styles.storyEditor}>
@@ -840,8 +791,8 @@ function QuoteEditor({
   onUpdate,
   quote
 }: {
-  onUpdate: (next: Partial<StudioHomeDraft["quote"]>) => void;
-  quote: StudioHomeDraft["quote"];
+  onUpdate: (next: Partial<OraTeoHomeDraft["quote"]>) => void;
+  quote: OraTeoHomeDraft["quote"];
 }) {
   return (
     <div className={styles.simplePanel}>
@@ -864,8 +815,8 @@ function ContactEditor({
   contact,
   onUpdate
 }: {
-  contact: StudioHomeDraft["contact"];
-  onUpdate: (next: Partial<StudioHomeDraft["contact"]>) => void;
+  contact: OraTeoHomeDraft["contact"];
+  onUpdate: (next: Partial<OraTeoHomeDraft["contact"]>) => void;
 }) {
   return (
     <div className={styles.simplePanel}>
@@ -887,15 +838,219 @@ function ContactEditor({
   );
 }
 
+function ReadOnlySection({
+  activeSection,
+  data
+}: {
+  activeSection: string;
+  data: OraTeoStudioData;
+}) {
+  if (activeSection === "Pages du site") {
+    return (
+      <div className={styles.readOnlyPanel}>
+        <SectionIntro
+          title="Pages du site"
+          text="Liste consultable des pages actuellement connues par OraTeo Studio."
+        />
+        <div className={styles.pageList}>
+          {data.pages.map((page) => (
+            <article key={page.id}>
+              <div>
+                <strong>{page.title}</strong>
+                <span>{page.addressLabel}</span>
+              </div>
+              <div>
+                <span className={page.status === "Publié" ? styles.statusPill : styles.draftPill}>
+                  {page.status}
+                </span>
+                <small>Mis à jour : {page.updatedAt}</small>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (activeSection === "Menu principal") {
+    return (
+      <div className={styles.readOnlyPanel}>
+        <SectionIntro
+          title="Menu principal"
+          text="Structure actuelle du menu, dans l'ordre visible sur le site."
+        />
+        <div className={styles.menuTree}>
+          {data.menu.map((item) => (
+            <MenuTreeItem item={item} key={item.id} />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (activeSection === "Galerie photos") {
+    return (
+      <div className={styles.readOnlyPanel}>
+        <SectionIntro
+          title="Galerie photos"
+          text="Photos déjà disponibles. L'ajout d'images viendra dans une prochaine étape."
+        />
+        <div className={styles.galleryGrid}>
+          {data.gallery.length ? (
+            data.gallery.map((image) => (
+              <article key={image.id}>
+                <img alt="" src={image.image} />
+                <strong>{image.title}</strong>
+                {image.caption ? <span>{image.caption}</span> : null}
+              </article>
+            ))
+          ) : (
+            <EmptyState text="Aucune photo de galerie trouvée pour le moment." />
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if (activeSection === "Documents PDF") {
+    return (
+      <div className={styles.readOnlyPanel}>
+        <SectionIntro
+          title="Documents PDF"
+          text="Documents repérés dans les pages du site. Modification et ajout viendront plus tard."
+        />
+        <div className={styles.documentList}>
+          {data.pdfs.length ? (
+            data.pdfs.map((pdf) => (
+              <article key={pdf.id}>
+                <FileText aria-hidden="true" size={20} />
+                <div>
+                  <strong>{pdf.title}</strong>
+                  <span>{pdf.fileName}</span>
+                </div>
+                <small>{pdf.pageTitle ? `Page : ${pdf.pageTitle}` : "Page non indiquée"}</small>
+              </article>
+            ))
+          ) : (
+            <EmptyState text="Aucun PDF trouvé pour le moment." />
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  if (activeSection === "Apparence") {
+    return (
+      <div className={styles.readOnlyPanel}>
+        <SectionIntro
+          title="Apparence"
+          text="Couleurs actuellement utilisées par l'identité visuelle."
+        />
+        <div className={styles.colorGrid}>
+          {data.colors.map((color) => (
+            <article key={color.label}>
+              <span style={{ backgroundColor: color.value }} />
+              <div>
+                <strong>{color.label}</strong>
+                <small>{color.value}</small>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (activeSection === "Contact") {
+    return (
+      <div className={styles.readOnlyPanel}>
+        <SectionIntro
+          title="Contact"
+          text="Coordonnées actuellement affichées ou utilisées par le site."
+        />
+        <div className={styles.contactGrid}>
+          <article>
+            <strong>Email</strong>
+            <span>{data.contact.email || "Non renseigné"}</span>
+          </article>
+          <article>
+            <strong>Téléphone</strong>
+            <span>{data.contact.phone || "Non renseigné"}</span>
+          </article>
+          <article>
+            <strong>Adresse</strong>
+            <span>{data.contact.address || "Non renseignée"}</span>
+          </article>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.readOnlyPanel}>
+      <SectionIntro
+        title="Paramètres"
+        text="Résumé de la connexion et des contenus consultés par OraTeo Studio."
+      />
+      <div className={styles.documentList}>
+        {data.documentsUsed.map((documentName) => (
+          <article key={documentName}>
+            <CheckCircle2 aria-hidden="true" size={20} />
+            <div>
+              <strong>{documentName}</strong>
+              <span>Lecture seule</span>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SectionIntro({ text, title }: { text: string; title: string }) {
+  return (
+    <div className={styles.sectionIntro}>
+      <h3>{title}</h3>
+      <p>{text}</p>
+    </div>
+  );
+}
+
+function EmptyState({ text }: { text: string }) {
+  return <div className={styles.emptyState}>{text}</div>;
+}
+
+function MenuTreeItem({ item }: { item: OraTeoStudioData["menu"][number] }) {
+  return (
+    <article>
+      <div>
+        <strong>{item.order}. {item.label}</strong>
+        {item.children.length ? <span>{item.children.length} sous-page(s)</span> : null}
+      </div>
+      {item.children.length ? (
+        <div className={styles.menuChildren}>
+          {item.children.map((child) => (
+            <MenuTreeItem item={child} key={child.id} />
+          ))}
+        </div>
+      ) : null}
+    </article>
+  );
+}
+
 function HomepagePreview({
   buttons,
+  cards,
   heroPhoto,
   intro,
+  story,
   title
 }: {
   buttons: StudioButton[];
+  cards: StudioCard[];
   heroPhoto: string;
   intro: string;
+  story: OraTeoHomeDraft["story"];
   title: string;
 }) {
   return (
@@ -937,7 +1092,7 @@ function HomepagePreview({
           <p>Mettez en avant les pages importantes.</p>
         </div>
         <div className={styles.previewCards}>
-          {studioCards.map((card) => (
+          {cards.map((card) => (
             <article key={card.id}>
               <img alt="" src={card.image} />
               <strong>{card.title}</strong>
@@ -953,11 +1108,8 @@ function HomepagePreview({
           <p>Présentez l'histoire et la mission du monastère.</p>
         </div>
         <div className={styles.storyPreviewRow}>
-          <img alt="" src={fallbackHome.story?.image ?? "/images/monastery-hero.svg"} />
-          <p>
-            A place of prayer and peace, rooted in the Cistercian tradition, where we seek God
-            in simplicity, community and service.
-          </p>
+          <img alt="" src={story.image} />
+          <p>{story.text}</p>
         </div>
       </section>
     </div>

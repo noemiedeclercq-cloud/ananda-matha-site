@@ -12,13 +12,17 @@ Route locale : `/orateo-studio`
 - Aperçu de la page d'accueil mis à jour en direct avec un mode aperçu large.
 - Un seul indicateur "Prototype local" dans le header.
 - Brouillon local conservé dans le navigateur : enregistrer, annuler les changements et restaurer au rechargement.
+- Lecture seule Sanity quand le projet est configuré : accueil, pages, menu, galerie, PDF, couleurs et contact.
+- Indicateur de source : "Connecté à Sanity" ou "Données de démonstration".
 
 ## Données utilisées
 
 - Le prototype lit les contenus de repli existants depuis `src/lib/fallbacks.ts`.
+- Quand Sanity est configuré, le prototype lit les documents existants via `services/sanity/readOnly.ts`.
 - Aucune modification n'est encore envoyée à Sanity.
 - Les boutons, cartes rapides, actions d'ajout/suppression, ordre des photos et sélections de liens sont simulés en local dans le navigateur.
 - Le brouillon local est sauvegardé temporairement dans `localStorage`, sans modifier le site public.
+- La publication est désactivée dans cette étape.
 
 ## Prochain branchement Sanity
 
