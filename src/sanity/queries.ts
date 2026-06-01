@@ -101,7 +101,7 @@ function mapHeroSlides(home: Record<string, any>) {
     return [
       {
         image: legacyHeroImage,
-        alt: home.heroTitle || "Ananda Matha Monastery"
+        alt: home.heroTitle || fallbackHome.heroTitle
       }
     ];
   }

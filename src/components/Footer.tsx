@@ -11,14 +11,13 @@ export function Footer({
   navigation: NavigationItem[];
 }) {
   const year = new Date().getFullYear();
-  const menuItems = navigation
-    .map((item) => ({
-      item,
-      resolved: resolveLink(item.link, {
-        href: item.url,
-        label: item.label
-      })
-    }));
+  const menuItems = navigation.map((item) => ({
+    item,
+    resolved: resolveLink(item.link, {
+      href: item.url,
+      label: item.label
+    })
+  }));
 
   return (
     <footer className="border-t border-saffron/20 bg-forest text-cream">
@@ -35,19 +34,17 @@ export function Footer({
         <div>
           <p className="footer-title">Explore</p>
           <div className="mt-4 grid grid-cols-2 gap-2 text-sm text-cream/75">
-            {menuItems.map(({ item, resolved }) => {
-              return (
-                <Link
-                  key={`${item.label}-${resolved.href}`}
-                  href={resolved.href}
-                  target={resolved.target}
-                  rel={resolved.rel}
-                  className="hover:text-white"
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
+            {menuItems.map(({ item, resolved }) => (
+              <Link
+                key={`${item.label}-${resolved.href}`}
+                href={resolved.href}
+                target={resolved.target}
+                rel={resolved.rel}
+                className="hover:text-white"
+              >
+                {item.label}
+              </Link>
+            ))}
           </div>
         </div>
 
@@ -96,7 +93,7 @@ export function Footer({
         </div>
       </div>
       <div className="border-t border-white/10 px-6 py-5 text-center text-xs text-cream/60">
-        ©{year} by Ananda Matha Ashram Monastery
+        ©{year} {settings.siteTitle}
       </div>
     </footer>
   );

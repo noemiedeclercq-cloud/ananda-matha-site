@@ -217,13 +217,11 @@ export function PageRenderer({ page }: { page: PageContent }) {
             alt=""
             fill
             sizes="100vw"
-            className="object-cover opacity-35"
+            className="object-cover"
           />
         )}
-        <div className="absolute inset-0 bg-forest/65" />
-        <div className="relative mx-auto max-w-5xl">
-          <p className="eyebrow text-cream/80">Ananda Matha Monastery</p>
-          <h1 className="mt-4 font-serif text-5xl font-semibold md:text-7xl">
+        <div className="relative mx-auto max-w-5xl drop-shadow-[0_2px_18px_rgba(0,0,0,0.45)]">
+          <h1 className="font-serif text-5xl font-semibold md:text-7xl">
             {page.title}
           </h1>
           {page.excerpt && (

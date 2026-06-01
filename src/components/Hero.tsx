@@ -3,33 +3,20 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { ButtonList, legacyButton } from "@/components/ButtonList";
-import type { ActionButton, HeroOverlayStrength, HeroSlide, SmartLink } from "@/lib/types";
-
-const overlayBackgrounds: Record<HeroOverlayStrength, string | null> = {
-  none: null,
-  light: "linear-gradient(90deg, rgba(13,53,37,0.26), rgba(13,53,37,0.12), rgba(13,53,37,0.04))",
-  medium: "linear-gradient(90deg, rgba(13,53,37,0.52), rgba(13,53,37,0.28), rgba(13,53,37,0.10))",
-  strong: "linear-gradient(90deg, rgba(13,53,37,0.78), rgba(13,53,37,0.46), rgba(13,53,37,0.20))"
-};
+import type { ActionButton, HeroSlide, SmartLink } from "@/lib/types";
 
 export function Hero({
   title,
   subtitle,
   image,
   slides,
-  buttonLabel,
-  buttonLink,
   button,
-  buttons,
-  overlayStrength = "light"
+  buttons
 }: {
   title: string;
   subtitle: string;
-  overlayStrength?: HeroOverlayStrength;
   image?: string;
   slides?: HeroSlide[];
-  buttonLabel: string;
-  buttonLink: string;
   button?: SmartLink;
   buttons?: ActionButton[];
 }) {
@@ -39,7 +26,6 @@ export function Hero({
   }, [image, slides]);
   const [activeIndex, setActiveIndex] = useState(0);
   const heroButtons = buttons?.length ? buttons : legacyButton(button);
-  const overlayBackground = overlayBackgrounds[overlayStrength] ?? overlayBackgrounds.light;
 
   useEffect(() => {
     setActiveIndex(0);
@@ -70,12 +56,8 @@ export function Hero({
           }`}
         />
       ))}
-      {overlayBackground ? (
-        <div className="absolute inset-0" style={{ background: overlayBackground }} />
-      ) : null}
       <div className="relative mx-auto flex min-h-[calc(100vh-81px)] max-w-7xl items-center px-6 py-20 lg:px-8">
         <div className="max-w-3xl">
-          <p className="eyebrow text-cream/80">In the heart of Kerala</p>
           <h1 className="mt-5 font-serif text-5xl font-semibold leading-[0.98] md:text-7xl">
             {title}
           </h1>

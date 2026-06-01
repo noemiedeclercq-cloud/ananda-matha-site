@@ -14,11 +14,8 @@ export default async function Home() {
       <Hero
         title={home.heroTitle}
         subtitle={home.heroSubtitle}
-        overlayStrength={home.heroOverlayStrength}
         image={home.heroImage}
         slides={home.heroSlides}
-        buttonLabel={home.heroButtonLabel}
-        buttonLink={home.heroButtonLink}
         button={home.heroButton}
         buttons={home.heroButtons}
       />
@@ -28,8 +25,6 @@ export default async function Home() {
       <HomeStory story={home.story} />
       <CTASection
         text={home.invitationText}
-        buttonLabel={home.invitationButtonLabel}
-        buttonLink={home.invitationButtonLink}
         button={home.invitationButton}
         buttons={home.invitationButtons}
       />

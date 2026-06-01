@@ -47,24 +47,6 @@ export const homePage = defineType({
         Rule.min(1).warning("Ajoutez au moins une photo pour eviter un haut de page vide.")
     }),
     defineField({
-      name: "heroOverlayStrength",
-      title: "Voile sur la photo",
-      description:
-        "Choisissez l'intensite du voile pose sur la grande photo pour garder le titre lisible.",
-      type: "string",
-      group: "hero",
-      initialValue: "light",
-      options: {
-        layout: "radio",
-        list: [
-          { title: "Aucun", value: "none" },
-          { title: "Leger", value: "light" },
-          { title: "Moyen", value: "medium" },
-          { title: "Fort", value: "strong" }
-        ]
-      }
-    }),
-    defineField({
       name: "heroButtons",
       title: "Boutons",
       type: "array",
@@ -138,7 +120,7 @@ export const homePage = defineType({
     select: { title: "heroTitle", subtitle: "heroSubtitle", media: "heroSlides.0.image" },
     prepare: ({ title, subtitle, media }) => ({
       title: title || "Page d'accueil",
-      subtitle: subtitle || "Diaporama, phrases, cartes et horaires",
+      subtitle: subtitle || "Diaporama, phrases, cartes, Our Story et CTA",
       media
     })
   }

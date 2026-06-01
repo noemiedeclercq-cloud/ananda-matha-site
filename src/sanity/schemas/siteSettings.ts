@@ -59,7 +59,7 @@ export const siteSettings = defineType({
       type: "string",
       group: "contact",
       validation: (Rule) =>
-        Rule.email().warning("Vérifiez que l’adresse email est correcte.")
+        Rule.email().warning("Vérifiez que l'adresse email est correcte.")
     }),
     defineField({
       name: "phone",
@@ -78,7 +78,7 @@ export const siteSettings = defineType({
       name: "theme",
       title: "Couleurs du site",
       description:
-        "Ces couleurs servent à garder l’identité visuelle : crème, safran, vert profond et bleu Ashoka.",
+        "Ces couleurs servent à garder l'identité visuelle : crème, safran, vert profond et bleu Ashoka.",
       type: "object",
       group: "colors",
       options: { collapsible: true, collapsed: false },
@@ -172,7 +172,7 @@ export const siteSettings = defineType({
               title: "Destination",
               type: "link",
               description:
-                "Choisissez la destination sans coder : page interne, URL externe, PDF, email ou telephone.",
+                "Choisissez la destination sans coder : page interne, URL externe, PDF, email ou téléphone.",
               validation: (Rule) =>
                 Rule.required().error("Choisissez la destination de ce lien.")
             })

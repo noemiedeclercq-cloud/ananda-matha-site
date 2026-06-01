@@ -3,14 +3,10 @@ import type { ActionButton, SmartLink } from "@/lib/types";
 
 export function CTASection({
   text,
-  buttonLabel,
-  buttonLink,
   button,
   buttons
 }: {
   text: string;
-  buttonLabel: string;
-  buttonLink: string;
   button?: SmartLink;
   buttons?: ActionButton[];
 }) {
@@ -21,7 +17,7 @@ export function CTASection({
       <div className="mx-auto max-w-5xl text-center">
         <div className="mx-auto mb-8 h-px w-24 bg-ashoka" />
         <blockquote className="font-serif text-4xl font-semibold leading-tight text-forest md:text-6xl">
-          “{text}”
+          {text}
         </blockquote>
         <ButtonList buttons={ctaButtons} className="mt-10 justify-center" />
       </div>
