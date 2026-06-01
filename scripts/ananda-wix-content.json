@@ -1,0 +1,950 @@
+[
+  {
+    "_id": "navigation",
+    "_type": "navigation",
+    "title": "Menu principal",
+    "items": [
+      {
+        "_key": "home",
+        "_type": "navLink",
+        "label": "Home",
+        "url": "/"
+      },
+      {
+        "_key": "who-are-we",
+        "_type": "navLink",
+        "label": "Who are we ?",
+        "url": "/who-are-we",
+        "link": {
+          "_type": "link",
+          "label": "Who are we ?",
+          "type": "internal",
+          "internalPage": {
+            "_type": "reference",
+            "_ref": "2796b48a-3c59-437a-83af-756d2446e3ad"
+          }
+        },
+        "children": [
+          {
+            "_key": "cistercian-order",
+            "_type": "navSubLink",
+            "label": "Cistercian order",
+            "url": "/cistercian-order",
+            "link": {
+              "_type": "link",
+              "label": "Cistercian order",
+              "type": "internal",
+              "internalPage": {
+                "_type": "reference",
+                "_ref": "page-cistercian-order"
+              }
+            }
+          },
+          {
+            "_key": "our-story",
+            "_type": "navSubLink",
+            "label": "Our story",
+            "url": "/our-story",
+            "link": {
+              "_type": "link",
+              "label": "Our story",
+              "type": "internal",
+              "internalPage": {
+                "_type": "reference",
+                "_ref": "page-our-story"
+              }
+            }
+          },
+          {
+            "_key": "monastic-life",
+            "_type": "navSubLink",
+            "label": "Monastic life",
+            "url": "/monastic-life",
+            "link": {
+              "_type": "link",
+              "label": "Monastic life",
+              "type": "internal",
+              "internalPage": {
+                "_type": "reference",
+                "_ref": "page-monastic-life"
+              }
+            }
+          },
+          {
+            "_key": "how-to-become",
+            "_type": "navSubLink",
+            "label": "How to become",
+            "url": "/how-to-become",
+            "link": {
+              "_type": "link",
+              "label": "How to become",
+              "type": "internal",
+              "internalPage": {
+                "_type": "reference",
+                "_ref": "page-how-to-become"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "_key": "pictures",
+        "_type": "navLink",
+        "label": "Pictures",
+        "url": "/pictures",
+        "link": {
+          "_type": "link",
+          "label": "Pictures",
+          "type": "internal",
+          "internalPage": {
+            "_type": "reference",
+            "_ref": "page-pictures"
+          }
+        }
+      },
+      {
+        "_key": "hospitality",
+        "_type": "navLink",
+        "label": "Hospitality",
+        "url": "/hospitality",
+        "link": {
+          "_type": "link",
+          "label": "Hospitality",
+          "type": "internal",
+          "internalPage": {
+            "_type": "reference",
+            "_ref": "page-hospitality"
+          }
+        }
+      },
+      {
+        "_key": "access",
+        "_type": "navLink",
+        "label": "Access",
+        "url": "/access",
+        "link": {
+          "_type": "link",
+          "label": "Access",
+          "type": "internal",
+          "internalPage": {
+            "_type": "reference",
+            "_ref": "page-access"
+          }
+        }
+      },
+      {
+        "_key": "contact",
+        "_type": "navLink",
+        "label": "Contact",
+        "url": "/contact",
+        "link": {
+          "_type": "link",
+          "label": "Contact",
+          "type": "internal",
+          "internalPage": {
+            "_type": "reference",
+            "_ref": "page-contact"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "_id": "2796b48a-3c59-437a-83af-756d2446e3ad",
+    "_type": "page",
+    "title": "Who are we ?",
+    "slug": {
+      "_type": "slug",
+      "current": "who-are-we"
+    },
+    "excerpt": "A Cistercian community in Kerala, introduced through its order, story, monastic life, and path of vocation.",
+    "seoTitle": "Who are we ?",
+    "seoDescription": "Discover Ananda Matha Monastery, a Cistercian community in Wayanad, Kerala.",
+    "body": [
+      {
+        "_key": "who-1",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "who-1-span",
+            "_type": "span",
+            "text": "Ananda Matha Ashram is a Cistercian community of nuns living in Wayanad, Kerala, in the tradition of the Order of Cistercians of the Strict Observance.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "who-2",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "who-2-span",
+            "_type": "span",
+            "text": "This page gathers the four main doors into our life: the Cistercian order, our story, monastic life, and the path for women discerning a vocation.",
+            "marks": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "page-cistercian-order",
+    "_type": "page",
+    "title": "Cistercian Order",
+    "slug": {
+      "_type": "slug",
+      "current": "cistercian-order"
+    },
+    "excerpt": "A journey of simplicity and spirituality, rooted in the Rule of Saint Benedict and the reform of Citeaux.",
+    "seoTitle": "Cistercian Order",
+    "seoDescription": "The Cistercian tradition, Saint Bernard, and the renewal of monastic life.",
+    "body": [
+      {
+        "_key": "order-1",
+        "_type": "block",
+        "style": "h2",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "order-1-span",
+            "_type": "span",
+            "text": "A Journey of Simplicity and Spirituality",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "order-2",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "order-2-span",
+            "_type": "span",
+            "text": "Born in France in the heart of the Middle Ages, the Cistercian Order was founded in 1098 by Saints Robert, Alberic, and Stephen with a desire to return to the pure essence of monastic life.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "order-3",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "order-3-span",
+            "_type": "span",
+            "text": "Through the reform of Citeaux, they sought faithful adherence to the Rule of Saint Benedict, authentic poverty, simplicity, manual labor, and a stripped-down liturgy.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "order-4",
+        "_type": "block",
+        "style": "h2",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "order-4-span",
+            "_type": "span",
+            "text": "Saint Bernard of Clairvaux",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "order-5",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "order-5-span",
+            "_type": "span",
+            "text": "Bernard of Clairvaux entered the monastery in 1112 and became one of the great spiritual forces of the Cistercian family. His preaching, counsel, foundations, and mystical writings shaped the order's growth.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "order-6",
+        "_type": "block",
+        "style": "h2",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "order-6-span",
+            "_type": "span",
+            "text": "Tradition and Renewal",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "order-7",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "order-7-span",
+            "_type": "span",
+            "text": "Throughout history, the Cistercian Order has known periods of reform and renewal, including the reform of La Trappe and the renewal following the Second Vatican Council. These moments helped communities preserve the heart of the tradition while living it in different cultures.",
+            "marks": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "page-our-story",
+    "_type": "page",
+    "title": "Our Story",
+    "slug": {
+      "_type": "slug",
+      "current": "our-story"
+    },
+    "excerpt": "Founded in 1995, Ananda Matha Ashram lives the Cistercian tradition in Wayanad, Kerala.",
+    "seoTitle": "Our Story",
+    "seoDescription": "The history and roots of Ananda Matha Ashram in Kerala.",
+    "body": [
+      {
+        "_key": "story-1",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "story-1-span",
+            "_type": "span",
+            "text": "Ananda Matha Ashram is a monastic community of Cistercian nuns, also known as Trappistines. Founded in 1995 in India, the community moved in 2009 to Kunnambetta, in the peaceful district of Wayanad, Kerala.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "story-2",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "story-2-span",
+            "_type": "span",
+            "text": "The sisters follow the Rule of Saint Benedict in a rhythm of silence, prayer, manual work, fraternal life, sustainable agriculture, and monastic hospitality.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "story-3",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "story-3-span",
+            "_type": "span",
+            "text": "On 7 October 2024, the monastery was formally recognized as a priory, a major milestone on the path to autonomy within the Cistercian Order.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "story-4",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "story-4-span",
+            "_type": "span",
+            "text": "The name Ananda means deep joy in Sanskrit. It expresses the community's desire to live in divine presence, peace, communion with creation, and fidelity to the Cistercian spirit.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "story-5",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "story-5-span",
+            "_type": "span",
+            "text": "The founding house is Soleilmont Abbey in Belgium. The community remains spiritually accompanied through the Cistercian family, with the Father Immediate, the Abbot of Scourmont Abbey.",
+            "marks": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "page-monastic-life",
+    "_type": "page",
+    "title": "Monastic Life",
+    "slug": {
+      "_type": "slug",
+      "current": "monastic-life"
+    },
+    "excerpt": "Prayer, work, silence, community, and hospitality shape the daily rhythm of Ananda Matha.",
+    "seoTitle": "Monastic Life",
+    "seoDescription": "The daily rhythm of prayer, work, community, and retreat at Ananda Matha Monastery.",
+    "body": [
+      {
+        "_key": "life-1",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "life-1-span",
+            "_type": "span",
+            "text": "The monastic life is a response to the call to live in God alone, to stand in his presence, and to leave everything in order to attain peace.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "life-2",
+        "_type": "block",
+        "style": "h2",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "life-2-span",
+            "_type": "span",
+            "text": "Listen",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "life-3",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "life-3-span",
+            "_type": "span",
+            "text": "Cistercian monks and nuns live according to the Rule of Saint Benedict. Its first word is Listen. The rule balances prayer and work, solitude and community, love of God and love of neighbor.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "life-4",
+        "_type": "block",
+        "style": "h2",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "life-4-span",
+            "_type": "span",
+            "text": "The Rhythm of Prayer",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "life-5",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "life-5-span",
+            "_type": "span",
+            "text": "4:00 Vigils and meditation; 5:00 reading and lectio; 6:00 Lauds; 7:00 Mass and Terce; 8:30 work; 12:10 Sext; 14:15 None; 14:30 study or meeting; 15:30 work; 17:30 Vespers and meditation; 19:30 Compline.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "life-6",
+        "_type": "block",
+        "style": "h2",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "life-6-span",
+            "_type": "span",
+            "text": "Work and Community",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "life-7",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "life-7-span",
+            "_type": "span",
+            "text": "The sisters care for the household, garden, buildings, and small productions of coffee and pepper. Work done with joy and attention brings the community closer to God and to the hidden life of Jesus.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "life-8",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "life-8-span",
+            "_type": "span",
+            "text": "Community life asks each sister to grow in humility, forgiveness, attentive listening, and true respect, welcoming others with their strengths and limitations.",
+            "marks": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "page-how-to-become",
+    "_type": "page",
+    "title": "How to Become",
+    "slug": {
+      "_type": "slug",
+      "current": "how-to-become"
+    },
+    "excerpt": "The path of formation for a woman discerning a Cistercian monastic vocation.",
+    "seoTitle": "How to Become a Cistercian Nun",
+    "seoDescription": "A simple explanation of aspirancy, postulancy, novitiate, temporary profession, and solemn profession.",
+    "body": [
+      {
+        "_key": "become-1",
+        "_type": "block",
+        "style": "h2",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "become-1-span",
+            "_type": "span",
+            "text": "The Path to Monastic Life",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "become-2",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "become-2-span",
+            "_type": "span",
+            "text": "When a woman wishes to enter the monastery, Saint Benedict asks above all whether she truly seeks God. She begins as an aspirant, then may become a postulant if the desire perseveres.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "become-3",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "become-3-span",
+            "_type": "span",
+            "text": "After an initial experience of one to two years, she may ask to begin the novitiate. She receives a white tunic, scapular, and veil, and enters a deeper time of discernment.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "become-4",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "become-4-span",
+            "_type": "span",
+            "text": "If she continues, she may make temporary profession for a defined period, usually five years, pronouncing vows of stability, conversion of life, and obedience.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "become-5",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "become-5-span",
+            "_type": "span",
+            "text": "Solemn profession is celebrated in the church as a lifelong commitment until death. Such a promise cannot be made by human strength alone; it is God who calls and gives the grace to respond.",
+            "marks": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "page-pictures",
+    "_type": "page",
+    "title": "Pictures",
+    "slug": {
+      "_type": "slug",
+      "current": "pictures"
+    },
+    "excerpt": "A visual doorway into the monastery, its prayer, work, community life, hospitality, and Kerala landscape.",
+    "seoTitle": "Pictures",
+    "seoDescription": "Photos of Ananda Matha Monastery and monastic life in Wayanad, Kerala.",
+    "body": [
+      {
+        "_key": "pictures-1",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "pictures-1-span",
+            "_type": "span",
+            "text": "This page is prepared for the monastery photo gallery: prayer, work, community life, hospitality, and the surrounding hills of Wayanad.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "pictures-2",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "pictures-2-span",
+            "_type": "span",
+            "text": "The sisters can add and reorder gallery images from the Studio as new photos become available.",
+            "marks": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "page-hospitality",
+    "_type": "page",
+    "title": "Hospitality",
+    "slug": {
+      "_type": "slug",
+      "current": "hospitality"
+    },
+    "excerpt": "A welcome in peace and prayer for those seeking silence, retreat, and renewal.",
+    "seoTitle": "Hospitality and Spiritual Retreats",
+    "seoDescription": "Hospitality and spiritual retreats at Ananda Matha Monastery in Kerala.",
+    "body": [
+      {
+        "_key": "hospitality-1",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "hospitality-1-span",
+            "_type": "span",
+            "text": "All guests who present themselves are to be received like Christ. The Benedictine tradition is founded on universal hospitality: every guest is welcomed with respect and dignity.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "hospitality-2",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "hospitality-2-span",
+            "_type": "span",
+            "text": "Visitors are invited to share in the prayer of the community in the way they feel called, entering an atmosphere of serenity, silence, and reflection.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "hospitality-3",
+        "_type": "block",
+        "style": "h2",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "hospitality-3-span",
+            "_type": "span",
+            "text": "A Haven of Peace for Renewal",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "hospitality-4",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "hospitality-4-span",
+            "_type": "span",
+            "text": "The monastery has a small guesthouse with three rooms, offering a simple and peaceful space for those who wish to take time for reflection, prayer, and connection with the community.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "hospitality-5",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "hospitality-5-span",
+            "_type": "span",
+            "text": "Stepping away from the noise and distractions of the world, even for a few hours or a few days, can become a precious opportunity to rediscover inner peace.",
+            "marks": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "page-access",
+    "_type": "page",
+    "title": "Access",
+    "slug": {
+      "_type": "slug",
+      "current": "access"
+    },
+    "excerpt": "How to reach Ananda Matha Ashram by airport, bus, or car.",
+    "seoTitle": "Access",
+    "seoDescription": "Directions to Ananda Matha Ashram in Kunnambetta, Wayanad.",
+    "body": [
+      {
+        "_key": "access-1",
+        "_type": "block",
+        "style": "h2",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "access-1-span",
+            "_type": "span",
+            "text": "Nearest Airport",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "access-2",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "access-2-span",
+            "_type": "span",
+            "text": "The closest airport to Kunnambetta is Calicut International Airport, also known as Kozhikode. The airport is located about 28 km south of Calicut city center.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "access-3",
+        "_type": "block",
+        "style": "h2",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "access-3-span",
+            "_type": "span",
+            "text": "By Bus",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "access-4",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "access-4-span",
+            "_type": "span",
+            "text": "From Bangalore, take a bus to Kerala via Mysore and stop at Kalpetta, just after Sultan Bathery. From Kalpetta, take a short bus ride to Chundale, then a bus in the direction of Meppadi.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "access-5",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "access-5-span",
+            "_type": "span",
+            "text": "From Chundale, ask for Kunnambetta village and continue by auto-rickshaw to Ananda Matha Ashram. On foot, stop near the Redemptorist Fathers' House and take the first right; the monastery is about a ten-minute walk.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "access-6",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "access-6-span",
+            "_type": "span",
+            "text": "From Calicut, take a bus to Kalpetta or towards Sultan Bathery, Mysore, or Bangalore. Stop at Chundale and follow the same directions. From Ooty or Gudalur, take a bus towards Kalpetta or Calicut, stop after Meppadi at Kunnambetta, and follow the directions to the ashram.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "access-7",
+        "_type": "block",
+        "style": "h2",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "access-7-span",
+            "_type": "span",
+            "text": "By Car",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "access-8",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "access-8-span",
+            "_type": "span",
+            "text": "The monastery lies on the road between Gudalur and Chundale, halfway between Chundale and Meppadi. From Meppadi, drive about 5 km to the Redemptorist Fathers' House. From there, take the road towards Chembra Peak; after 300 meters, turn right towards Ananda Matha Ashram.",
+            "marks": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "page-contact",
+    "_type": "page",
+    "title": "Contact",
+    "slug": {
+      "_type": "slug",
+      "current": "contact"
+    },
+    "excerpt": "Contact Ananda Matha Monastery for visits, retreats, hospitality, and practical information.",
+    "seoTitle": "Contact",
+    "seoDescription": "Address, phone, email, and opening hours for Ananda Matha Monastery.",
+    "body": [
+      {
+        "_key": "contact-1",
+        "_type": "block",
+        "style": "h2",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "contact-1-span",
+            "_type": "span",
+            "text": "Address",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "contact-2",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "contact-2-span",
+            "_type": "span",
+            "text": "Ananda Matha Monastery, Kunnambetta P.O. 673 123, Wayanad District, Kerala, India.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "contact-3",
+        "_type": "block",
+        "style": "h2",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "contact-3-span",
+            "_type": "span",
+            "text": "Contact",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "contact-4",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "contact-4-span",
+            "_type": "span",
+            "text": "Phone: 9656061997. Email: anandamatha@gmail.com.",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "contact-5",
+        "_type": "block",
+        "style": "h2",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "contact-5-span",
+            "_type": "span",
+            "text": "Opening Hours",
+            "marks": []
+          }
+        ]
+      },
+      {
+        "_key": "contact-6",
+        "_type": "block",
+        "style": "normal",
+        "markDefs": [],
+        "children": [
+          {
+            "_key": "contact-6-span",
+            "_type": "span",
+            "text": "Monday to Friday: 8 h - 19 h. Saturday: 9 h - 19 h. Sunday: 9 h - 19 h.",
+            "marks": []
+          }
+        ]
+      }
+    ]
+  }
+]

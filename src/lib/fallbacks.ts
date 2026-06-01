@@ -40,16 +40,10 @@ export const fallbackNavigation: NavigationItem[] = [
       { label: "How to become", url: "/how-to-become", order: 3 }
     ]
   },
-  { label: "About Us", url: "/about-us", order: 2 },
-  { label: "History", url: "/history", order: 2 },
-  { label: "Our Vision", url: "/our-vision", order: 3 },
-  { label: "Monastic Life", url: "/monastic-life", order: 4 },
-  { label: "Prayer", url: "/prayer", order: 5 },
-  { label: "Work", url: "/work", order: 6 },
-  { label: "Community", url: "/community", order: 7 },
-  { label: "Hospitality", url: "/hospitality", order: 8 },
-  { label: "Location", url: "/location", order: 9 },
-  { label: "Contact", url: "/contact", order: 10 }
+  { label: "Pictures", url: "/pictures", order: 2 },
+  { label: "Hospitality", url: "/hospitality", order: 3 },
+  { label: "Access", url: "/access", order: 4 },
+  { label: "Contact", url: "/contact", order: 5 }
 ];
 
 export const fallbackHome: HomePage = {
@@ -273,27 +267,27 @@ export const fallbackPages: PageContent[] = [
     slug: "who-are-we",
     heroImage: monasteryImage,
     excerpt:
-      "A Cistercian community seeking God through prayer, work, silence, and hospitality.",
+      "A Cistercian community in Kerala, introduced through its order, story, monastic life, and path of vocation.",
     body:
-      "Ananda Matha Monastery is a Cistercian community in Kerala, rooted in the Rule of Saint Benedict and the tradition of contemplative monastic life.\n\nThe community lives a daily rhythm of prayer, manual work, silence, study, and hospitality."
+      "Ananda Matha Ashram is a Cistercian community of nuns living in Wayanad, Kerala, in the tradition of the Order of Cistercians of the Strict Observance.\n\nThis page gathers the four main doors into our life: the Cistercian order, our story, monastic life, and the path for women discerning a vocation."
   },
   {
     title: "Cistercian Order",
     slug: "cistercian-order",
     heroImage: prayerImage,
     excerpt:
-      "The Cistercian tradition follows the Rule of Saint Benedict in simplicity, prayer, and work.",
+      "A journey of simplicity and spirituality, rooted in the Rule of Saint Benedict and the reform of Citeaux.",
     body:
-      "The Cistercian Order is a monastic family rooted in the Rule of Saint Benedict. Its life is marked by liturgical prayer, lectio divina, manual work, silence, simplicity, and fraternal charity.\n\nAnanda Matha Monastery belongs to this tradition and lives it in the cultural and spiritual landscape of Kerala."
+      "A Journey of Simplicity and Spirituality\n\nBorn in France in the heart of the Middle Ages, the Cistercian Order was founded in 1098 by Saints Robert, Alberic, and Stephen with a desire to return to the pure essence of monastic life.\n\nThrough the reform of Citeaux, they sought faithful adherence to the Rule of Saint Benedict, authentic poverty, simplicity, manual labor, and a stripped-down liturgy.\n\nSaint Bernard of Clairvaux\n\nBernard of Clairvaux entered the monastery in 1112 and became one of the great spiritual forces of the Cistercian family. His preaching, counsel, foundations, and mystical writings shaped the order's growth.\n\nTradition and Renewal\n\nThroughout history, the Cistercian Order has known periods of reform and renewal, including the reform of La Trappe and the renewal following the Second Vatican Council. These moments helped communities preserve the heart of the tradition while living it in different cultures."
   },
   {
     title: "Our Story",
     slug: "our-story",
     heroImage: gardenImage,
     excerpt:
-      "The story of Ananda Matha Monastery, from its foundation to its life in Wayanad.",
+      "Founded in 1995, Ananda Matha Ashram lives the Cistercian tradition in Wayanad, Kerala.",
     body:
-      "Ananda Matha Ashram was founded as a place of prayer and monastic hospitality. Over time, the community came to Wayanad, where the hills, gardens, and quiet daily rhythm became part of its vocation.\n\nIts story is one of faithfulness, simplicity, and trust in God's providence."
+      "Ananda Matha Ashram is a monastic community of Cistercian nuns, also known as Trappistines. Founded in 1995 in India, the community moved in 2009 to Kunnambetta, in the peaceful district of Wayanad, Kerala.\n\nThe sisters follow the Rule of Saint Benedict in a rhythm of silence, prayer, manual work, fraternal life, sustainable agriculture, and monastic hospitality.\n\nOn 7 October 2024, the monastery was formally recognized as a priory, a major milestone on the path to autonomy within the Cistercian Order.\n\nThe name Ananda means deep joy in Sanskrit. It expresses the community's desire to live in divine presence, peace, communion with creation, and fidelity to the Cistercian spirit.\n\nThe founding house is Soleilmont Abbey in Belgium. The community remains spiritually accompanied through the Cistercian family, with the Father Immediate, the Abbot of Scourmont Abbey."
   },
   {
     title: "How to Become",
@@ -302,7 +296,7 @@ export const fallbackPages: PageContent[] = [
     excerpt:
       "A first orientation for women discerning a Cistercian monastic vocation.",
     body:
-      "A monastic vocation begins with listening. Anyone discerning this path is invited to take time for prayer, conversation, and patient accompaniment.\n\nThe first step is usually to contact the monastery and begin a simple dialogue with the community."
+      "The Path to Monastic Life\n\nWhen a woman wishes to enter the monastery, Saint Benedict asks above all whether she truly seeks God. She begins as an aspirant, then may become a postulant if the desire perseveres.\n\nAfter an initial experience of one to two years, she may ask to begin the novitiate. She receives a white tunic, scapular, and veil, and enters a deeper time of discernment.\n\nIf she continues, she may make temporary profession for a defined period, usually five years, pronouncing vows of stability, conversion of life, and obedience.\n\nSolemn profession is celebrated in the church as a lifelong commitment until death. Such a promise cannot be made by human strength alone; it is God who calls and gives the grace to respond."
   },
   {
     title: "About Us",
@@ -336,9 +330,9 @@ export const fallbackPages: PageContent[] = [
     slug: "monastic-life",
     heroImage: monasteryImage,
     excerpt:
-      "To live in God alone and to stand in his presence, to leave everything to attain peace.",
+      "Prayer, work, silence, community, and hospitality shape the daily rhythm of Ananda Matha.",
     body:
-      "Cistercian monks and nuns live according to the Rule of Saint Benedict. The first word of this rule is LISTEN.\n\nEven after fourteen centuries, it remains a spiritual guide for many communities worldwide, thanks to its balance between prayer and work, solitude and community, love of God and love of neighbor.\n\nThose who follow this rule are pilgrims, seekers of God, attentive to His voice. The Rule of Saint Benedict is a path to happiness and freedom, guided by the Gospel."
+      "The monastic life is a response to the call to live in God alone, to stand in his presence, and to leave everything in order to attain peace.\n\nListen\n\nCistercian monks and nuns live according to the Rule of Saint Benedict. Its first word is Listen. The rule balances prayer and work, solitude and community, love of God and love of neighbor.\n\nThe Rhythm of Prayer\n\n4:00 Vigils and meditation; 5:00 reading and lectio; 6:00 Lauds; 7:00 Mass and Terce; 8:30 work; 12:10 Sext; 14:15 None; 14:30 study or meeting; 15:30 work; 17:30 Vespers and meditation; 19:30 Compline.\n\nWork and Community\n\nThe sisters care for the household, garden, buildings, and small productions of coffee and pepper. Work done with joy and attention brings the community closer to God and to the hidden life of Jesus.\n\nCommunity life asks each sister to grow in humility, forgiveness, attentive listening, and true respect, welcoming others with their strengths and limitations."
   },
   {
     title: "Prayer",
@@ -372,9 +366,27 @@ export const fallbackPages: PageContent[] = [
     slug: "hospitality",
     heroImage: gardenImage,
     excerpt:
-      "All guests who present themselves are to be received like Christ.",
+      "A welcome in peace and prayer for those seeking silence, retreat, and renewal.",
     body:
-      "All guests who present themselves are to be received like Christ. The Benedictine tradition is founded on universal hospitality. Every guest, regardless of background, status, or religion, is welcomed with respect and dignity.\n\nVisitors are invited to share in the prayer of the community in whatever way they feel called, immersing themselves in an atmosphere of serenity and reflection.\n\nWe have a small guesthouse with three rooms, offering a simple and peaceful space for those who wish to take time for reflection, prayer, and connection with the community."
+      "All guests who present themselves are to be received like Christ. The Benedictine tradition is founded on universal hospitality: every guest is welcomed with respect and dignity.\n\nVisitors are invited to share in the prayer of the community in the way they feel called, entering an atmosphere of serenity, silence, and reflection.\n\nA Haven of Peace for Renewal\n\nThe monastery has a small guesthouse with three rooms, offering a simple and peaceful space for those who wish to take time for reflection, prayer, and connection with the community.\n\nStepping away from the noise and distractions of the world, even for a few hours or a few days, can become a precious opportunity to rediscover inner peace."
+  },
+  {
+    title: "Pictures",
+    slug: "pictures",
+    heroImage: prayerImage,
+    excerpt:
+      "A visual doorway into the monastery, its prayer, work, community life, hospitality, and Kerala landscape.",
+    body:
+      "This page is prepared for the monastery photo gallery: prayer, work, community life, hospitality, and the surrounding hills of Wayanad.\n\nThe sisters can add and reorder gallery images from the Studio as new photos become available."
+  },
+  {
+    title: "Access",
+    slug: "access",
+    heroImage: monasteryImage,
+    excerpt:
+      "How to reach Ananda Matha Ashram by airport, bus, or car.",
+    body:
+      "Nearest Airport\n\nThe closest airport to Kunnambetta is Calicut International Airport, also known as Kozhikode. The airport is located about 28 km south of Calicut city center.\n\nBy Bus\n\nFrom Bangalore, take a bus to Kerala via Mysore and stop at Kalpetta, just after Sultan Bathery. From Kalpetta, take a short bus ride to Chundale, then a bus in the direction of Meppadi.\n\nFrom Chundale, ask for Kunnambetta village and continue by auto-rickshaw to Ananda Matha Ashram. On foot, stop near the Redemptorist Fathers' House and take the first right; the monastery is about a ten-minute walk.\n\nFrom Calicut, take a bus to Kalpetta or towards Sultan Bathery, Mysore, or Bangalore. Stop at Chundale and follow the same directions. From Ooty or Gudalur, take a bus towards Kalpetta or Calicut, stop after Meppadi at Kunnambetta, and follow the directions to the ashram.\n\nBy Car\n\nThe monastery lies on the road between Gudalur and Chundale, halfway between Chundale and Meppadi. From Meppadi, drive about 5 km to the Redemptorist Fathers' House. From there, take the road towards Chembra Peak; after 300 meters, turn right towards Ananda Matha Ashram."
   },
   {
     title: "Location",
@@ -389,8 +401,8 @@ export const fallbackPages: PageContent[] = [
     title: "Contact",
     slug: "contact",
     heroImage: prayerImage,
-    excerpt: "Contact Ananda Matha Monastery for visits, retreats, and hospitality.",
+    excerpt: "Contact Ananda Matha Monastery for visits, retreats, hospitality, and practical information.",
     body:
-      "Ananda Matha Monastery\nKunnambetta P.O. 673 123\nWayanad District\nKerala\nIndia\n\nPhone: 9656061997\nEmail: anandamatha@gmail.com\n\nOpening hours:\nMonday - Friday: 8 h - 19 h\nSaturday: 9 h - 19 h\nSunday: 9 h - 19 h"
+      "Address\n\nAnanda Matha Monastery\nKunnambetta P.O. 673 123\nWayanad District\nKerala\nIndia\n\nContact\n\nPhone: 9656061997\nEmail: anandamatha@gmail.com\n\nOpening Hours\n\nMonday to Friday: 8 h - 19 h\nSaturday: 9 h - 19 h\nSunday: 9 h - 19 h"
   }
 ];
