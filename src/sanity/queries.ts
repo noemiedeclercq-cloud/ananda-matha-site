@@ -8,6 +8,7 @@ import {
   fallbackSettings
 } from "@/lib/fallbacks";
 import type {
+  GalleryItem,
   HeroOverlayStrength,
   HomePage,
   NavigationItem,
@@ -298,4 +299,19 @@ export async function getAllPageSlugs(): Promise<string[]> {
   const slugs = await fetchOrNull<string[]>(`*[_type == "page" && defined(slug.current)][].slug.current`);
   const fallbackSlugs = fallbackPages.map((page) => page.slug);
   return Array.from(new Set([...(slugs || []), ...fallbackSlugs]));
+}
+
+export async function getGalleryItems(): Promise<GalleryItem[]> {
+  const items = await fetchOrNull<Record<string, any>[]>(`*[_type == "galleryItem"] | order(_createdAt asc){
+    title, image, alt, caption
+  }`);
+
+  return (items || [])
+    .map((item) => ({
+      title: item.title || "Photo",
+      image: imageUrl(item.image),
+      alt: item.alt,
+      caption: item.caption
+    }))
+    .filter((item) => item.image);
 }

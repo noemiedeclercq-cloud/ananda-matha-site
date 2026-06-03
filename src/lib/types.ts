@@ -178,4 +178,11 @@ export type PageContent = {
   seoTitle?: string;
   seoDescription?: string;
 };
+
+export type GalleryItem = {
+  title: string;
+  image?: string;
+  alt?: string;
+  caption?: string;
+};
 import type { PortableTextBlock } from "@portabletext/types";
