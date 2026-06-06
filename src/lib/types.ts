@@ -97,6 +97,7 @@ export type HomeStory = {
   button?: SmartLink;
   buttons?: ActionButton[];
   image?: string;
+  imageAssetRef?: string;
   backgroundColor?: string;
   textColor?: string;
 };

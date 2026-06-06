@@ -192,7 +192,7 @@ export async function getHomePage(): Promise<HomePage> {
     story{
       title, subtitle, text${portableTextProjection}, button${linkProjection},
       buttons[]${buttonProjection},
-      image, backgroundColor, textColor
+      image, "imageAssetRef": image.asset._ref, backgroundColor, textColor
     },
     photoBands[]{image, alt, height, overlay, caption},
     visitingHoursTitle, visitingHoursContent, visitingHoursImage,
@@ -218,6 +218,7 @@ export async function getHomePage(): Promise<HomePage> {
       ...fallbackHome.story,
       ...home.story,
       image: imageUrl(home.story?.image, fallbackHome.story?.image),
+      imageAssetRef: home.story?.imageAssetRef,
       buttons: mapButtons(home.story?.buttons, home.story?.button)
     },
     photoBands: (home.photoBands?.length

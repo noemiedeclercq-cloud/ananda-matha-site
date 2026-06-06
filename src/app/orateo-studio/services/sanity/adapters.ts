@@ -80,6 +80,7 @@ export function mapHomeToDraft(home: HomePage): OraTeoHomeDraft {
     },
     cards: (home.cards?.length ? home.cards : fallbackHome.cards).map(mapCard),
     story: {
+      imageAssetRef: home.story?.imageAssetRef,
       title: home.story?.title || "Our Story",
       text: plainText(home.story?.text) || fallbackHome.story?.text?.toString() || "",
       image: home.story?.image || fallbackHome.story?.image || "/images/monastery-hero.svg",

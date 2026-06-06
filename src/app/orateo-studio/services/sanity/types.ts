@@ -53,6 +53,8 @@ export type OraTeoHomeDraft = {
   };
   cards: StudioCard[];
   story: {
+    file?: File;
+    imageAssetRef?: string;
     title: string;
     text: string;
     image: string;

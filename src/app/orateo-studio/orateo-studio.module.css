@@ -998,6 +998,12 @@
   gap: 0.8rem;
 }
 
+.storyImageActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
 .simplePanel {
   grid-template-columns: 1fr 1fr;
 }

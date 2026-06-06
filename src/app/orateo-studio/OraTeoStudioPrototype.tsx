@@ -137,7 +137,13 @@ function readStoredDraft(baseDraft: OraTeoHomeDraft): OraTeoHomeDraft | null {
       ...parsed,
       hero: { ...baseDraft.hero, ...parsed.hero },
       slideshow: baseDraft.slideshow,
-      story: { ...baseDraft.story, ...parsed.story },
+      story: {
+        ...baseDraft.story,
+        ...parsed.story,
+        file: undefined,
+        image: baseDraft.story.image,
+        imageAssetRef: baseDraft.story.imageAssetRef
+      },
       quote: { ...baseDraft.quote, ...parsed.quote },
       contact: { ...baseDraft.contact, ...parsed.contact },
       cards: parsed.cards ?? baseDraft.cards
@@ -215,11 +221,13 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
   const [isPublishingHero, setIsPublishingHero] = useState(false);
   const [heroPublishMessage, setHeroPublishMessage] = useState("");
   const [isPublishingHeroPhotos, setIsPublishingHeroPhotos] = useState(false);
+  const [isPublishingStoryImage, setIsPublishingStoryImage] = useState(false);
   const [draggedPhotoId, setDraggedPhotoId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("split");
   const [previewMode, setPreviewMode] = useState<PreviewMode>("edit");
   const [selectedBlock, setSelectedBlock] = useState<BlockKey>("hero");
   const [uploadNotice, setUploadNotice] = useState("");
+  const [storyImageMessage, setStoryImageMessage] = useState("");
   const [openBlocks, setOpenBlocks] = useState<Record<BlockKey, boolean>>({
     hero: true,
     slideshow: true,
@@ -484,6 +492,78 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
         ...next
       }
     }));
+  }
+
+  function replaceStoryImage(file: File) {
+    setDraft((current) => ({
+      ...current,
+      story: {
+        ...current.story,
+        file,
+        image: URL.createObjectURL(file),
+        imageAssetRef: undefined
+      }
+    }));
+    setStoryImageMessage("Photo remplacee. Publiez pour mettre le site a jour.");
+  }
+
+  async function publishStoryImageToSanity() {
+    if (!draft.story.file && !draft.story.imageAssetRef) {
+      setStoryImageMessage("Ajoutez une photo");
+      return;
+    }
+
+    const formData = new FormData();
+    if (draft.story.file) {
+      formData.append("image", draft.story.file);
+    }
+    if (draft.story.imageAssetRef) {
+      formData.append("assetRef", draft.story.imageAssetRef);
+    }
+
+    setIsPublishingStoryImage(true);
+    setStoryImageMessage("Publication en cours...");
+
+    try {
+      const response = await fetch("/orateo-studio/api/home/story-image", {
+        method: "POST",
+        body: formData
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result?.error || "Impossible de publier");
+      }
+
+      setDraft((current) => ({
+        ...current,
+        story: {
+          ...current.story,
+          file: undefined,
+          image: result.image || current.story.image,
+          imageAssetRef: result.assetRef
+        }
+      }));
+      setSavedDraft((current) => {
+        const next = {
+          ...current,
+          story: {
+            ...current.story,
+            file: undefined,
+            image: result.image || draft.story.image,
+            imageAssetRef: result.assetRef
+          }
+        };
+        window.localStorage.setItem(draftStorageKey, JSON.stringify(next));
+        return next;
+      });
+      setStoryImageMessage("Publication reussie");
+      router.refresh();
+    } catch {
+      setStoryImageMessage("Impossible de publier");
+    } finally {
+      setIsPublishingStoryImage(false);
+    }
   }
 
   function updateStoryButton(id: string, next: Partial<StudioButton>) {
@@ -904,12 +984,16 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
                     )}
                     {block.key === "story" && (
                       <StoryEditor
+                        isPublishingImage={isPublishingStoryImage}
                         onAddButton={addStoryButton}
+                        onPublishImage={publishStoryImageToSanity}
                         onRemoveButton={removeStoryButton}
                         onReorderButton={reorderStoryButton}
+                        onReplaceImage={replaceStoryImage}
                         onUpdate={updateStory}
                         onUpdateButton={updateStoryButton}
                         story={draft.story}
+                        storyImageMessage={storyImageMessage}
                       />
                     )}
                     {block.key === "quote" && (
@@ -1471,24 +1555,47 @@ function QuickCardsEditor({
 }
 
 function StoryEditor({
+  isPublishingImage,
   onAddButton,
+  onPublishImage,
   onRemoveButton,
   onReorderButton,
+  onReplaceImage,
   onUpdate,
   onUpdateButton,
-  story
+  story,
+  storyImageMessage
 }: {
+  isPublishingImage: boolean;
   onAddButton: () => void;
+  onPublishImage: () => void;
   onRemoveButton: (id: string) => void;
   onReorderButton: (id: string, direction: -1 | 1) => void;
+  onReplaceImage: (file: File) => void;
   onUpdate: (next: Partial<OraTeoHomeDraft["story"]>) => void;
   onUpdateButton: (id: string, next: Partial<StudioButton>) => void;
   story: OraTeoHomeDraft["story"];
+  storyImageMessage: string;
 }) {
+  function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    onReplaceImage(file);
+    event.target.value = "";
+  }
+
   return (
     <div className={styles.storyEditor}>
       <img alt="" src={story.image} />
       <div>
+        <input
+          accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+          className={styles.hiddenFileInput}
+          id="orateo-story-image-upload"
+          onChange={handleImageChange}
+          type="file"
+        />
         <label>
           <span>Titre</span>
           <input value={story.title} onChange={(event) => onUpdate({ title: event.target.value })} />
@@ -1500,10 +1607,22 @@ function StoryEditor({
             onChange={(event) => onUpdate({ text: event.target.value })}
           />
         </label>
-        <button className={styles.secondaryAction} type="button">
-          <Pencil aria-hidden="true" size={15} />
-          Modifier l'image
-        </button>
+        <div className={styles.storyImageActions}>
+          <label className={styles.secondaryAction} htmlFor="orateo-story-image-upload">
+            <Pencil aria-hidden="true" size={15} />
+            Remplacer l'image
+          </label>
+          <button
+            className={styles.publishAction}
+            disabled={isPublishingImage}
+            onClick={onPublishImage}
+            type="button"
+          >
+            <UploadCloud aria-hidden="true" size={17} />
+            {isPublishingImage ? "Publication..." : "Publier l'image"}
+          </button>
+        </div>
+        {storyImageMessage ? <p className={styles.localNotice}>{storyImageMessage}</p> : null}
         <div className={styles.managerCard}>
           <ButtonManager
             buttons={story.buttons}
