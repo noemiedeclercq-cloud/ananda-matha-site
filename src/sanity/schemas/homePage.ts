@@ -1,6 +1,7 @@
 import { defineField, defineType } from "sanity";
 import { HomeIcon } from "@sanity/icons";
 import { FriendlyDocumentInput } from "../studio/components/FriendlyDocumentInput";
+import { FriendlyImageInput } from "../studio/components/FriendlyImageInput";
 import { VisualArrayInput } from "../studio/components/VisualArrayInput";
 
 export const homePage = defineType({
@@ -15,7 +16,8 @@ export const homePage = defineType({
     { name: "cards", title: "Cartes Prayer / Work / Community / Hospitality" },
     { name: "story", title: "Our Story" },
     { name: "bands", title: "Bandes photos" },
-    { name: "cta", title: "CTA final" }
+    { name: "cta", title: "CTA final" },
+    { name: "legacy", title: "Champs conserves" }
   ],
   fields: [
     defineField({
@@ -47,6 +49,16 @@ export const homePage = defineType({
         Rule.min(1).warning("Ajoutez au moins une photo pour eviter un haut de page vide.")
     }),
     defineField({
+      name: "heroImage",
+      title: "Photo principale de secours",
+      description:
+        "Ancien champ conserve pour les contenus importes. Le diaporama ci-dessus reste prioritaire, mais cette image peut servir si aucune photo n'est ajoutee dans la liste.",
+      type: "image",
+      options: { hotspot: true },
+      group: "hero",
+      components: { field: FriendlyImageInput }
+    }),
+    defineField({
       name: "heroButtons",
       title: "Boutons",
       type: "array",
@@ -55,6 +67,20 @@ export const homePage = defineType({
         "Ajoutez, supprimez ou reordonnez les boutons affiches dans la grande photo d'accueil.",
       of: [{ type: "actionButton" }],
       components: { input: VisualArrayInput }
+    }),
+    defineField({
+      name: "heroButtonLabel",
+      title: "Ancien texte du bouton hero",
+      type: "string",
+      group: "legacy",
+      hidden: true
+    }),
+    defineField({
+      name: "heroButtonLink",
+      title: "Ancien lien du bouton hero",
+      type: "string",
+      group: "legacy",
+      hidden: true
     }),
     defineField({
       name: "values",
@@ -99,6 +125,33 @@ export const homePage = defineType({
       components: { input: VisualArrayInput }
     }),
     defineField({
+      name: "visitingHoursTitle",
+      title: "Ancien titre des horaires",
+      type: "string",
+      group: "legacy",
+      description:
+        "Champ conserve car il existe dans les donnees importees. Il n'est plus affiche sur la page d'accueil."
+    }),
+    defineField({
+      name: "visitingHoursContent",
+      title: "Ancien contenu des horaires",
+      type: "text",
+      rows: 5,
+      group: "legacy",
+      description:
+        "Champ conserve car il existe dans les donnees importees. Il n'est plus affiche sur la page d'accueil."
+    }),
+    defineField({
+      name: "visitingHoursImage",
+      title: "Ancienne photo des horaires",
+      type: "image",
+      options: { hotspot: true },
+      group: "legacy",
+      components: { field: FriendlyImageInput },
+      description:
+        "Champ image conserve pour eviter l'affichage JSON dans le Studio. Il n'est plus affiche sur la page d'accueil."
+    }),
+    defineField({
       name: "invitationText",
       title: "Phrase d'invitation",
       type: "text",
@@ -114,6 +167,20 @@ export const homePage = defineType({
         "Ajoutez, supprimez ou reordonnez les boutons du CTA final. Si aucun bouton n'est ajoute, aucun bouton ne s'affiche.",
       of: [{ type: "actionButton" }],
       components: { input: VisualArrayInput }
+    }),
+    defineField({
+      name: "invitationButtonLabel",
+      title: "Ancien texte du bouton d'invitation",
+      type: "string",
+      group: "legacy",
+      hidden: true
+    }),
+    defineField({
+      name: "invitationButtonLink",
+      title: "Ancien lien du bouton d'invitation",
+      type: "string",
+      group: "legacy",
+      hidden: true
     })
   ],
   preview: {

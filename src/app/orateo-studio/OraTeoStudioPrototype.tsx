@@ -136,7 +136,7 @@ function readStoredDraft(baseDraft: OraTeoHomeDraft): OraTeoHomeDraft | null {
       ...baseDraft,
       ...parsed,
       hero: { ...baseDraft.hero, ...parsed.hero },
-      slideshow: { ...baseDraft.slideshow, ...parsed.slideshow },
+      slideshow: baseDraft.slideshow,
       story: { ...baseDraft.story, ...parsed.story },
       quote: { ...baseDraft.quote, ...parsed.quote },
       contact: { ...baseDraft.contact, ...parsed.contact },
@@ -214,6 +214,7 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
   const [lastSavedLabel, setLastSavedLabel] = useState("Brouillon initial");
   const [isPublishingHero, setIsPublishingHero] = useState(false);
   const [heroPublishMessage, setHeroPublishMessage] = useState("");
+  const [isPublishingHeroPhotos, setIsPublishingHeroPhotos] = useState(false);
   const [draggedPhotoId, setDraggedPhotoId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>("split");
   const [previewMode, setPreviewMode] = useState<PreviewMode>("edit");
@@ -322,24 +323,47 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
       }
     }));
     setDraggedPhotoId((current) => (current === id ? null : current));
-    setUploadNotice("Photo supprimée du brouillon. Enregistrez pour conserver ce changement.");
+    setUploadNotice("Photo supprimee. Publiez pour mettre le site a jour.");
   }
 
-  function addPhotoFromFile(fileName: string, image: string) {
+  function addPhotoFromFile(file: File) {
+    const image = URL.createObjectURL(file);
     setDraft((current) => ({
       ...current,
       slideshow: {
         photos: [
           ...current.slideshow.photos,
           {
+            file,
             id: createLocalId("photo", current.slideshow.photos.length),
             image,
-            label: fileName
+            label: file.name
           }
         ]
       }
     }));
-    setUploadNotice("Image ajoutée au brouillon local. Non publiée.");
+    setUploadNotice("Photo ajoutee. Publiez pour mettre le site a jour.");
+  }
+
+  function replacePhotoFromFile(id: string, file: File) {
+    const image = URL.createObjectURL(file);
+    setDraft((current) => ({
+      ...current,
+      slideshow: {
+        photos: current.slideshow.photos.map((photo) =>
+          photo.id === id
+            ? {
+                ...photo,
+                assetRef: undefined,
+                file,
+                image,
+                label: file.name
+              }
+            : photo
+        )
+      }
+    }));
+    setUploadNotice("Photo remplacee. Publiez pour mettre le site a jour.");
   }
 
   function movePhotoToStart(photo: StudioPhoto) {
@@ -374,6 +398,72 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
         }
       };
     });
+  }
+
+  async function publishHeroPhotosToSanity() {
+    if (!draft.slideshow.photos.length) {
+      setUploadNotice("Ajoutez une photo");
+      return;
+    }
+
+    const formData = new FormData();
+    const slides = draft.slideshow.photos.map((photo, index) => {
+      const fileKey = photo.file ? `photo-${index}` : undefined;
+      if (photo.file && fileKey) {
+        formData.append(fileKey, photo.file);
+      }
+
+      return {
+        assetRef: photo.assetRef,
+        fileKey,
+        id: photo.id,
+        label: photo.label || `Photo ${index + 1}`
+      };
+    });
+
+    formData.append("slides", JSON.stringify(slides));
+    setIsPublishingHeroPhotos(true);
+    setUploadNotice("Publication en cours...");
+
+    try {
+      const response = await fetch("/orateo-studio/api/home/hero-slides", {
+        method: "POST",
+        body: formData
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result?.error || "Impossible de publier");
+      }
+
+      const publishedPhotos: StudioPhoto[] = (result.slides || []).map(
+        (slide: { assetRef?: string; id?: string; image?: string; label?: string }, index: number) => ({
+          assetRef: slide.assetRef,
+          id: slide.id || `sanity-photo-${index}`,
+          image: slide.image || draft.slideshow.photos[index]?.image || "",
+          label: slide.label || `Photo ${index + 1}`
+        })
+      );
+
+      setDraft((current) => ({
+        ...current,
+        slideshow: { photos: publishedPhotos }
+      }));
+      setSavedDraft((current) => {
+        const next = {
+          ...current,
+          slideshow: { photos: publishedPhotos }
+        };
+        window.localStorage.setItem(draftStorageKey, JSON.stringify(next));
+        return next;
+      });
+      setUploadNotice("Publication reussie");
+      router.refresh();
+    } catch {
+      setUploadNotice("Impossible de publier");
+    } finally {
+      setIsPublishingHeroPhotos(false);
+    }
   }
 
   function updateHero(next: Partial<OraTeoHomeDraft["hero"]>) {
@@ -788,11 +878,14 @@ export function OraTeoStudioPrototype({ initialData }: { initialData: OraTeoStud
                     {block.key === "slideshow" && (
                       <PhotoManager
                         draggedPhotoId={draggedPhotoId}
+                        isPublishing={isPublishingHeroPhotos}
                         onAddPhoto={addPhotoFromFile}
                         onDragEnd={() => setDraggedPhotoId(null)}
                         onDragStart={setDraggedPhotoId}
                         onMoveToStart={movePhotoToStart}
+                        onPublish={publishHeroPhotosToSanity}
                         onRemovePhoto={removePhoto}
+                        onReplacePhoto={replacePhotoFromFile}
                         onReorderPhoto={reorderPhoto}
                         photos={draft.slideshow.photos}
                         uploadNotice={uploadNotice}
@@ -1144,21 +1237,27 @@ function ButtonManager({
 
 function PhotoManager({
   draggedPhotoId,
+  isPublishing,
   onAddPhoto,
   onDragEnd,
   onDragStart,
   onMoveToStart,
+  onPublish,
   onRemovePhoto,
+  onReplacePhoto,
   onReorderPhoto,
   photos,
   uploadNotice
 }: {
   draggedPhotoId: string | null;
-  onAddPhoto: (fileName: string, image: string) => void;
+  isPublishing: boolean;
+  onAddPhoto: (file: File) => void;
   onDragEnd: () => void;
   onDragStart: (id: string) => void;
   onMoveToStart: (photo: StudioPhoto) => void;
+  onPublish: () => void;
   onRemovePhoto: (id: string) => void;
+  onReplacePhoto: (id: string, file: File) => void;
   onReorderPhoto: (id: string) => void;
   photos: StudioPhoto[];
   uploadNotice: string;
@@ -1167,13 +1266,15 @@ function PhotoManager({
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === "string") {
-        onAddPhoto(file.name, reader.result);
-      }
-    };
-    reader.readAsDataURL(file);
+    onAddPhoto(file);
+    event.target.value = "";
+  }
+
+  function handleReplaceFileChange(id: string, event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    onReplacePhoto(id, file);
     event.target.value = "";
   }
 
@@ -1197,6 +1298,15 @@ function PhotoManager({
         </label>
       </div>
       {uploadNotice ? <p className={styles.localNotice}>{uploadNotice}</p> : null}
+      <button
+        className={styles.publishAction}
+        disabled={isPublishing}
+        onClick={onPublish}
+        type="button"
+      >
+        <UploadCloud aria-hidden="true" size={18} />
+        {isPublishing ? "Publication..." : "Publier les photos"}
+      </button>
 
       <div className={styles.photoGrid}>
         {photos.map((photo, index) => (
@@ -1209,6 +1319,13 @@ function PhotoManager({
             onDragStart={() => onDragStart(photo.id)}
             onDrop={() => onReorderPhoto(photo.id)}
           >
+            <input
+              accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+              className={styles.hiddenFileInput}
+              id={`orateo-photo-replace-${photo.id}`}
+              onChange={(event) => handleReplaceFileChange(photo.id, event)}
+              type="file"
+            />
             <img alt={photo.label} src={photo.image} />
             <button
               aria-label="Supprimer cette photo"
@@ -1217,7 +1334,7 @@ function PhotoManager({
               onClick={(event) => {
                 event.preventDefault();
                 event.stopPropagation();
-                if (window.confirm("Supprimer cette photo du brouillon ?")) {
+                if (window.confirm("Supprimer cette photo ?")) {
                   onRemovePhoto(photo.id);
                 }
               }}
@@ -1232,6 +1349,14 @@ function PhotoManager({
                 Position {index + 1}
               </span>
               <div>
+                <label
+                  className={styles.photoOverlayButton}
+                  draggable={false}
+                  htmlFor={`orateo-photo-replace-${photo.id}`}
+                  onMouseDown={(event) => event.stopPropagation()}
+                >
+                  Remplacer
+                </label>
                 <button
                   draggable={false}
                   onClick={(event) => {

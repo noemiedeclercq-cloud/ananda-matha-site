@@ -71,7 +71,8 @@ export function mapHomeToDraft(home: HomePage): OraTeoHomeDraft {
     slideshow: {
       photos: (home.heroSlides?.length ? home.heroSlides : fallbackHome.heroSlides || []).map(
         (slide, index) => ({
-          id: `sanity-photo-${index}`,
+          assetRef: slide.assetRef,
+          id: slide._key || `sanity-photo-${index}`,
           image: slide.image || "/images/monastery-hero.svg",
           label: slide.alt || slide.caption || `Photo ${index + 1}`
         })

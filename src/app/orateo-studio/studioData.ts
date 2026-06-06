@@ -21,6 +21,8 @@ export type StudioCard = {
 };
 
 export type StudioPhoto = {
+  assetRef?: string;
+  file?: File;
   id: string;
   image: string;
   label: string;

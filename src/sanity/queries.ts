@@ -91,6 +91,7 @@ function mapHeroSlides(home: Record<string, any>) {
   const publishedSlides = (home.heroSlides || [])
     .map((slide: any) => ({
       ...slide,
+      assetRef: slide.image?.asset?._ref,
       image: imageUrl(slide.image)
     }))
     .filter((slide: any) => slide.image);

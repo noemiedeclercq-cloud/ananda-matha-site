@@ -41,6 +41,8 @@
     "PastoPlus",
     "_active",
     "_archives",
-    "_local-untracked"
+    "_local-untracked",
+    "postgresql-17.10",
+    "postgresql-18.3"
   ]
 }

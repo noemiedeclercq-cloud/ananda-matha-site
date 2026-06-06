@@ -83,7 +83,9 @@ export type HomeCard = {
 };
 
 export type HeroSlide = {
+  _key?: string;
   image?: string;
+  assetRef?: string;
   alt?: string;
   caption?: string;
 };
